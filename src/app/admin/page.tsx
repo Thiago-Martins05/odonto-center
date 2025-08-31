@@ -4,7 +4,8 @@ import { AdminTabs } from "@/components/admin/admin-tabs";
 
 export const metadata: Metadata = {
   title: "Painel Administrativo | Odonto Center",
-  description: "Painel administrativo para gerenciar serviços, disponibilidade e agendamentos da clínica odontológica.",
+  description:
+    "Painel administrativo para gerenciar serviços, disponibilidade e agendamentos da clínica odontológica.",
   robots: {
     index: false,
     follow: false,

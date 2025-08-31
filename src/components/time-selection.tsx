@@ -4,7 +4,14 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Calendar, Clock, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Calendar,
+  Clock,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
 import { Service } from "./scheduling-flow";
 import { TimeSlotSkeleton } from "./skeletons/time-slot-skeleton";
 
@@ -72,7 +79,9 @@ export function TimeSelection({
       setLoading(false);
     } catch (error) {
       console.error("Error fetching slots:", error);
-      setError("Não foi possível carregar os horários disponíveis. Tente novamente.");
+      setError(
+        "Não foi possível carregar os horários disponíveis. Tente novamente."
+      );
       setLoading(false);
     }
   };
@@ -174,14 +183,20 @@ export function TimeSelection({
           </div>
           <div className="w-20"></div>
         </div>
-        
+
         <div className="text-center py-12 space-y-4">
           <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
             <AlertCircle className="w-8 h-8 text-destructive" />
           </div>
-          <h3 className="text-lg font-semibold text-foreground">Ops! Algo deu errado</h3>
+          <h3 className="text-lg font-semibold text-foreground">
+            Ops! Algo deu errado
+          </h3>
           <p className="text-muted-foreground max-w-md mx-auto">{error}</p>
-          <Button onClick={fetchAvailableSlots} variant="outline" className="mt-4">
+          <Button
+            onClick={fetchAvailableSlots}
+            variant="outline"
+            className="mt-4"
+          >
             <RefreshCw className="w-4 h-4 mr-2" />
             Tentar novamente
           </Button>

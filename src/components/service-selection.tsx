@@ -4,7 +4,13 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, DollarSign, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Clock,
+  DollarSign,
+  CheckCircle,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
 import { Service } from "./scheduling-flow";
 import { ServiceSkeleton } from "./skeletons/service-skeleton";
 
@@ -99,7 +105,9 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
         <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
           <AlertCircle className="w-8 h-8 text-destructive" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground">Ops! Algo deu errado</h3>
+        <h3 className="text-lg font-semibold text-foreground">
+          Ops! Algo deu errado
+        </h3>
         <p className="text-muted-foreground max-w-md mx-auto">{error}</p>
         <Button onClick={fetchServices} variant="outline" className="mt-4">
           <RefreshCw className="w-4 h-4 mr-2" />
@@ -115,9 +123,12 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
           <AlertCircle className="w-8 h-8 text-muted-foreground" />
         </div>
-        <h3 className="text-lg font-semibold text-foreground">Nenhum serviço disponível</h3>
+        <h3 className="text-lg font-semibold text-foreground">
+          Nenhum serviço disponível
+        </h3>
         <p className="text-muted-foreground max-w-md mx-auto">
-          No momento não temos serviços disponíveis para agendamento. Tente novamente mais tarde.
+          No momento não temos serviços disponíveis para agendamento. Tente
+          novamente mais tarde.
         </p>
       </div>
     );

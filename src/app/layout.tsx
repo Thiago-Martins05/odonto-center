@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     "tratamento de canal",
     "São Paulo",
     "biossegurança",
-    "atendimento humanizado"
+    "atendimento humanizado",
   ],
   authors: [{ name: "Odonto Center" }],
   creator: "Odonto Center",
@@ -49,7 +49,8 @@ export const metadata: Metadata = {
     locale: "pt_BR",
     url: "https://odontocenter.com",
     title: "Odonto Center - Clínica Odontológica Premium",
-    description: "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online.",
+    description:
+      "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online.",
     siteName: "Odonto Center",
     images: [
       {
@@ -63,7 +64,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Odonto Center - Clínica Odontológica Premium",
-    description: "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa.",
+    description:
+      "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa.",
     images: ["/og-image.svg"],
   },
   robots: {
