@@ -136,7 +136,8 @@ export function AvailabilityTab() {
           id: "1",
           name: "Limpeza Dental Profunda",
           slug: "limpeza-dental-profunda",
-          description: "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
+          description:
+            "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
           durationMin: 40,
           priceCents: 8000,
           active: true,
@@ -145,7 +146,8 @@ export function AvailabilityTab() {
           id: "2",
           name: "Clareamento Dental",
           slug: "clareamento-dental",
-          description: "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
+          description:
+            "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
           durationMin: 60,
           priceCents: 30000,
           active: true,
@@ -154,7 +156,8 @@ export function AvailabilityTab() {
           id: "3",
           name: "Tratamento de Canal (Endodontia)",
           slug: "tratamento-canal-endodontia",
-          description: "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
+          description:
+            "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
           durationMin: 90,
           priceCents: 35000,
           active: true,

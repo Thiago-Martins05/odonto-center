@@ -31,7 +31,8 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
       id: "1",
       name: "Limpeza Dental Profunda",
       slug: "limpeza-dental-profunda",
-      description: "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
+      description:
+        "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
       durationMin: 40,
       priceCents: 8000,
       active: true,

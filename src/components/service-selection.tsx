@@ -57,7 +57,8 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
         {
           id: "3",
           name: "Tratamento de Canal (Endodontia)",
-          description: "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
+          description:
+            "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
           durationMin: 90,
           priceCents: 35000, // R$ 350,00
           slug: "tratamento-canal-endodontia",
