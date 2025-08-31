@@ -11,7 +11,8 @@ export default function AgendaPage() {
             Agendar Consulta
           </h1>
           <p className="text-lg text-text-secondary max-w-2xl mx-auto">
-            Escolha o serviço, horário e preencha seus dados para agendar sua consulta
+            Escolha o serviço, horário e preencha seus dados para agendar sua
+            consulta
           </p>
         </div>
         <SchedulingFlow />

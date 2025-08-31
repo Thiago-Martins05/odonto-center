@@ -19,7 +19,11 @@ interface DaySlots {
   dateKey: string;
 }
 
-export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionProps) {
+export function TimeSelection({
+  service,
+  onTimeSelect,
+  onBack,
+}: TimeSelectionProps) {
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [availableSlots, setAvailableSlots] = useState<DaySlots[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
@@ -36,17 +40,17 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
       // For now, using mock data
       const weekStart = getWeekStart(currentWeek);
       const mockSlots: DaySlots[] = [];
-      
+
       for (let i = 0; i < 7; i++) {
         const date = new Date(weekStart);
         date.setDate(date.getDate() + i);
-        
+
         // Skip past dates
         if (date < new Date()) continue;
-        
-        const dateKey = date.toISOString().split('T')[0];
+
+        const dateKey = date.toISOString().split("T")[0];
         const formattedDate = formatDate(date);
-        
+
         // Generate mock slots for weekdays (Mon-Fri)
         const weekday = date.getDay();
         if (weekday >= 1 && weekday <= 5) {
@@ -60,7 +64,7 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
           }
         }
       }
-      
+
       setAvailableSlots(mockSlots);
       setLoading(false);
     } catch (error) {
@@ -73,21 +77,24 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
     const slots: string[] = [];
     const startHour = 9; // 9 AM
     const endHour = 17; // 5 PM
-    
+
     for (let hour = startHour; hour < endHour; hour++) {
       for (let minute = 0; minute < 60; minute += 30) {
         const slotTime = new Date(date);
         slotTime.setHours(hour, minute, 0, 0);
-        
+
         // Skip past times for today
-        if (date.toDateString() === new Date().toDateString() && slotTime < new Date()) {
+        if (
+          date.toDateString() === new Date().toDateString() &&
+          slotTime < new Date()
+        ) {
           continue;
         }
-        
+
         slots.push(slotTime.toISOString());
       }
     }
-    
+
     return slots;
   };
 
@@ -99,27 +106,27 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
   };
 
   const formatDate = (date: Date): string => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
     }).format(date);
   };
 
   const formatTime = (isoString: string): string => {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
   const getWeekdayName = (date: Date): string => {
-    return new Intl.DateTimeFormat('pt-BR', { weekday: 'short' }).format(date);
+    return new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(date);
   };
 
-  const navigateWeek = (direction: 'prev' | 'next') => {
+  const navigateWeek = (direction: "prev" | "next") => {
     const newWeek = new Date(currentWeek);
-    if (direction === 'prev') {
+    if (direction === "prev") {
       newWeek.setDate(newWeek.getDate() - 7);
     } else {
       newWeek.setDate(newWeek.getDate() + 7);
@@ -141,7 +148,9 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
     return (
       <div className="text-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Carregando horários disponíveis...</p>
+        <p className="mt-4 text-muted-foreground">
+          Carregando horários disponíveis...
+        </p>
       </div>
     );
   }
@@ -149,11 +158,14 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={onBack} className="flex items-center space-x-2">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="flex items-center space-x-2"
+        >
           <ChevronLeft className="w-4 h-4" />
           <span>Voltar</span>
         </Button>
-        
         <div className="text-center">
           <h2 className="text-2xl font-bold text-foreground mb-2">
             Escolha o Horário
@@ -162,7 +174,6 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
             {service.name} • {service.durationMin} min
           </p>
         </div>
-        
         <div className="w-20"></div> {/* Spacer for centering */}
       </div>
 
@@ -171,23 +182,28 @@ export function TimeSelection({ service, onTimeSelect, onBack }: TimeSelectionPr
         <Button
           variant="outline"
           size="sm"
-          onClick={() => navigateWeek('prev')}
+          onClick={() => navigateWeek("prev")}
           className="flex items-center space-x-2"
         >
           <ChevronLeft className="w-4 h-4" />
           <span>Semana anterior</span>
         </Button>
-        
+
         <div className="text-center">
           <p className="text-sm font-medium text-muted-foreground">
-            {formatDate(getWeekStart(currentWeek))} - {formatDate(new Date(getWeekStart(currentWeek).getTime() + 6 * 24 * 60 * 60 * 1000))}
+            {formatDate(getWeekStart(currentWeek))} -{" "}
+            {formatDate(
+              new Date(
+                getWeekStart(currentWeek).getTime() + 6 * 24 * 60 * 60 * 1000
+              )
+            )}
           </p>
         </div>
-        
+
         <Button
           variant="outline"
           size="sm"
-          onClick={() => navigateWeek('next')}
+          onClick={() => navigateWeek("next")}
           className="flex items-center space-x-2"
         >
           <span>Próxima semana</span>

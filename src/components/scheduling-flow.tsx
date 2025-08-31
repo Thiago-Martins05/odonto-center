@@ -9,6 +9,7 @@ import { ServiceSelection } from "./service-selection";
 import { TimeSelection } from "./time-selection";
 import { PatientForm } from "./patient-form";
 import { SuccessScreen } from "./success-screen";
+import { createAppointment } from "@/server/appointments";
 
 export interface Service {
   id: string;
@@ -29,7 +30,9 @@ export interface AppointmentData {
 
 export function SchedulingFlow() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [appointmentData, setAppointmentData] = useState<Partial<AppointmentData>>({});
+  const [appointmentData, setAppointmentData] = useState<
+    Partial<AppointmentData>
+  >({});
   const [isSuccess, setIsSuccess] = useState(false);
 
   const steps = [
@@ -54,12 +57,12 @@ export function SchedulingFlow() {
   ];
 
   const handleServiceSelect = (service: Service) => {
-    setAppointmentData(prev => ({ ...prev, service }));
+    setAppointmentData((prev) => ({ ...prev, service }));
     setCurrentStep(2);
   };
 
   const handleTimeSelect = (selectedSlot: string) => {
-    setAppointmentData(prev => ({ ...prev, selectedSlot }));
+    setAppointmentData((prev) => ({ ...prev, selectedSlot }));
     setCurrentStep(3);
   };
 
@@ -75,11 +78,20 @@ export function SchedulingFlow() {
     } as AppointmentData;
 
     try {
-      // TODO: Call server action to create appointment
-      console.log("Creating appointment:", completeData);
-      setIsSuccess(true);
+      // Call server action to create appointment
+      const result = await createAppointment(completeData);
+      
+      if (result.success) {
+        console.log("Appointment created successfully! ID:", result.appointmentId);
+        console.log("Confirmation email sent to:", completeData.patientEmail);
+        setIsSuccess(true);
+      } else {
+        console.error("Failed to create appointment:", result.error);
+        // TODO: Show error toast to user
+      }
     } catch (error) {
       console.error("Error creating appointment:", error);
+      // TODO: Show error toast to user
     }
   };
 
@@ -120,14 +132,20 @@ export function SchedulingFlow() {
                   )}
                 </div>
                 <div className="mt-2 text-center">
-                  <p className="text-sm font-medium text-foreground">{step.title}</p>
-                  <p className="text-xs text-muted-foreground">{step.description}</p>
+                  <p className="text-sm font-medium text-foreground">
+                    {step.title}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {step.description}
+                  </p>
                 </div>
               </div>
               {index < steps.length - 1 && (
                 <div
                   className={`w-16 h-0.5 mx-4 transition-all duration-300 ${
-                    currentStep > step.id ? "bg-primary" : "bg-muted-foreground/30"
+                    currentStep > step.id
+                      ? "bg-primary"
+                      : "bg-muted-foreground/30"
                   }`}
                 />
               )}

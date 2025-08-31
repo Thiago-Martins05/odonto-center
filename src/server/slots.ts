@@ -1,5 +1,5 @@
-import { getDailySlots, BlackoutDate, Appointment } from '../lib/availability';
-import { formatPt } from '../lib/time';
+import { getDailySlots, BlackoutDate, Appointment } from "../lib/availability";
+import { formatPt } from "../lib/time";
 
 export interface AvailableSlotsOptions {
   weekStart: Date;
@@ -29,7 +29,7 @@ export async function getAvailableSlots({
 }: AvailableSlotsOptions): Promise<AvailableSlotsResult> {
   // TODO: Replace with actual database calls when models are defined
   // For now, using mock data
-  
+
   // Mock service data
   let service;
   if (serviceId) {
@@ -60,7 +60,7 @@ export async function getAvailableSlots({
   const currentDate = new Date(weekStart);
 
   while (currentDate <= weekEnd) {
-    const dateKey = currentDate.toISOString().split('T')[0];
+    const dateKey = currentDate.toISOString().split("T")[0];
 
     const slots = getDailySlots({
       date: new Date(currentDate),
@@ -83,7 +83,7 @@ export async function getAvailableSlots({
   const days: DaySlots[] = Array.from(daysMap.entries()).map(
     ([dateKey, slots]) => ({
       date: formatPt(new Date(dateKey)),
-      slots: slots.map(slot => slot.toISOString()),
+      slots: slots.map((slot) => slot.toISOString()),
       dateKey,
     })
   );

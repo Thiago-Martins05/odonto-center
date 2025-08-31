@@ -1,4 +1,4 @@
-import { addMinutes, parseHHMM } from './time';
+import { addMinutes, parseHHMM } from "./time";
 
 export interface AvailabilityRule {
   id: string;
@@ -48,7 +48,7 @@ export function getDailySlots({
 
   // Get rules for this weekday
   const weekday = date.getDay();
-  const applicableRules = rules.filter(rule => rule.weekday === weekday);
+  const applicableRules = rules.filter((rule) => rule.weekday === weekday);
 
   if (applicableRules.length === 0) return [];
 
@@ -76,13 +76,13 @@ export function getDailySlots({
 
       if (slotEnd <= ruleEnd && currentSlot >= bufferTime) {
         // Check for overlaps with existing appointments
-        const hasOverlap = existingAppointments.some(appointment => {
+        const hasOverlap = existingAppointments.some((appointment) => {
           const appointmentStart = new Date(appointment.startsAt);
           const appointmentEnd = new Date(appointment.endsAt);
 
           return currentSlot < appointmentEnd && slotEnd > appointmentStart;
         });
-        
+
         if (!hasOverlap) {
           allSlots.push(new Date(currentSlot));
         }
@@ -94,8 +94,9 @@ export function getDailySlots({
 
   // Return sorted unique slots
   return allSlots
-    .filter((slot, index, self) =>
-      self.findIndex(s => s.getTime() === slot.getTime()) === index
+    .filter(
+      (slot, index, self) =>
+        self.findIndex((s) => s.getTime() === slot.getTime()) === index
     )
     .sort((a, b) => a.getTime() - b.getTime());
 }

@@ -28,14 +28,16 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
         {
           id: "1",
           name: "Consulta de Avaliação",
-          description: "Avaliação completa da saúde bucal com plano de tratamento personalizado",
+          description:
+            "Avaliação completa da saúde bucal com plano de tratamento personalizado",
           durationMin: 60,
           price: 15000, // R$ 150,00
         },
         {
           id: "2",
           name: "Limpeza e Profilaxia",
-          description: "Limpeza profissional, remoção de tártaro e polimento dos dentes",
+          description:
+            "Limpeza profissional, remoção de tártaro e polimento dos dentes",
           durationMin: 45,
           price: 12000, // R$ 120,00
         },
@@ -49,12 +51,13 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
         {
           id: "4",
           name: "Extração Simples",
-          description: "Remoção de dente com anestesia local e cuidados pós-operatórios",
+          description:
+            "Remoção de dente com anestesia local e cuidados pós-operatórios",
           durationMin: 30,
           price: 20000, // R$ 200,00
         },
       ];
-      
+
       setServices(mockServices);
       setLoading(false);
     } catch (error) {
@@ -64,9 +67,9 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   };
 
   const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(priceInCents / 100);
   };
 
@@ -127,14 +130,20 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {service.description}
               </p>
-              
+
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  <Badge variant="secondary" className="flex items-center space-x-1">
+                  <Badge
+                    variant="secondary"
+                    className="flex items-center space-x-1"
+                  >
                     <Clock className="w-3 h-3" />
                     <span>{formatDuration(service.durationMin)}</span>
                   </Badge>
-                  <Badge variant="outline" className="flex items-center space-x-1">
+                  <Badge
+                    variant="outline"
+                    className="flex items-center space-x-1"
+                  >
                     <DollarSign className="w-3 h-3" />
                     <span>{formatPrice(service.price)}</span>
                   </Badge>

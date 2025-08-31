@@ -10,7 +10,15 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronLeft, Clock, Calendar, User, Mail, Phone, FileText } from "lucide-react";
+import {
+  ChevronLeft,
+  Clock,
+  Calendar,
+  User,
+  Mail,
+  Phone,
+  FileText,
+} from "lucide-react";
 import { Service } from "./scheduling-flow";
 
 const patientFormSchema = z.object({
@@ -29,7 +37,12 @@ interface PatientFormProps {
   onBack: () => void;
 }
 
-export function PatientForm({ service, selectedSlot, onSubmit, onBack }: PatientFormProps) {
+export function PatientForm({
+  service,
+  selectedSlot,
+  onSubmit,
+  onBack,
+}: PatientFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const {
@@ -42,19 +55,19 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
   });
 
   const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(priceInCents / 100);
   };
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
@@ -84,11 +97,14 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Button variant="ghost" onClick={onBack} className="flex items-center space-x-2">
+        <Button
+          variant="ghost"
+          onClick={onBack}
+          className="flex items-center space-x-2"
+        >
           <ChevronLeft className="w-4 h-4" />
           <span>Voltar</span>
         </Button>
-        
         <div className="text-center">
           <h2 className="text-2xl font-bold text-foreground mb-2">
             Seus Dados
@@ -97,7 +113,6 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
             Preencha suas informações para finalizar o agendamento
           </p>
         </div>
-        
         <div className="w-20"></div> {/* Spacer for centering */}
       </div>
 
@@ -118,23 +133,27 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
                 <p className="text-xs text-muted-foreground">Serviço</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <Clock className="w-4 h-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">{formatDate(selectedSlot)}</p>
+                <p className="text-sm font-medium">
+                  {formatDate(selectedSlot)}
+                </p>
                 <p className="text-xs text-muted-foreground">Data e Hora</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <Clock className="w-4 h-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">{formatDuration(service.durationMin)}</p>
+                <p className="text-sm font-medium">
+                  {formatDuration(service.durationMin)}
+                </p>
                 <p className="text-xs text-muted-foreground">Duração</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className="text-sm">
                 {formatPrice(service.price)}
@@ -150,7 +169,10 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Name */}
           <div className="space-y-2">
-            <Label htmlFor="patientName" className="flex items-center space-x-2">
+            <Label
+              htmlFor="patientName"
+              className="flex items-center space-x-2"
+            >
               <User className="w-4 h-4" />
               <span>Nome completo *</span>
             </Label>
@@ -161,13 +183,18 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
               className="h-12 rounded-xl"
             />
             {errors.patientName && (
-              <p className="text-sm text-destructive">{errors.patientName.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.patientName.message}
+              </p>
             )}
           </div>
 
           {/* Email */}
           <div className="space-y-2">
-            <Label htmlFor="patientEmail" className="flex items-center space-x-2">
+            <Label
+              htmlFor="patientEmail"
+              className="flex items-center space-x-2"
+            >
               <Mail className="w-4 h-4" />
               <span>E-mail *</span>
             </Label>
@@ -179,7 +206,9 @@ export function PatientForm({ service, selectedSlot, onSubmit, onBack }: Patient
               className="h-12 rounded-xl"
             />
             {errors.patientEmail && (
-              <p className="text-sm text-destructive">{errors.patientEmail.message}</p>
+              <p className="text-sm text-destructive">
+                {errors.patientEmail.message}
+              </p>
             )}
           </div>
         </div>

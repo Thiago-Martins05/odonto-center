@@ -3,7 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Calendar, Clock, User, DollarSign, Download, Home } from "lucide-react";
+import {
+  CheckCircle,
+  Calendar,
+  Clock,
+  User,
+  DollarSign,
+  Download,
+  Home,
+} from "lucide-react";
 import { AppointmentData } from "./scheduling-flow";
 
 interface SuccessScreenProps {
@@ -11,21 +19,24 @@ interface SuccessScreenProps {
   onBackToStart: () => void;
 }
 
-export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenProps) {
+export function SuccessScreen({
+  appointmentData,
+  onBackToStart,
+}: SuccessScreenProps) {
   const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
+    return new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
     }).format(priceInCents / 100);
   };
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+    return new Intl.DateTimeFormat("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     }).format(date);
   };
 
@@ -61,7 +72,8 @@ export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenP
           Agendamento confirmado!
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sua consulta foi agendada com sucesso. Você receberá um e-mail de confirmação em breve.
+          Sua consulta foi agendada com sucesso! Enviamos a confirmação por e-mail. 
+          Verifique sua caixa de entrada.
         </p>
       </div>
 
@@ -78,27 +90,33 @@ export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenP
             <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-xl">
               <User className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
-                <p className="text-sm font-medium">{appointmentData.service.name}</p>
+                <p className="text-sm font-medium">
+                  {appointmentData.service.name}
+                </p>
                 <p className="text-xs text-muted-foreground">Serviço</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-xl">
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
-                <p className="text-sm font-medium">{formatDate(appointmentData.selectedSlot)}</p>
+                <p className="text-sm font-medium">
+                  {formatDate(appointmentData.selectedSlot)}
+                </p>
                 <p className="text-xs text-muted-foreground">Data e Hora</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-xl">
               <Clock className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
-                <p className="text-sm font-medium">{formatDuration(appointmentData.service.durationMin)}</p>
+                <p className="text-sm font-medium">
+                  {formatDuration(appointmentData.service.durationMin)}
+                </p>
                 <p className="text-xs text-muted-foreground">Duração</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-3 p-3 bg-muted/30 rounded-xl">
               <DollarSign className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
@@ -114,9 +132,13 @@ export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenP
           <div className="border-t pt-4">
             <p className="text-sm text-muted-foreground mb-2">Paciente:</p>
             <p className="font-medium">{appointmentData.patientName}</p>
-            <p className="text-sm text-muted-foreground">{appointmentData.patientEmail}</p>
+            <p className="text-sm text-muted-foreground">
+              {appointmentData.patientEmail}
+            </p>
             {appointmentData.patientPhone && (
-              <p className="text-sm text-muted-foreground">{appointmentData.patientPhone}</p>
+              <p className="text-sm text-muted-foreground">
+                {appointmentData.patientPhone}
+              </p>
             )}
           </div>
         </CardContent>
@@ -133,7 +155,7 @@ export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenP
           <Download className="w-5 h-5" />
           <span>Adicionar ao calendário</span>
         </Button>
-        
+
         <Button
           onClick={onBackToStart}
           size="lg"
@@ -147,8 +169,8 @@ export function SuccessScreen({ appointmentData, onBackToStart }: SuccessScreenP
       {/* Additional Info */}
       <div className="text-center text-sm text-muted-foreground max-w-2xl mx-auto">
         <p>
-          Lembre-se de chegar 10 minutos antes do horário agendado. 
-          Em caso de dúvidas, entre em contato conosco.
+          Lembre-se de chegar 10 minutos antes do horário agendado. Em caso de
+          dúvidas, entre em contato conosco.
         </p>
       </div>
     </div>
