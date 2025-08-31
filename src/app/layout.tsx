@@ -19,7 +19,7 @@ const plusJakarta = Plus_Jakarta_Sans({
 export const metadata: Metadata = {
   title: "Odonto Center - Clínica Odontológica Premium | Agendamento Online",
   description:
-    "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online para avaliação, limpeza, tratamento de canal e mais. Atendimento em São Paulo.",
+    "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online para avaliação, limpeza, tratamento de canal e mais. Atendimento em Natal-RN.",
   keywords: [
     "odontologia",
     "clínica odontológica",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     "consulta odontológica",
     "limpeza dental",
     "tratamento de canal",
-    "São Paulo",
+    "Natal-RN",
     "biossegurança",
     "atendimento humanizado",
   ],

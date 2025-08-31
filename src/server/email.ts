@@ -11,7 +11,7 @@ const resend = process.env.RESEND_API_KEY
 // Mock clinic data - in production, this would come from environment or database
 const clinic: Clinic = {
   name: "Odonto Center",
-  address: "Rua das Flores, 123 - Centro, São Paulo - SP, 01234-567",
+  address: "Rua das Flores, 123 - Centro, Natal - RN, 01234-567",
   phone: "(11) 99999-9999",
   email: "contato@odontocenter.com",
 };
