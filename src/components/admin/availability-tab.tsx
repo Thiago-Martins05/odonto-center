@@ -5,14 +5,32 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Plus, Trash2, Save, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const availabilityRuleSchema = z.object({
   weekday: z.string().min(1, "Selecione um dia da semana"),
@@ -59,7 +77,9 @@ const weekdays = [
 ];
 
 export function AvailabilityTab() {
-  const [availabilityRules, setAvailabilityRules] = useState<AvailabilityRule[]>([]);
+  const [availabilityRules, setAvailabilityRules] = useState<
+    AvailabilityRule[]
+  >([]);
   const [blackoutDates, setBlackoutDates] = useState<BlackoutDate[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [isRuleFormOpen, setIsRuleFormOpen] = useState(false);
@@ -154,8 +174,8 @@ export function AvailabilityTab() {
         end: data.end,
         serviceId: data.serviceId,
       };
-      
-      setAvailabilityRules(prev => [...prev, newRule]);
+
+      setAvailabilityRules((prev) => [...prev, newRule]);
       ruleForm.reset();
       setIsRuleFormOpen(false);
     } catch (error) {
@@ -170,8 +190,8 @@ export function AvailabilityTab() {
         date: data.date,
         reason: data.reason,
       };
-      
-      setBlackoutDates(prev => [...prev, newBlackout]);
+
+      setBlackoutDates((prev) => [...prev, newBlackout]);
       blackoutForm.reset();
       setIsBlackoutFormOpen(false);
     } catch (error) {
@@ -181,18 +201,21 @@ export function AvailabilityTab() {
 
   const deleteRule = async (ruleId: string) => {
     if (confirm("Tem certeza que deseja excluir esta regra?")) {
-      setAvailabilityRules(prev => prev.filter(r => r.id !== ruleId));
+      setAvailabilityRules((prev) => prev.filter((r) => r.id !== ruleId));
     }
   };
 
   const deleteBlackout = async (blackoutId: string) => {
     if (confirm("Tem certeza que deseja excluir esta data bloqueada?")) {
-      setBlackoutDates(prev => prev.filter(b => b.id !== blackoutId));
+      setBlackoutDates((prev) => prev.filter((b) => b.id !== blackoutId));
     }
   };
 
   const getWeekdayName = (weekday: number) => {
-    return weekdays.find(w => w.value === weekday.toString())?.label || "Desconhecido";
+    return (
+      weekdays.find((w) => w.value === weekday.toString())?.label ||
+      "Desconhecido"
+    );
   };
 
   const formatTime = (time: string) => {
@@ -214,7 +237,10 @@ export function AvailabilityTab() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Regras de Disponibilidade</h2>
-          <Button onClick={() => setIsRuleFormOpen(true)} className="flex items-center space-x-2">
+          <Button
+            onClick={() => setIsRuleFormOpen(true)}
+            className="flex items-center space-x-2"
+          >
             <Plus className="w-4 h-4" />
             <span>Nova Regra</span>
           </Button>
@@ -242,7 +268,8 @@ export function AvailabilityTab() {
                     <TableCell>{formatTime(rule.end)}</TableCell>
                     <TableCell>
                       {rule.serviceId ? (
-                        services.find(s => s.id === rule.serviceId)?.name || "N/A"
+                        services.find((s) => s.id === rule.serviceId)?.name ||
+                        "N/A"
                       ) : (
                         <Badge variant="secondary">Todos os serviços</Badge>
                       )}
@@ -269,7 +296,10 @@ export function AvailabilityTab() {
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Datas Bloqueadas</h2>
-          <Button onClick={() => setIsBlackoutFormOpen(true)} className="flex items-center space-x-2">
+          <Button
+            onClick={() => setIsBlackoutFormOpen(true)}
+            className="flex items-center space-x-2"
+          >
             <Calendar className="w-4 h-4" />
             <span>Adicionar Data Bloqueada</span>
           </Button>
@@ -316,11 +346,16 @@ export function AvailabilityTab() {
           <CardHeader>
             <CardTitle>Nova Regra de Disponibilidade</CardTitle>
           </CardHeader>
-          
-          <form onSubmit={ruleForm.handleSubmit(onSubmitRule)} className="space-y-4">
+
+          <form
+            onSubmit={ruleForm.handleSubmit(onSubmitRule)}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="weekday">Dia da Semana *</Label>
-              <Select onValueChange={(value) => ruleForm.setValue("weekday", value)}>
+              <Select
+                onValueChange={(value) => ruleForm.setValue("weekday", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Selecione o dia" />
                 </SelectTrigger>
@@ -333,39 +368,39 @@ export function AvailabilityTab() {
                 </SelectContent>
               </Select>
               {ruleForm.formState.errors.weekday && (
-                <p className="text-sm text-destructive">{ruleForm.formState.errors.weekday.message}</p>
+                <p className="text-sm text-destructive">
+                  {ruleForm.formState.errors.weekday.message}
+                </p>
               )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="start">Início *</Label>
-                <Input
-                  id="start"
-                  type="time"
-                  {...ruleForm.register("start")}
-                />
+                <Input id="start" type="time" {...ruleForm.register("start")} />
                 {ruleForm.formState.errors.start && (
-                  <p className="text-sm text-destructive">{ruleForm.formState.errors.start.message}</p>
+                  <p className="text-sm text-destructive">
+                    {ruleForm.formState.errors.start.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="end">Fim *</Label>
-                <Input
-                  id="end"
-                  type="time"
-                  {...ruleForm.register("end")}
-                />
+                <Input id="end" type="time" {...ruleForm.register("end")} />
                 {ruleForm.formState.errors.end && (
-                  <p className="text-sm text-destructive">{ruleForm.formState.errors.end.message}</p>
+                  <p className="text-sm text-destructive">
+                    {ruleForm.formState.errors.end.message}
+                  </p>
                 )}
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="serviceId">Serviço Específico (opcional)</Label>
-              <Select onValueChange={(value) => ruleForm.setValue("serviceId", value)}>
+              <Select
+                onValueChange={(value) => ruleForm.setValue("serviceId", value)}
+              >
                 <SelectTrigger>
                   <SelectValue placeholder="Todos os serviços" />
                 </SelectTrigger>
@@ -381,7 +416,11 @@ export function AvailabilityTab() {
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setIsRuleFormOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsRuleFormOpen(false)}
+              >
                 <X className="w-4 h-4 mr-2" />
                 Cancelar
               </Button>
@@ -400,17 +439,18 @@ export function AvailabilityTab() {
           <CardHeader>
             <CardTitle>Nova Data Bloqueada</CardTitle>
           </CardHeader>
-          
-          <form onSubmit={blackoutForm.handleSubmit(onSubmitBlackout)} className="space-y-4">
+
+          <form
+            onSubmit={blackoutForm.handleSubmit(onSubmitBlackout)}
+            className="space-y-4"
+          >
             <div className="space-y-2">
               <Label htmlFor="date">Data *</Label>
-              <Input
-                id="date"
-                type="date"
-                {...blackoutForm.register("date")}
-              />
+              <Input id="date" type="date" {...blackoutForm.register("date")} />
               {blackoutForm.formState.errors.date && (
-                <p className="text-sm text-destructive">{blackoutForm.formState.errors.date.message}</p>
+                <p className="text-sm text-destructive">
+                  {blackoutForm.formState.errors.date.message}
+                </p>
               )}
             </div>
 
@@ -422,12 +462,18 @@ export function AvailabilityTab() {
                 {...blackoutForm.register("reason")}
               />
               {blackoutForm.formState.errors.reason && (
-                <p className="text-sm text-destructive">{blackoutForm.formState.errors.reason.message}</p>
+                <p className="text-sm text-destructive">
+                  {blackoutForm.formState.errors.reason.message}
+                </p>
               )}
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button type="button" variant="outline" onClick={() => setIsBlackoutFormOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsBlackoutFormOpen(false)}
+              >
                 <X className="w-4 h-4 mr-2" />
                 Cancelar
               </Button>

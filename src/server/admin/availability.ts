@@ -1,6 +1,6 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
+import { z } from "zod";
 
 const availabilityRuleSchema = z.object({
   weekday: z.number().min(0).max(6),
@@ -84,33 +84,35 @@ export async function getAvailabilityRules(): Promise<AvailabilityRule[]> {
     // const rules = await prisma.availabilityRule.findMany({
     //   orderBy: [{ weekday: 'asc' }, { start: 'asc' }]
     // });
-    
+
     return mockAvailabilityRules;
   } catch (error) {
-    console.error('Error fetching availability rules:', error);
-    throw new Error('Failed to fetch availability rules');
+    console.error("Error fetching availability rules:", error);
+    throw new Error("Failed to fetch availability rules");
   }
 }
 
-export async function createAvailabilityRule(data: AvailabilityRuleFormData): Promise<AvailabilityRule> {
+export async function createAvailabilityRule(
+  data: AvailabilityRuleFormData
+): Promise<AvailabilityRule> {
   try {
     const validatedData = availabilityRuleSchema.parse(data);
-    
+
     // TODO: Replace with actual Prisma call
     // const rule = await prisma.availabilityRule.create({
     //   data: validatedData
     // });
-    
+
     const newRule: AvailabilityRule = {
       id: `rule_${Date.now()}`,
       ...validatedData,
     };
-    
+
     mockAvailabilityRules.push(newRule);
     return newRule;
   } catch (error) {
-    console.error('Error creating availability rule:', error);
-    throw new Error('Failed to create availability rule');
+    console.error("Error creating availability rule:", error);
+    throw new Error("Failed to create availability rule");
   }
 }
 
@@ -120,11 +122,11 @@ export async function deleteAvailabilityRule(id: string): Promise<void> {
     // await prisma.availabilityRule.delete({
     //   where: { id }
     // });
-    
-    mockAvailabilityRules = mockAvailabilityRules.filter(r => r.id !== id);
+
+    mockAvailabilityRules = mockAvailabilityRules.filter((r) => r.id !== id);
   } catch (error) {
-    console.error('Error deleting availability rule:', error);
-    throw new Error('Failed to delete availability rule');
+    console.error("Error deleting availability rule:", error);
+    throw new Error("Failed to delete availability rule");
   }
 }
 
@@ -134,33 +136,35 @@ export async function getBlackoutDates(): Promise<BlackoutDate[]> {
     // const blackouts = await prisma.blackoutDate.findMany({
     //   orderBy: { date: 'asc' }
     // });
-    
+
     return mockBlackoutDates;
   } catch (error) {
-    console.error('Error fetching blackout dates:', error);
-    throw new Error('Failed to fetch blackout dates');
+    console.error("Error fetching blackout dates:", error);
+    throw new Error("Failed to fetch blackout dates");
   }
 }
 
-export async function createBlackoutDate(data: BlackoutDateFormData): Promise<BlackoutDate> {
+export async function createBlackoutDate(
+  data: BlackoutDateFormData
+): Promise<BlackoutDate> {
   try {
     const validatedData = blackoutDateSchema.parse(data);
-    
+
     // TODO: Replace with actual Prisma call
     // const blackout = await prisma.blackoutDate.create({
     //   data: validatedData
     // });
-    
+
     const newBlackout: BlackoutDate = {
       id: `blackout_${Date.now()}`,
       ...validatedData,
     };
-    
+
     mockBlackoutDates.push(newBlackout);
     return newBlackout;
   } catch (error) {
-    console.error('Error creating blackout date:', error);
-    throw new Error('Failed to create blackout date');
+    console.error("Error creating blackout date:", error);
+    throw new Error("Failed to create blackout date");
   }
 }
 
@@ -170,10 +174,10 @@ export async function deleteBlackoutDate(id: string): Promise<void> {
     // await prisma.blackoutDate.delete({
     //   where: { id }
     // });
-    
-    mockBlackoutDates = mockBlackoutDates.filter(b => b.id !== id);
+
+    mockBlackoutDates = mockBlackoutDates.filter((b) => b.id !== id);
   } catch (error) {
-    console.error('Error deleting blackout date:', error);
-    throw new Error('Failed to delete blackout date');
+    console.error("Error deleting blackout date:", error);
+    throw new Error("Failed to delete blackout date");
   }
 }

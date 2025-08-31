@@ -5,11 +5,38 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Calendar, Clock, User, Mail, Phone, Eye, CheckCircle, XCircle } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Calendar,
+  Clock,
+  User,
+  Mail,
+  Phone,
+  Eye,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 
 interface Appointment {
   id: string;
@@ -37,8 +64,11 @@ const appointmentStatuses = [
 export function AppointmentsTab() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [services, setServices] = useState<Service[]>([]);
-  const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([]);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [filteredAppointments, setFilteredAppointments] = useState<
+    Appointment[]
+  >([]);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<Appointment | null>(null);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -114,33 +144,38 @@ export function AppointmentsTab() {
 
     // Date range filter
     if (dateRangeStart) {
-      filtered = filtered.filter(apt => 
-        new Date(apt.startsAt) >= new Date(dateRangeStart)
+      filtered = filtered.filter(
+        (apt) => new Date(apt.startsAt) >= new Date(dateRangeStart)
       );
     }
     if (dateRangeEnd) {
-      filtered = filtered.filter(apt => 
-        new Date(apt.startsAt) <= new Date(dateRangeEnd + "T23:59:59")
+      filtered = filtered.filter(
+        (apt) => new Date(apt.startsAt) <= new Date(dateRangeEnd + "T23:59:59")
       );
     }
 
     // Service filter
     if (serviceFilter) {
-      filtered = filtered.filter(apt => apt.serviceName === serviceFilter);
+      filtered = filtered.filter((apt) => apt.serviceName === serviceFilter);
     }
 
     // Status filter
     if (statusFilter) {
-      filtered = filtered.filter(apt => apt.status === statusFilter);
+      filtered = filtered.filter((apt) => apt.status === statusFilter);
     }
 
     setFilteredAppointments(filtered);
   };
 
-  const updateAppointmentStatus = async (appointmentId: string, newStatus: Appointment["status"]) => {
-    setAppointments(prev => prev.map(apt => 
-      apt.id === appointmentId ? { ...apt, status: newStatus } : apt
-    ));
+  const updateAppointmentStatus = async (
+    appointmentId: string,
+    newStatus: Appointment["status"]
+  ) => {
+    setAppointments((prev) =>
+      prev.map((apt) =>
+        apt.id === appointmentId ? { ...apt, status: newStatus } : apt
+      )
+    );
   };
 
   const viewAppointmentDetails = (appointment: Appointment) => {
@@ -159,7 +194,7 @@ export function AppointmentsTab() {
   };
 
   const getStatusBadge = (status: Appointment["status"]) => {
-    const statusConfig = appointmentStatuses.find(s => s.value === status);
+    const statusConfig = appointmentStatuses.find((s) => s.value === status);
     return (
       <Badge variant={statusConfig?.variant || "default"}>
         {statusConfig?.label || status}
@@ -208,7 +243,7 @@ export function AppointmentsTab() {
                 onChange={(e) => setDateRangeStart(e.target.value)}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="dateEnd">Data Fim</Label>
               <Input
@@ -218,7 +253,7 @@ export function AppointmentsTab() {
                 onChange={(e) => setDateRangeEnd(e.target.value)}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="serviceFilter">Serviço</Label>
               <Select value={serviceFilter} onValueChange={setServiceFilter}>
@@ -235,7 +270,7 @@ export function AppointmentsTab() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="statusFilter">Status</Label>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -274,8 +309,12 @@ export function AppointmentsTab() {
                 <TableRow key={appointment.id}>
                   <TableCell>
                     <div>
-                      <div className="font-medium">{appointment.patientName}</div>
-                      <div className="text-sm text-muted-foreground">{appointment.patientEmail}</div>
+                      <div className="font-medium">
+                        {appointment.patientName}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {appointment.patientEmail}
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>{appointment.serviceName}</TableCell>
@@ -295,13 +334,15 @@ export function AppointmentsTab() {
                       >
                         <Eye className="w-4 h-4" />
                       </Button>
-                      
+
                       {appointment.status === "confirmed" && (
                         <>
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => updateAppointmentStatus(appointment.id, "done")}
+                            onClick={() =>
+                              updateAppointmentStatus(appointment.id, "done")
+                            }
                             className="text-green-600"
                           >
                             <CheckCircle className="w-4 h-4" />
@@ -309,7 +350,12 @@ export function AppointmentsTab() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => updateAppointmentStatus(appointment.id, "cancelled")}
+                            onClick={() =>
+                              updateAppointmentStatus(
+                                appointment.id,
+                                "cancelled"
+                              )
+                            }
                             className="text-red-600"
                           >
                             <XCircle className="w-4 h-4" />
@@ -331,35 +377,45 @@ export function AppointmentsTab() {
           <DialogHeader>
             <DialogTitle>Detalhes do Agendamento</DialogTitle>
           </DialogHeader>
-          
+
           {selectedAppointment && (
             <div className="space-y-6">
               {/* Patient Info */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Informações do Paciente</h3>
+                <h3 className="text-lg font-semibold">
+                  Informações do Paciente
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3">
                     <User className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{selectedAppointment.patientName}</p>
+                      <p className="font-medium">
+                        {selectedAppointment.patientName}
+                      </p>
                       <p className="text-sm text-muted-foreground">Nome</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <Mail className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{selectedAppointment.patientEmail}</p>
+                      <p className="font-medium">
+                        {selectedAppointment.patientEmail}
+                      </p>
                       <p className="text-sm text-muted-foreground">E-mail</p>
                     </div>
                   </div>
-                  
+
                   {selectedAppointment.patientPhone && (
                     <div className="flex items-center space-x-3">
                       <Phone className="w-5 h-5 text-muted-foreground" />
                       <div>
-                        <p className="font-medium">{selectedAppointment.patientPhone}</p>
-                        <p className="text-sm text-muted-foreground">Telefone</p>
+                        <p className="font-medium">
+                          {selectedAppointment.patientPhone}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Telefone
+                        </p>
                       </div>
                     </div>
                   )}
@@ -368,24 +424,32 @@ export function AppointmentsTab() {
 
               {/* Appointment Info */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">Detalhes do Agendamento</h3>
+                <h3 className="text-lg font-semibold">
+                  Detalhes do Agendamento
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="flex items-center space-x-3">
                     <Calendar className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{selectedAppointment.serviceName}</p>
+                      <p className="font-medium">
+                        {selectedAppointment.serviceName}
+                      </p>
                       <p className="text-sm text-muted-foreground">Serviço</p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <Clock className="w-5 h-5 text-muted-foreground" />
                     <div>
-                      <p className="font-medium">{formatDate(selectedAppointment.startsAt)}</p>
-                      <p className="text-sm text-muted-foreground">Data e Hora</p>
+                      <p className="font-medium">
+                        {formatDate(selectedAppointment.startsAt)}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        Data e Hora
+                      </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-3">
                     <Badge variant="outline">
                       {getStatusBadge(selectedAppointment.status)}
@@ -399,7 +463,9 @@ export function AppointmentsTab() {
               {selectedAppointment.observations && (
                 <div className="space-y-2">
                   <h3 className="text-lg font-semibold">Observações</h3>
-                  <p className="text-muted-foreground">{selectedAppointment.observations}</p>
+                  <p className="text-muted-foreground">
+                    {selectedAppointment.observations}
+                  </p>
                 </div>
               )}
 
@@ -420,7 +486,10 @@ export function AppointmentsTab() {
                     <Button
                       variant="destructive"
                       onClick={() => {
-                        updateAppointmentStatus(selectedAppointment.id, "cancelled");
+                        updateAppointmentStatus(
+                          selectedAppointment.id,
+                          "cancelled"
+                        );
                         setIsDetailsDialogOpen(false);
                       }}
                     >

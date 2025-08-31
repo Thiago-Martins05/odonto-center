@@ -7,8 +7,21 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Save, X } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -17,8 +30,13 @@ import { z } from "zod";
 
 const serviceSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  description: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
-  durationMin: z.number().min(15, "Duração mínima é 15 minutos").max(480, "Duração máxima é 8 horas"),
+  description: z
+    .string()
+    .min(10, "Descrição deve ter pelo menos 10 caracteres"),
+  durationMin: z
+    .number()
+    .min(15, "Duração mínima é 15 minutos")
+    .max(480, "Duração máxima é 8 horas"),
   price: z.number().min(0, "Preço deve ser maior que zero"),
   active: z.boolean(),
 });
@@ -45,6 +63,7 @@ export function ServicesTab() {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors, isValid },
   } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
@@ -62,7 +81,8 @@ export function ServicesTab() {
         {
           id: "1",
           name: "Consulta de Avaliação",
-          description: "Avaliação completa da saúde bucal com plano de tratamento personalizado",
+          description:
+            "Avaliação completa da saúde bucal com plano de tratamento personalizado",
           durationMin: 60,
           price: 15000,
           active: true,
@@ -70,7 +90,8 @@ export function ServicesTab() {
         {
           id: "2",
           name: "Limpeza e Profilaxia",
-          description: "Limpeza profissional, remoção de tártaro e polimento dos dentes",
+          description:
+            "Limpeza profissional, remoção de tártaro e polimento dos dentes",
           durationMin: 45,
           price: 12000,
           active: true,
@@ -97,7 +118,9 @@ export function ServicesTab() {
       if (editingService) {
         // Update existing service
         const updatedService = { ...editingService, ...data };
-        setServices(prev => prev.map(s => s.id === editingService.id ? updatedService : s));
+        setServices((prev) =>
+          prev.map((s) => (s.id === editingService.id ? updatedService : s))
+        );
         setEditingService(null);
       } else {
         // Create new service
@@ -105,9 +128,9 @@ export function ServicesTab() {
           id: `service_${Date.now()}`,
           ...data,
         };
-        setServices(prev => [...prev, newService]);
+        setServices((prev) => [...prev, newService]);
       }
-      
+
       reset();
       setIsCreateDialogOpen(false);
     } catch (error) {
@@ -127,14 +150,14 @@ export function ServicesTab() {
 
   const handleDelete = async (serviceId: string) => {
     if (confirm("Tem certeza que deseja excluir este serviço?")) {
-      setServices(prev => prev.filter(s => s.id !== serviceId));
+      setServices((prev) => prev.filter((s) => s.id !== serviceId));
     }
   };
 
   const handleToggleActive = async (serviceId: string) => {
-    setServices(prev => prev.map(s => 
-      s.id === serviceId ? { ...s, active: !s.active } : s
-    ));
+    setServices((prev) =>
+      prev.map((s) => (s.id === serviceId ? { ...s, active: !s.active } : s))
+    );
   };
 
   const openCreateDialog = () => {
@@ -177,7 +200,10 @@ export function ServicesTab() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Serviços</h2>
-        <Button onClick={openCreateDialog} className="flex items-center space-x-2">
+        <Button
+          onClick={openCreateDialog}
+          className="flex items-center space-x-2"
+        >
           <Plus className="w-4 h-4" />
           <span>Novo Serviço</span>
         </Button>
@@ -200,7 +226,9 @@ export function ServicesTab() {
               {services.map((service) => (
                 <TableRow key={service.id}>
                   <TableCell className="font-medium">{service.name}</TableCell>
-                  <TableCell className="max-w-xs truncate">{service.description}</TableCell>
+                  <TableCell className="max-w-xs truncate">
+                    {service.description}
+                  </TableCell>
                   <TableCell>{formatDuration(service.durationMin)}</TableCell>
                   <TableCell>{formatPrice(service.price)}</TableCell>
                   <TableCell>
@@ -248,7 +276,7 @@ export function ServicesTab() {
               {editingService ? "Editar Serviço" : "Novo Serviço"}
             </DialogTitle>
           </DialogHeader>
-          
+
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -259,10 +287,12 @@ export function ServicesTab() {
                   {...register("name")}
                 />
                 {errors.name && (
-                  <p className="text-sm text-destructive">{errors.name.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.name.message}
+                  </p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="durationMin">Duração (minutos) *</Label>
                 <Input
@@ -272,7 +302,9 @@ export function ServicesTab() {
                   {...register("durationMin", { valueAsNumber: true })}
                 />
                 {errors.durationMin && (
-                  <p className="text-sm text-destructive">{errors.durationMin.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.durationMin.message}
+                  </p>
                 )}
               </div>
             </div>
@@ -286,7 +318,9 @@ export function ServicesTab() {
                 rows={3}
               />
               {errors.description && (
-                <p className="text-sm text-destructive">{errors.description.message}</p>
+                <p className="text-sm text-destructive">
+                  {errors.description.message}
+                </p>
               )}
             </div>
 
@@ -300,24 +334,26 @@ export function ServicesTab() {
                   {...register("price", { valueAsNumber: true })}
                 />
                 {errors.price && (
-                  <p className="text-sm text-destructive">{errors.price.message}</p>
+                  <p className="text-sm text-destructive">
+                    {errors.price.message}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground">
                   Ex: 15000 = R$ 150,00
                 </p>
               </div>
-              
-                             <div className="space-y-2">
-                 <Label htmlFor="active">Status</Label>
-                 <div className="flex items-center space-x-2">
-                   <Switch
-                     id="active"
-                     checked={watch("active")}
-                     onCheckedChange={(checked) => setValue("active", checked)}
-                   />
-                   <Label htmlFor="active">Ativo</Label>
-                 </div>
-               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="active">Status</Label>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="active"
+                    checked={watch("active")}
+                    onCheckedChange={(checked) => setValue("active", checked)}
+                  />
+                  <Label htmlFor="active">Ativo</Label>
+                </div>
+              </div>
             </div>
 
             <div className="flex justify-end space-x-2">

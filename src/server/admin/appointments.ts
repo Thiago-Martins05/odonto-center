@@ -1,8 +1,8 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
+import { z } from "zod";
 
-const appointmentStatusSchema = z.enum(['confirmed', 'done', 'cancelled']);
+const appointmentStatusSchema = z.enum(["confirmed", "done", "cancelled"]);
 
 export type AppointmentStatus = z.infer<typeof appointmentStatusSchema>;
 
@@ -61,16 +61,18 @@ let mockAppointments: Appointment[] = [
   },
 ];
 
-export async function getAppointments(filters?: AppointmentFilters): Promise<Appointment[]> {
+export async function getAppointments(
+  filters?: AppointmentFilters
+): Promise<Appointment[]> {
   try {
     // TODO: Replace with actual Prisma call
     // let whereClause: any = {};
-    // 
+    //
     // if (filters?.dateRangeStart) {
     //   whereClause.startsAt = { gte: new Date(filters.dateRangeStart) };
     // }
     // if (filters?.dateRangeEnd) {
-    //   whereClause.startsAt = { 
+    //   whereClause.startsAt = {
     //     ...whereClause.startsAt,
     //     lte: new Date(filters.dateRangeEnd + 'T23:59:59')
     //   };
@@ -81,7 +83,7 @@ export async function getAppointments(filters?: AppointmentFilters): Promise<App
     // if (filters?.status) {
     //   whereClause.status = filters.status;
     // }
-    // 
+    //
     // const appointments = await prisma.appointment.findMany({
     //   where: whereClause,
     //   include: {
@@ -89,37 +91,41 @@ export async function getAppointments(filters?: AppointmentFilters): Promise<App
     //   },
     //   orderBy: { startsAt: 'asc' }
     // });
-    
+
     let filtered = [...mockAppointments];
 
     // Apply filters
     if (filters?.dateRangeStart) {
-      filtered = filtered.filter(apt => 
-        new Date(apt.startsAt) >= new Date(filters.dateRangeStart!)
+      filtered = filtered.filter(
+        (apt) => new Date(apt.startsAt) >= new Date(filters.dateRangeStart!)
       );
     }
     if (filters?.dateRangeEnd) {
-      filtered = filtered.filter(apt => 
-        new Date(apt.startsAt) <= new Date(filters.dateRangeEnd! + "T23:59:59")
+      filtered = filtered.filter(
+        (apt) =>
+          new Date(apt.startsAt) <=
+          new Date(filters.dateRangeEnd! + "T23:59:59")
       );
     }
     if (filters?.serviceId) {
       // In real implementation, you'd filter by serviceId
       // For now, we'll filter by service name
-      filtered = filtered.filter(apt => apt.serviceName.includes(""));
+      filtered = filtered.filter((apt) => apt.serviceName.includes(""));
     }
     if (filters?.status) {
-      filtered = filtered.filter(apt => apt.status === filters.status);
+      filtered = filtered.filter((apt) => apt.status === filters.status);
     }
 
     return filtered;
   } catch (error) {
-    console.error('Error fetching appointments:', error);
-    throw new Error('Failed to fetch appointments');
+    console.error("Error fetching appointments:", error);
+    throw new Error("Failed to fetch appointments");
   }
 }
 
-export async function getAppointmentById(id: string): Promise<Appointment | null> {
+export async function getAppointmentById(
+  id: string
+): Promise<Appointment | null> {
   try {
     // TODO: Replace with actual Prisma call
     // const appointment = await prisma.appointment.findUnique({
@@ -128,40 +134,43 @@ export async function getAppointmentById(id: string): Promise<Appointment | null
     //     service: { select: { name: true } }
     //   }
     // });
-    
-    const appointment = mockAppointments.find(apt => apt.id === id);
+
+    const appointment = mockAppointments.find((apt) => apt.id === id);
     return appointment || null;
   } catch (error) {
-    console.error('Error fetching appointment:', error);
-    throw new Error('Failed to fetch appointment');
+    console.error("Error fetching appointment:", error);
+    throw new Error("Failed to fetch appointment");
   }
 }
 
-export async function updateAppointmentStatus(id: string, status: AppointmentStatus): Promise<Appointment> {
+export async function updateAppointmentStatus(
+  id: string,
+  status: AppointmentStatus
+): Promise<Appointment> {
   try {
     const validatedStatus = appointmentStatusSchema.parse(status);
-    
+
     // TODO: Replace with actual Prisma call
     // const appointment = await prisma.appointment.update({
     //   where: { id },
     //   data: { status: validatedStatus }
     // });
-    
-    const appointmentIndex = mockAppointments.findIndex(apt => apt.id === id);
+
+    const appointmentIndex = mockAppointments.findIndex((apt) => apt.id === id);
     if (appointmentIndex === -1) {
-      throw new Error('Appointment not found');
+      throw new Error("Appointment not found");
     }
-    
+
     const updatedAppointment: Appointment = {
       ...mockAppointments[appointmentIndex],
       status: validatedStatus,
     };
-    
+
     mockAppointments[appointmentIndex] = updatedAppointment;
     return updatedAppointment;
   } catch (error) {
-    console.error('Error updating appointment status:', error);
-    throw new Error('Failed to update appointment status');
+    console.error("Error updating appointment status:", error);
+    throw new Error("Failed to update appointment status");
   }
 }
 
@@ -171,11 +180,11 @@ export async function deleteAppointment(id: string): Promise<void> {
     // await prisma.appointment.delete({
     //   where: { id }
     // });
-    
-    mockAppointments = mockAppointments.filter(apt => apt.id !== id);
+
+    mockAppointments = mockAppointments.filter((apt) => apt.id !== id);
   } catch (error) {
-    console.error('Error deleting appointment:', error);
-    throw new Error('Failed to delete appointment');
+    console.error("Error deleting appointment:", error);
+    throw new Error("Failed to delete appointment");
   }
 }
 
@@ -191,15 +200,19 @@ export async function getAppointmentStats(): Promise<{
     //   by: ['status'],
     //   _count: { status: true }
     // });
-    
+
     const total = mockAppointments.length;
-    const confirmed = mockAppointments.filter(apt => apt.status === 'confirmed').length;
-    const done = mockAppointments.filter(apt => apt.status === 'done').length;
-    const cancelled = mockAppointments.filter(apt => apt.status === 'cancelled').length;
+    const confirmed = mockAppointments.filter(
+      (apt) => apt.status === "confirmed"
+    ).length;
+    const done = mockAppointments.filter((apt) => apt.status === "done").length;
+    const cancelled = mockAppointments.filter(
+      (apt) => apt.status === "cancelled"
+    ).length;
 
     return { total, confirmed, done, cancelled };
   } catch (error) {
-    console.error('Error fetching appointment stats:', error);
-    throw new Error('Failed to fetch appointment stats');
+    console.error("Error fetching appointment stats:", error);
+    throw new Error("Failed to fetch appointment stats");
   }
 }

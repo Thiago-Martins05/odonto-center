@@ -16,9 +16,14 @@ RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # Next.js
 NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
+
+# Authentication
+ADMIN_EMAILS="admin@example.com,manager@example.com"
 ```
 
 **Note:** You'll need to sign up for [Resend](https://resend.com) to get an API key for email functionality.
+
+**Authentication:** The admin panel is protected by email-based authentication. Add authorized admin emails to the `ADMIN_EMAILS` environment variable, separated by commas.
 
 ### Development Server
 

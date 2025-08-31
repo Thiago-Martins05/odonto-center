@@ -1,11 +1,16 @@
-'use server';
+"use server";
 
-import { z } from 'zod';
+import { z } from "zod";
 
 const serviceSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  description: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
-  durationMin: z.number().min(15, "Duração mínima é 15 minutos").max(480, "Duração máxima é 8 horas"),
+  description: z
+    .string()
+    .min(10, "Descrição deve ter pelo menos 10 caracteres"),
+  durationMin: z
+    .number()
+    .min(15, "Duração mínima é 15 minutos")
+    .max(480, "Duração máxima é 8 horas"),
   price: z.number().min(0, "Preço deve ser maior que zero"),
   active: z.boolean(),
 });
@@ -26,7 +31,8 @@ let mockServices: Service[] = [
   {
     id: "1",
     name: "Consulta de Avaliação",
-    description: "Avaliação completa da saúde bucal com plano de tratamento personalizado",
+    description:
+      "Avaliação completa da saúde bucal com plano de tratamento personalizado",
     durationMin: 60,
     price: 15000,
     active: true,
@@ -34,7 +40,8 @@ let mockServices: Service[] = [
   {
     id: "2",
     name: "Limpeza e Profilaxia",
-    description: "Limpeza profissional, remoção de tártaro e polimento dos dentes",
+    description:
+      "Limpeza profissional, remoção de tártaro e polimento dos dentes",
     durationMin: 45,
     price: 12000,
     active: true,
@@ -55,61 +62,64 @@ export async function getServices(): Promise<Service[]> {
     // const services = await prisma.service.findMany({
     //   orderBy: { name: 'asc' }
     // });
-    
+
     return mockServices;
   } catch (error) {
-    console.error('Error fetching services:', error);
-    throw new Error('Failed to fetch services');
+    console.error("Error fetching services:", error);
+    throw new Error("Failed to fetch services");
   }
 }
 
 export async function createService(data: ServiceFormData): Promise<Service> {
   try {
     const validatedData = serviceSchema.parse(data);
-    
+
     // TODO: Replace with actual Prisma call
     // const service = await prisma.service.create({
     //   data: validatedData
     // });
-    
+
     const newService: Service = {
       id: `service_${Date.now()}`,
       ...validatedData,
     };
-    
+
     mockServices.push(newService);
     return newService;
   } catch (error) {
-    console.error('Error creating service:', error);
-    throw new Error('Failed to create service');
+    console.error("Error creating service:", error);
+    throw new Error("Failed to create service");
   }
 }
 
-export async function updateService(id: string, data: ServiceFormData): Promise<Service> {
+export async function updateService(
+  id: string,
+  data: ServiceFormData
+): Promise<Service> {
   try {
     const validatedData = serviceSchema.parse(data);
-    
+
     // TODO: Replace with actual Prisma call
     // const service = await prisma.service.update({
     //   where: { id },
     //   data: validatedData
     // });
-    
-    const serviceIndex = mockServices.findIndex(s => s.id === id);
+
+    const serviceIndex = mockServices.findIndex((s) => s.id === id);
     if (serviceIndex === -1) {
-      throw new Error('Service not found');
+      throw new Error("Service not found");
     }
-    
+
     const updatedService: Service = {
       ...mockServices[serviceIndex],
       ...validatedData,
     };
-    
+
     mockServices[serviceIndex] = updatedService;
     return updatedService;
   } catch (error) {
-    console.error('Error updating service:', error);
-    throw new Error('Failed to update service');
+    console.error("Error updating service:", error);
+    throw new Error("Failed to update service");
   }
 }
 
@@ -119,11 +129,11 @@ export async function deleteService(id: string): Promise<void> {
     // await prisma.service.delete({
     //   where: { id }
     // });
-    
-    mockServices = mockServices.filter(s => s.id !== id);
+
+    mockServices = mockServices.filter((s) => s.id !== id);
   } catch (error) {
-    console.error('Error deleting service:', error);
-    throw new Error('Failed to delete service');
+    console.error("Error deleting service:", error);
+    throw new Error("Failed to delete service");
   }
 }
 
@@ -134,21 +144,21 @@ export async function toggleServiceStatus(id: string): Promise<Service> {
     //   where: { id },
     //   data: { active: { not: true } }
     // });
-    
-    const serviceIndex = mockServices.findIndex(s => s.id === id);
+
+    const serviceIndex = mockServices.findIndex((s) => s.id === id);
     if (serviceIndex === -1) {
-      throw new Error('Service not found');
+      throw new Error("Service not found");
     }
-    
+
     const updatedService: Service = {
       ...mockServices[serviceIndex],
       active: !mockServices[serviceIndex].active,
     };
-    
+
     mockServices[serviceIndex] = updatedService;
     return updatedService;
   } catch (error) {
-    console.error('Error toggling service status:', error);
-    throw new Error('Failed to toggle service status');
+    console.error("Error toggling service status:", error);
+    throw new Error("Failed to toggle service status");
   }
 }
