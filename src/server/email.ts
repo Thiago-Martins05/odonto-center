@@ -4,7 +4,7 @@ import { Service } from "@/types/service";
 import { formatPrice } from "@/types/service";
 
 // Mock Resend se não houver API key
-const resend = process.env.RESEND_API_KEY 
+const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
@@ -20,7 +20,10 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
   try {
     // Se não houver Resend configurado, apenas logar
     if (!resend) {
-      console.log("Email service not configured. Mock appointment confirmation:", appointmentId);
+      console.log(
+        "Email service not configured. Mock appointment confirmation:",
+        appointmentId
+      );
       return { success: true, message: "Email service not configured" };
     }
 
@@ -116,15 +119,21 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Data e Hora:</span>
-                  <span class="detail-value">${formatDate(mockAppointment.startsAt)}</span>
+                  <span class="detail-value">${formatDate(
+                    mockAppointment.startsAt
+                  )}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Duração:</span>
-                  <span class="detail-value">${mockService.durationMin} minutos</span>
+                  <span class="detail-value">${
+                    mockService.durationMin
+                  } minutos</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Valor:</span>
-                  <span class="detail-value">${formatPrice(mockService.priceCents)}</span>
+                  <span class="detail-value">${formatPrice(
+                    mockService.priceCents
+                  )}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Local:</span>
@@ -141,7 +150,9 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 O arquivo ICS está anexado a este email para facilitar a adição ao seu calendário pessoal.
               </div>
               
-              <p><strong>Observações:</strong> ${mockAppointment.observations || "Nenhuma observação adicional."}</p>
+              <p><strong>Observações:</strong> ${
+                mockAppointment.observations || "Nenhuma observação adicional."
+              }</p>
               
               <p>Se precisar reagendar ou cancelar, entre em contato conosco:</p>
               <p>📞 <strong>Telefone:</strong> ${clinic.phone}<br>
