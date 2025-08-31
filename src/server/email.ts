@@ -1,14 +1,19 @@
-import { Resend } from 'resend';
-import { makeIcs, type Appointment, type Service, type Clinic } from '../lib/ics';
+import { Resend } from "resend";
+import {
+  makeIcs,
+  type Appointment,
+  type Service,
+  type Clinic,
+} from "../lib/ics";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Mock clinic data - in production, this would come from environment or database
 const clinic: Clinic = {
-  name: 'Odonto Center',
-  address: 'Rua das Flores, 123 - Centro, São Paulo - SP, 01234-567',
-  phone: '(11) 99999-9999',
-  email: 'contato@odontocenter.com',
+  name: "Odonto Center",
+  address: "Rua das Flores, 123 - Centro, São Paulo - SP, 01234-567",
+  phone: "(11) 99999-9999",
+  email: "contato@odontocenter.com",
 };
 
 export async function sendAppointmentConfirmation(appointmentId: string) {
@@ -19,16 +24,16 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
       id: appointmentId,
       startsAt: new Date(), // This would come from the actual appointment
       endsAt: new Date(Date.now() + 60 * 60 * 1000), // 1 hour later
-      patientName: 'Paciente Mock',
-      patientEmail: 'paciente@example.com',
-      patientPhone: '(11) 88888-8888',
-      observations: 'Observação de teste',
+      patientName: "Paciente Mock",
+      patientEmail: "paciente@example.com",
+      patientPhone: "(11) 88888-8888",
+      observations: "Observação de teste",
     };
 
     const mockService: Service = {
-      id: '1',
-      name: 'Consulta de Avaliação',
-      description: 'Avaliação completa da saúde bucal',
+      id: "1",
+      name: "Consulta de Avaliação",
+      description: "Avaliação completa da saúde bucal",
       durationMin: 60,
       price: 15000,
     };
@@ -41,30 +46,30 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
     });
 
     // Convert ICS content to Buffer for attachment
-    const icsBuffer = Buffer.from(icsContent, 'utf-8');
+    const icsBuffer = Buffer.from(icsContent, "utf-8");
 
     // Format appointment date for email
     const formatDate = (date: Date) => {
-      return new Intl.DateTimeFormat('pt-BR', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
+      return new Intl.DateTimeFormat("pt-BR", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       }).format(date);
     };
 
     const formatPrice = (priceInCents: number) => {
-      return new Intl.NumberFormat('pt-BR', {
-        style: 'currency',
-        currency: 'BRL',
+      return new Intl.NumberFormat("pt-BR", {
+        style: "currency",
+        currency: "BRL",
       }).format(priceInCents / 100);
     };
 
     // Send email
     const { data, error } = await resend.emails.send({
-      from: 'Odonto Center <noreply@odontocenter.com>',
+      from: "Odonto Center <noreply@odontocenter.com>",
       to: [mockAppointment.patientEmail],
       bcc: [clinic.email], // Optional BCC to clinic mailbox
       subject: `Confirmação de Agendamento - ${mockService.name}`,
@@ -109,15 +114,21 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Data e Hora:</span>
-                  <span class="detail-value">${formatDate(mockAppointment.startsAt)}</span>
+                  <span class="detail-value">${formatDate(
+                    mockAppointment.startsAt
+                  )}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Duração:</span>
-                  <span class="detail-value">${mockService.durationMin} minutos</span>
+                  <span class="detail-value">${
+                    mockService.durationMin
+                  } minutos</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Preço:</span>
-                  <span class="detail-value">${formatPrice(mockService.price)}</span>
+                  <span class="detail-value">${formatPrice(
+                    mockService.price
+                  )}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Local:</span>
@@ -125,12 +136,16 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 </div>
               </div>
               
-              ${mockAppointment.observations ? `
+              ${
+                mockAppointment.observations
+                  ? `
                 <div class="important">
                   <strong>Observações:</strong><br>
                   ${mockAppointment.observations}
                 </div>
-              ` : ''}
+              `
+                  : ""
+              }
               
               <div class="important">
                 <strong>⚠️ Importante:</strong><br>
@@ -160,20 +175,20 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
         {
           filename: `consulta-${appointmentId}.ics`,
           content: icsBuffer,
-          contentType: 'text/calendar',
+          contentType: "text/calendar",
         },
       ],
     });
 
     if (error) {
-      console.error('Error sending email:', error);
-      throw new Error('Failed to send confirmation email');
+      console.error("Error sending email:", error);
+      throw new Error("Failed to send confirmation email");
     }
 
-    console.log('Confirmation email sent successfully:', data);
+    console.log("Confirmation email sent successfully:", data);
     return data;
   } catch (error) {
-    console.error('Error in sendAppointmentConfirmation:', error);
+    console.error("Error in sendAppointmentConfirmation:", error);
     throw error;
   }
 }

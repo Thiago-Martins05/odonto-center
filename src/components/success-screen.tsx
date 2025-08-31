@@ -72,8 +72,8 @@ export function SuccessScreen({
           Agendamento confirmado!
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          Sua consulta foi agendada com sucesso! Enviamos a confirmação por e-mail. 
-          Verifique sua caixa de entrada.
+          Sua consulta foi agendada com sucesso! Enviamos a confirmação por
+          e-mail. Verifique sua caixa de entrada.
         </p>
       </div>
 

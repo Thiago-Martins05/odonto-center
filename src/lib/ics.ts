@@ -33,14 +33,17 @@ export function makeIcs({
   clinic: Clinic;
 }): string {
   const formatDate = (date: Date): string => {
-    return date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+    return date
+      .toISOString()
+      .replace(/[-:]/g, "")
+      .replace(/\.\d{3}/, "");
   };
 
   const escapeText = (text: string): string => {
     return text
-      .replace(/[\\;,]/g, '\\$&')
-      .replace(/\n/g, '\\n')
-      .replace(/\r/g, '\\r');
+      .replace(/[\\;,]/g, "\\$&")
+      .replace(/\n/g, "\\n")
+      .replace(/\r/g, "\\r");
   };
 
   const now = new Date();
@@ -50,16 +53,20 @@ export function makeIcs({
   const createdDate = formatDate(now);
 
   const summary = `Consulta — ${service.name}`;
-  const description = `Consulta agendada para ${service.name}${appointment.observations ? `\n\nObservações: ${appointment.observations}` : ''}`;
+  const description = `Consulta agendada para ${service.name}${
+    appointment.observations
+      ? `\n\nObservações: ${appointment.observations}`
+      : ""
+  }`;
   const location = clinic.address;
 
   const icsContent = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Odonto Center//Agendamento Online//PT-BR',
-    'CALSCALE:GREGORIAN',
-    'METHOD:REQUEST',
-    'BEGIN:VEVENT',
+    "BEGIN:VCALENDAR",
+    "VERSION:2.0",
+    "PRODID:-//Odonto Center//Agendamento Online//PT-BR",
+    "CALSCALE:GREGORIAN",
+    "METHOD:REQUEST",
+    "BEGIN:VEVENT",
     `UID:${eventId}@odontocenter.com`,
     `DTSTAMP:${createdDate}`,
     `DTSTART:${startDate}`,
@@ -68,17 +75,19 @@ export function makeIcs({
     `DESCRIPTION:${escapeText(description)}`,
     `LOCATION:${escapeText(location)}`,
     `ORGANIZER;CN=${escapeText(clinic.name)}:mailto:${clinic.email}`,
-    `ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=${escapeText(appointment.patientName)}:mailto:${appointment.patientEmail}`,
-    'STATUS:CONFIRMED',
-    'SEQUENCE:0',
-    'BEGIN:VALARM',
-    'TRIGGER:-PT15M',
-    'ACTION:DISPLAY',
+    `ATTENDEE;ROLE=REQ-PARTICIPANT;PARTSTAT=NEEDS-ACTION;RSVP=TRUE;CN=${escapeText(
+      appointment.patientName
+    )}:mailto:${appointment.patientEmail}`,
+    "STATUS:CONFIRMED",
+    "SEQUENCE:0",
+    "BEGIN:VALARM",
+    "TRIGGER:-PT15M",
+    "ACTION:DISPLAY",
     `DESCRIPTION:${escapeText(summary)}`,
-    'END:VALARM',
-    'END:VEVENT',
-    'END:VCALENDAR',
-  ].join('\r\n');
+    "END:VALARM",
+    "END:VEVENT",
+    "END:VCALENDAR",
+  ].join("\r\n");
 
   return icsContent;
 }
