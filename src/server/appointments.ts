@@ -79,6 +79,16 @@ export async function createAppointment(data: CreateAppointmentData) {
     console.log("🚀 Starting appointment creation...");
     console.log("📊 Input data:", JSON.stringify(data, null, 2));
     
+    // Testar conexão com o banco
+    console.log("🔍 Testing database connection...");
+    try {
+      const testQuery = await prisma.$queryRaw`SELECT 1 as test`;
+      console.log("✅ Database connection successful:", testQuery);
+    } catch (dbError) {
+      console.error("❌ Database connection failed:", dbError);
+      throw new Error("Falha na conexão com o banco de dados");
+    }
+    
     // Calcular duração total e horário de fim
     const totalDuration = data.services.reduce(
       (total: number, service: Service) => total + service.durationMin,
