@@ -1,5 +1,15 @@
+import { Metadata } from "next";
 import { Navigation } from "@/components/navigation";
 import { SchedulingFlow } from "@/components/scheduling-flow";
+
+export const metadata: Metadata = {
+  title: "Agendar Consulta | Odonto Center - Agendamento Online",
+  description: "Agende sua consulta odontológica online com facilidade. Escolha o serviço, horário e preencha seus dados. Agendamento rápido e seguro.",
+  openGraph: {
+    title: "Agendar Consulta | Odonto Center",
+    description: "Agende sua consulta odontológica online com facilidade. Escolha o serviço, horário e preencha seus dados.",
+  },
+};
 
 export default function AgendaPage() {
   return (

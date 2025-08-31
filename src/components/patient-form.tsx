@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/ui/phone-input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -219,10 +220,8 @@ export function PatientForm({
             <Phone className="w-4 h-4" />
             <span>Telefone (opcional)</span>
           </Label>
-          <Input
+          <PhoneInput
             id="patientPhone"
-            type="tel"
-            placeholder="(11) 99999-9999"
             {...register("patientPhone")}
             className="h-12 rounded-xl"
           />

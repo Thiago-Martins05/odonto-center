@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, Clock, AlertCircle, RefreshCw } from "lucide-react";
 import { Service } from "./scheduling-flow";
+import { TimeSlotSkeleton } from "./skeletons/time-slot-skeleton";
 
 interface TimeSelectionProps {
   service: Service;
@@ -28,6 +29,7 @@ export function TimeSelection({
   const [availableSlots, setAvailableSlots] = useState<DaySlots[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchAvailableSlots();
@@ -35,6 +37,7 @@ export function TimeSelection({
 
   const fetchAvailableSlots = async () => {
     setLoading(true);
+    setError(null);
     try {
       // TODO: Replace with actual API call to getAvailableSlots
       // For now, using mock data
@@ -69,6 +72,7 @@ export function TimeSelection({
       setLoading(false);
     } catch (error) {
       console.error("Error fetching slots:", error);
+      setError("Não foi possível carregar os horários disponíveis. Tente novamente.");
       setLoading(false);
     }
   };
@@ -145,12 +149,43 @@ export function TimeSelection({
   };
 
   if (loading) {
+    return <TimeSlotSkeleton />;
+  }
+
+  if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">
-          Carregando horários disponíveis...
-        </p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={onBack}
+            className="flex items-center space-x-2"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            <span>Voltar</span>
+          </Button>
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              Escolha o Horário
+            </h2>
+            <p className="text-muted-foreground">
+              {service.name} • {service.durationMin} min
+            </p>
+          </div>
+          <div className="w-20"></div>
+        </div>
+        
+        <div className="text-center py-12 space-y-4">
+          <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+            <AlertCircle className="w-8 h-8 text-destructive" />
+          </div>
+          <h3 className="text-lg font-semibold text-foreground">Ops! Algo deu errado</h3>
+          <p className="text-muted-foreground max-w-md mx-auto">{error}</p>
+          <Button onClick={fetchAvailableSlots} variant="outline" className="mt-4">
+            <RefreshCw className="w-4 h-4 mr-2" />
+            Tentar novamente
+          </Button>
+        </div>
       </div>
     );
   }

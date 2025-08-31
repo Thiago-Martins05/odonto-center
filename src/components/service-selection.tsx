@@ -4,8 +4,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, DollarSign, CheckCircle } from "lucide-react";
+import { Clock, DollarSign, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { Service } from "./scheduling-flow";
+import { ServiceSkeleton } from "./skeletons/service-skeleton";
 
 interface ServiceSelectionProps {
   onServiceSelect: (service: Service) => void;
@@ -15,6 +16,7 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   const [services, setServices] = useState<Service[]>([]);
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchServices();
@@ -22,6 +24,7 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
 
   const fetchServices = async () => {
     try {
+      setError(null);
       // TODO: Replace with actual API call
       // For now, using mock data
       const mockServices: Service[] = [
@@ -62,6 +65,7 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
       setLoading(false);
     } catch (error) {
       console.error("Error fetching services:", error);
+      setError("Não foi possível carregar os serviços. Tente novamente.");
       setLoading(false);
     }
   };
@@ -86,10 +90,35 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   };
 
   if (loading) {
+    return <ServiceSkeleton />;
+  }
+
+  if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Carregando serviços...</p>
+      <div className="text-center py-12 space-y-4">
+        <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto">
+          <AlertCircle className="w-8 h-8 text-destructive" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground">Ops! Algo deu errado</h3>
+        <p className="text-muted-foreground max-w-md mx-auto">{error}</p>
+        <Button onClick={fetchServices} variant="outline" className="mt-4">
+          <RefreshCw className="w-4 h-4 mr-2" />
+          Tentar novamente
+        </Button>
+      </div>
+    );
+  }
+
+  if (services.length === 0) {
+    return (
+      <div className="text-center py-12 space-y-4">
+        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+          <AlertCircle className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h3 className="text-lg font-semibold text-foreground">Nenhum serviço disponível</h3>
+        <p className="text-muted-foreground max-w-md mx-auto">
+          No momento não temos serviços disponíveis para agendamento. Tente novamente mais tarde.
+        </p>
       </div>
     );
   }

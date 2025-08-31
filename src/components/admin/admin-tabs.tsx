@@ -31,12 +31,8 @@ export function AdminTabs() {
             </TabsTrigger>
           </TabsList>
         </Tabs>
-        
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="ml-4"
-        >
+
+        <Button variant="outline" onClick={handleLogout} className="ml-4">
           Sair
         </Button>
       </div>

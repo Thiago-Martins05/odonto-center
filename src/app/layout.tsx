@@ -17,9 +17,74 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Odonto Center - Clínica Odontológica Premium",
+  title: "Odonto Center - Clínica Odontológica Premium | Agendamento Online",
   description:
-    "Atendimento humanizado com excelência em odontologia. Agende sua consulta hoje mesmo.",
+    "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online para avaliação, limpeza, tratamento de canal e mais. Atendimento em São Paulo.",
+  keywords: [
+    "odontologia",
+    "clínica odontológica",
+    "dentista",
+    "agendamento online",
+    "consulta odontológica",
+    "limpeza dental",
+    "tratamento de canal",
+    "São Paulo",
+    "biossegurança",
+    "atendimento humanizado"
+  ],
+  authors: [{ name: "Odonto Center" }],
+  creator: "Odonto Center",
+  publisher: "Odonto Center",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://odontocenter.com"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "https://odontocenter.com",
+    title: "Odonto Center - Clínica Odontológica Premium",
+    description: "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa. Agende sua consulta online.",
+    siteName: "Odonto Center",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Odonto Center - Clínica Odontológica Premium",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Odonto Center - Clínica Odontológica Premium",
+    description: "Clínica odontológica de excelência com atendimento humanizado e biossegurança rigorosa.",
+    images: ["/og-image.svg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+  },
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
