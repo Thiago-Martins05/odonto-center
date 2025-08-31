@@ -32,8 +32,8 @@ export default async function AboutPage() {
   ];
 
   // Converter highlights de string para array se necessário
-  const highlights = clinic?.highlights 
-    ? clinic.highlights.split(", ").map(h => h.trim())
+  const highlights = clinic?.highlights
+    ? clinic.highlights.split(", ").map((h) => h.trim())
     : defaultHighlights;
 
   return (
