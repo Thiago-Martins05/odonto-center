@@ -1,17 +1,49 @@
-import { Navigation } from "@/components/navigation";
+import { Metadata } from 'next';
+import { prisma } from '@/server/db';
+import { ServiceCard } from '@/components/service-card';
 
-export default function ServicosPage() {
+export const metadata: Metadata = {
+  title: 'Serviços | Odonto Center',
+  description: 'Tratamentos odontológicos com agendamento online.',
+};
+
+export default async function ServicesPage() {
+  const services = await prisma.service.findMany({
+    where: { active: true },
+    orderBy: { name: 'asc' },
+  });
+
   return (
-    <div>
-      <Navigation />
-      <div className="max-w-6xl mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold text-text-primary font-dm-serif mb-8">
-          Nossos Serviços
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
+      <div className="text-center mb-12">
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          Serviços
         </h1>
-        <p className="text-lg text-text-secondary">
-          Página de serviços em desenvolvimento...
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          Escolha o serviço ideal e agende seu horário.
         </p>
       </div>
+
+      {services.length === 0 ? (
+        <div className="text-center py-16">
+          <p className="text-gray-500 text-lg">
+            Nenhum serviço disponível no momento.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((service) => (
+            <ServiceCard
+              key={service.id}
+              slug={service.slug}
+              name={service.name}
+              description={service.description}
+              priceCents={service.priceCents}
+              durationMin={service.durationMin}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
