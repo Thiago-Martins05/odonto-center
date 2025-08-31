@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Navigation } from "@/components/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -53,46 +52,42 @@ export function LoginForm() {
   };
 
   return (
-    <div>
-      <Navigation />
-      <div className="max-w-md mx-auto px-4 py-20">
-        <Card className="w-full">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-text-primary font-dm-serif">
-              Acesso Administrativo
-            </CardTitle>
-            <CardDescription>
-              Entre com seu e-mail para acessar o painel administrativo
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">E-mail</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  required
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? "Entrando..." : "Entrar"}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center text-sm text-muted-foreground">
-              <p>
-                Apenas e-mails autorizados podem acessar o painel
-                administrativo.
-              </p>
+    <div className="max-w-md mx-auto px-4 py-20">
+      <Card className="w-full">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold text-text-primary font-dm-serif">
+            Acesso Administrativo
+          </CardTitle>
+          <CardDescription>
+            Entre com seu e-mail para acessar o painel administrativo
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">E-mail</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="seu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                required
+              />
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+
+          <div className="mt-6 text-center text-sm text-muted-foreground">
+            <p>
+              Apenas e-mails autorizados podem acessar o painel administrativo.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

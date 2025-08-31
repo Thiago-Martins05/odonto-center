@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { Navigation } from "@/components/navigation";
 import { AdminTabs } from "@/components/admin/admin-tabs";
 import { AdminNotificationBanner } from "@/components/admin/admin-notification-banner";
 
@@ -14,8 +13,7 @@ export const metadata: Metadata = {
 
 export default function AdminPage() {
   return (
-    <div>
-      <Navigation />
+    <>
       <AdminNotificationBanner />
       <div className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
@@ -28,6 +26,6 @@ export default function AdminPage() {
         </div>
         <AdminTabs />
       </div>
-    </div>
+    </>
   );
 }
