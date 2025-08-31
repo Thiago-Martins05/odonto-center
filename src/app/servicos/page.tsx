@@ -9,19 +9,19 @@ export const metadata: Metadata = {
 };
 
 // Forçar renderização dinâmica para evitar problemas no build
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function ServicesPage() {
   let services: Service[] = [];
-  
+
   try {
     services = await prisma.service.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
     });
   } catch (error) {
-    console.error('Erro ao carregar serviços:', error);
+    console.error("Erro ao carregar serviços:", error);
     // Em caso de erro, retorna array vazio
   }
 

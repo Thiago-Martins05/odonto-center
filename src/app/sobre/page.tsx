@@ -10,16 +10,16 @@ export const metadata: Metadata = {
 };
 
 // Forçar renderização dinâmica para evitar problemas no build
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function AboutPage() {
   let clinic = null;
-  
+
   try {
     clinic = await prisma.clinicInfo.findFirst();
   } catch (error) {
-    console.error('Erro ao carregar informações da clínica:', error);
+    console.error("Erro ao carregar informações da clínica:", error);
     // Em caso de erro, clinic permanece null
   }
 
