@@ -1,4 +1,4 @@
-import { addMinutes, parseHHMM, isTimeInRange } from './time';
+import { addMinutes, parseHHMM } from './time';
 
 export interface AvailabilityRule {
   id: string;
@@ -82,6 +82,8 @@ export function getDailySlots({
 
           return currentSlot < appointmentEnd && slotEnd > appointmentStart;
         });
+        
+        if (!hasOverlap) {
           allSlots.push(new Date(currentSlot));
         }
       }

@@ -1,6 +1,5 @@
-import { prisma } from './db';
-import { getDailySlots } from '../lib/availability';
-import { startEndOfWeek, formatPt } from '../lib/time';
+import { getDailySlots, BlackoutDate, Appointment } from '../lib/availability';
+import { formatPt } from '../lib/time';
 
 export interface AvailableSlotsOptions {
   weekStart: Date;
@@ -28,38 +27,33 @@ export async function getAvailableSlots({
   weekEnd,
   serviceId,
 }: AvailableSlotsOptions): Promise<AvailableSlotsResult> {
-  // Fetch service details if serviceId is provided
+  // TODO: Replace with actual database calls when models are defined
+  // For now, using mock data
+  
+  // Mock service data
   let service;
   if (serviceId) {
-    service = await prisma.service.findUnique({
-      where: { id: serviceId },
-      select: { id: true, name: true, durationMin: true },
-    });
-      throw new Error(`Service with id ${serviceId} not found`);
-    }
+    service = {
+      id: serviceId,
+      name: "Mock Service",
+      durationMin: 60,
+    };
   }
 
-  // Fetch availability rules
-  const rules = await prisma.availabilityRule.findMany({
-    where: serviceId ? { serviceId } : {},
-    orderBy: [{ weekday: 'asc' }, { start: 'asc' }],
-  });
+  // Mock availability rules (weekdays 9 AM - 5 PM)
+  const rules = [
+    { id: "1", weekday: 1, start: "09:00", end: "17:00", serviceId },
+    { id: "2", weekday: 2, start: "09:00", end: "17:00", serviceId },
+    { id: "3", weekday: 3, start: "09:00", end: "17:00", serviceId },
+    { id: "4", weekday: 4, start: "09:00", end: "17:00", serviceId },
+    { id: "5", weekday: 5, start: "09:00", end: "17:00", serviceId },
+  ];
 
-  // Fetch blackout dates in range
-  const blackouts = await prisma.blackoutDate.findMany({
-    where: {
-      date: { gte: weekStart, lte: weekEnd },
-    },
-  });
+  // Mock blackout dates (none for now)
+  const blackouts: BlackoutDate[] = [];
 
-  // Fetch existing appointments in range
-  const existingAppointments = await prisma.appointment.findMany({
-    where: {
-      startsAt: { gte: weekStart, lte: weekEnd },
-      status: { notIn: ['cancelled'] },
-    },
-    select: { id: true, startsAt: true, endsAt: true },
-  });
+  // Mock existing appointments (none for now)
+  const existingAppointments: Appointment[] = [];
 
   // Build slots map for each day
   const daysMap = new Map<string, Date[]>();
