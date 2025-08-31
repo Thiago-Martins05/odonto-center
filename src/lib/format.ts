@@ -1,6 +1,6 @@
-export const brl = new Intl.NumberFormat('pt-BR', {
-  style: 'currency',
-  currency: 'BRL'
+export const brl = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
 });
 
 export function durationLabel(min: number) {

@@ -1,24 +1,22 @@
-import { Metadata } from 'next';
-import { prisma } from '@/server/db';
-import { ServiceCard } from '@/components/service-card';
+import { Metadata } from "next";
+import { prisma } from "@/server/db";
+import { ServiceCard } from "@/components/service-card";
 
 export const metadata: Metadata = {
-  title: 'Serviços | Odonto Center',
-  description: 'Tratamentos odontológicos com agendamento online.',
+  title: "Serviços | Odonto Center",
+  description: "Tratamentos odontológicos com agendamento online.",
 };
 
 export default async function ServicesPage() {
   const services = await prisma.service.findMany({
     where: { active: true },
-    orderBy: { name: 'asc' },
+    orderBy: { name: "asc" },
   });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Serviços
-        </h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Serviços</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
           Escolha o serviço ideal e agende seu horário.
         </p>
