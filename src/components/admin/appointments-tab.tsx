@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -69,9 +69,37 @@ export function AppointmentsTab() {
     fetchData();
   }, []);
 
+  const applyFilters = useCallback(() => {
+    let filtered = [...appointments];
+
+    // Date range filter
+    if (dateRangeStart) {
+      filtered = filtered.filter(
+        (apt) => new Date(apt.startsAt) >= new Date(dateRangeStart)
+      );
+    }
+    if (dateRangeEnd) {
+      filtered = filtered.filter(
+        (apt) => new Date(apt.startsAt) <= new Date(dateRangeEnd + "T23:59:59")
+      );
+    }
+
+    // Service filter
+    if (serviceFilter) {
+      filtered = filtered.filter((apt) => apt.serviceName === serviceFilter);
+    }
+
+    // Status filter
+    if (statusFilter) {
+      filtered = filtered.filter((apt) => apt.status === statusFilter);
+    }
+
+    setFilteredAppointments(filtered);
+  }, [appointments, dateRangeStart, dateRangeEnd, serviceFilter, statusFilter]);
+
   useEffect(() => {
     applyFilters();
-  }, [appointments, dateRangeStart, dateRangeEnd, serviceFilter, statusFilter]);
+  }, [applyFilters]);
 
   const fetchData = async () => {
     try {
@@ -148,34 +176,6 @@ export function AppointmentsTab() {
       console.error("Error fetching data:", error);
       setLoading(false);
     }
-  };
-
-  const applyFilters = () => {
-    let filtered = [...appointments];
-
-    // Date range filter
-    if (dateRangeStart) {
-      filtered = filtered.filter(
-        (apt) => new Date(apt.startsAt) >= new Date(dateRangeStart)
-      );
-    }
-    if (dateRangeEnd) {
-      filtered = filtered.filter(
-        (apt) => new Date(apt.startsAt) <= new Date(dateRangeEnd + "T23:59:59")
-      );
-    }
-
-    // Service filter
-    if (serviceFilter) {
-      filtered = filtered.filter((apt) => apt.serviceName === serviceFilter);
-    }
-
-    // Status filter
-    if (statusFilter) {
-      filtered = filtered.filter((apt) => apt.status === statusFilter);
-    }
-
-    setFilteredAppointments(filtered);
   };
 
   const updateAppointmentStatus = async (

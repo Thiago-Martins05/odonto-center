@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { prisma } from "@/server/db";
 import { ServiceCard } from "@/components/service-card";
+import { Service } from "@/types/service";
 
 export const metadata: Metadata = {
   title: "Serviços | Odonto Center",
@@ -30,7 +31,7 @@ export default async function ServicesPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service: any) => (
+          {services.map((service: Service) => (
             <ServiceCard
               key={service.id}
               slug={service.slug}

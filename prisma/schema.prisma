@@ -1,15 +1,69 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model Service {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  durationMin Int
+  description String?
+  priceCents  Int      @default(0)
+  active      Boolean  @default(true)
+  rules       AvailabilityRule[]
+  appointments Appointment[]
+}
+
+model AvailabilityRule {
+  id        String  @id @default(cuid())
+  weekday   Int     // 0..6 (Sunday..Saturday)
+  start     String  // "09:00"
+  end       String  // "12:00"
+  serviceId String?
+  service   Service? @relation(fields: [serviceId], references: [id])
+}
+
+model BlackoutDate {
+  id     String   @id @default(cuid())
+  date   DateTime
+  reason String?
+}
+
+model Appointment {
+  id        String   @id @default(cuid())
+  patientName String
+  email     String
+  phone     String?
+  serviceId String
+  service   Service   @relation(fields: [serviceId], references: [id])
+  startsAt  DateTime
+  endsAt    DateTime
+  notes     String?
+  status    String    @default("scheduled") // scheduled|cancelled|done
+  createdAt DateTime  @default(now())
+  @@index([startsAt])
+}
+
+model ClinicInfo {
+  id           String   @id @default(cuid())
+  name         String   @default("Odonto Center")
+  slogan       String?
+  address      String?
+  cityState    String?
+  phone        String?
+  whatsapp     String?
+  email        String?
+  openingHours Json?
+  mapEmbedUrl  String?
+  highlights   String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

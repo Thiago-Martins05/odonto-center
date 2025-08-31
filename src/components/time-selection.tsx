@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChevronLeft,
   ChevronRight,
   Calendar,
-  Clock,
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
@@ -38,11 +36,7 @@ export function TimeSelection({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchAvailableSlots();
-  }, [currentWeek, service]);
-
-  const fetchAvailableSlots = async () => {
+  const fetchAvailableSlots = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -84,7 +78,11 @@ export function TimeSelection({
       );
       setLoading(false);
     }
-  };
+  }, [currentWeek]);
+
+  useEffect(() => {
+    fetchAvailableSlots();
+  }, [fetchAvailableSlots]);
 
   const generateMockSlots = (date: Date): string[] => {
     const slots: string[] = [];

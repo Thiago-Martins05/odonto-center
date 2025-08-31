@@ -21,16 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, Plus, Trash2, Save, X } from "lucide-react";
+import { Calendar, Plus, Trash2, Save, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 const availabilityRuleSchema = z.object({
   weekday: z.string().min(1, "Selecione um dia da semana"),

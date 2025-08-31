@@ -45,7 +45,7 @@ export function LoginForm() {
         );
         router.push("/admin");
       }
-    } catch (error) {
+    } catch {
       toast.error("Ocorreu um erro durante o login. Tente novamente.");
     } finally {
       setIsLoading(false);
