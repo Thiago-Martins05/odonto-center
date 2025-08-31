@@ -129,11 +129,11 @@ export async function getServices(): Promise<Service[]> {
     //   where: { active: true },
     //   orderBy: { name: 'asc' }
     // });
-    
-    return mockServices.filter(service => service.active);
+
+    return mockServices.filter((service) => service.active);
   } catch (error) {
     console.error("Error fetching services:", error);
-    return mockServices.filter(service => service.active);
+    return mockServices.filter((service) => service.active);
   }
 }
 
@@ -259,7 +259,7 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
     // const service = await prisma.service.findUnique({
     //   where: { slug }
     // });
-    
+
     const service = mockServices.find((s) => s.slug === slug);
     return service || null;
   } catch (error) {

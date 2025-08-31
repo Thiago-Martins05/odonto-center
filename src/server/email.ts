@@ -3,7 +3,10 @@ import { makeIcs, type Appointment, type Clinic } from "../lib/ics";
 import { Service } from "@/types/service";
 import { formatPrice } from "@/types/service";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Mock Resend se não houver API key
+const resend = process.env.RESEND_API_KEY 
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null;
 
 // Mock clinic data - in production, this would come from environment or database
 const clinic: Clinic = {
@@ -15,6 +18,12 @@ const clinic: Clinic = {
 
 export async function sendAppointmentConfirmation(appointmentId: string) {
   try {
+    // Se não houver Resend configurado, apenas logar
+    if (!resend) {
+      console.log("Email service not configured. Mock appointment confirmation:", appointmentId);
+      return { success: true, message: "Email service not configured" };
+    }
+
     // TODO: Replace with actual database fetch
     // For now, using mock data structure
     const mockAppointment: Appointment = {
@@ -98,7 +107,7 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
             <div class="content">
               <h2>Olá, ${mockAppointment.patientName}!</h2>
               
-              <p>Seu agendamento foi confirmado com sucesso. Aqui estão os detalhes:</p>
+              <p>Seu agendamento foi confirmado com sucesso! 🎉</p>
               
               <div class="appointment-details">
                 <div class="detail-row">
@@ -107,58 +116,47 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Data e Hora:</span>
-                  <span class="detail-value">${formatDate(
-                    mockAppointment.startsAt
-                  )}</span>
+                  <span class="detail-value">${formatDate(mockAppointment.startsAt)}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Duração:</span>
-                  <span class="detail-value">${
-                    mockService.durationMin
-                  } minutos</span>
+                  <span class="detail-value">${mockService.durationMin} minutos</span>
                 </div>
                 <div class="detail-row">
-                  <span class="detail-label">Preço:</span>
-                  <span class="detail-value">${formatPrice(
-                    mockService.priceCents
-                  )}</span>
+                  <span class="detail-label">Valor:</span>
+                  <span class="detail-value">${formatPrice(mockService.priceCents)}</span>
                 </div>
                 <div class="detail-row">
                   <span class="detail-label">Local:</span>
+                  <span class="detail-value">${clinic.name}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Endereço:</span>
                   <span class="detail-value">${clinic.address}</span>
                 </div>
               </div>
               
-              ${
-                mockAppointment.observations
-                  ? `
-                <div class="important">
-                  <strong>Observações:</strong><br>
-                  ${mockAppointment.observations}
-                </div>
-              `
-                  : ""
-              }
-              
               <div class="important">
-                <strong>⚠️ Importante:</strong><br>
-                • Chegue 10 minutos antes do horário agendado<br>
-                • Em caso de cancelamento, entre em contato com pelo menos 24h de antecedência<br>
-                • Traga documentos de identificação
+                <strong>📅 Adicione ao seu calendário:</strong><br>
+                O arquivo ICS está anexado a este email para facilitar a adição ao seu calendário pessoal.
               </div>
               
-              <p>O arquivo .ics está anexado para você adicionar ao seu calendário.</p>
+              <p><strong>Observações:</strong> ${mockAppointment.observations || "Nenhuma observação adicional."}</p>
               
-              <p>Em caso de dúvidas, entre em contato conosco:</p>
-              <p>
-                📞 <strong>${clinic.phone}</strong><br>
-                📧 <strong>${clinic.email}</strong>
-              </p>
+              <p>Se precisar reagendar ou cancelar, entre em contato conosco:</p>
+              <p>📞 <strong>Telefone:</strong> ${clinic.phone}<br>
+              📧 <strong>E-mail:</strong> ${clinic.email}</p>
+              
+              <div style="text-align: center;">
+                <a href="#" class="cta">Ver detalhes do agendamento</a>
+              </div>
             </div>
             
             <div class="footer">
-              <p>Odonto Center - Cuidando do seu sorriso com excelência</p>
-              <p>Este é um e-mail automático, não responda a esta mensagem.</p>
+              <p><strong>Odonto Center</strong></p>
+              <p>${clinic.address}</p>
+              <p>${clinic.phone} | ${clinic.email}</p>
+              <p>Horário de funcionamento: Segunda a Sexta, 8h às 18h</p>
             </div>
           </div>
         </body>
@@ -166,22 +164,21 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
       `,
       attachments: [
         {
-          filename: `consulta-${appointmentId}.ics`,
+          filename: "agendamento.ics",
           content: icsBuffer,
-          contentType: "text/calendar",
         },
       ],
     });
 
     if (error) {
       console.error("Error sending email:", error);
-      throw new Error("Failed to send confirmation email");
+      return { success: false, error: error.message };
     }
 
-    console.log("Confirmation email sent successfully:", data);
-    return data;
+    console.log("Email sent successfully:", data);
+    return { success: true, data };
   } catch (error) {
     console.error("Error in sendAppointmentConfirmation:", error);
-    throw error;
+    return { success: false, error: "Failed to send confirmation email" };
   }
 }
