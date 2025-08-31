@@ -30,7 +30,8 @@ export default async function AboutPage() {
           Sobre a Odonto Center
         </h1>
         <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-          {clinic?.slogan || "Cuidado profissional e acolhimento em cada atendimento."}
+          {clinic?.slogan ||
+            "Cuidado profissional e acolhimento em cada atendimento."}
         </p>
       </div>
 
@@ -43,8 +44,9 @@ export default async function AboutPage() {
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-gray-600 leading-relaxed">
-              Proporcionar saúde bucal de qualidade através de tratamentos modernos e 
-              atendimento personalizado, priorizando o bem-estar e satisfação de nossos pacientes.
+              Proporcionar saúde bucal de qualidade através de tratamentos
+              modernos e atendimento personalizado, priorizando o bem-estar e
+              satisfação de nossos pacientes.
             </p>
           </CardContent>
         </Card>
@@ -73,8 +75,9 @@ export default async function AboutPage() {
           </CardHeader>
           <CardContent className="text-center">
             <p className="text-gray-600 leading-relaxed">
-              Clínica moderna equipada com tecnologia avançada, salas de tratamento 
-              climatizadas e ambiente acolhedor para proporcionar conforto e segurança.
+              Clínica moderna equipada com tecnologia avançada, salas de
+              tratamento climatizadas e ambiente acolhedor para proporcionar
+              conforto e segurança.
             </p>
           </CardContent>
         </Card>
@@ -126,9 +129,7 @@ export default async function AboutPage() {
               </div>
             ) : (
               <div className="aspect-video rounded-2xl bg-gray-100 flex items-center justify-center">
-                <p className="text-gray-500 text-center">
-                  Mapa em breve
-                </p>
+                <p className="text-gray-500 text-center">Mapa em breve</p>
               </div>
             )}
           </CardContent>
