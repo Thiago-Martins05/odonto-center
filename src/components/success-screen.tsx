@@ -80,9 +80,15 @@ export function SuccessScreen({
               <User className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
                 <p className="text-sm font-medium">
-                  {appointmentData.service.name}
+                  {appointmentData.services.length === 1
+                    ? appointmentData.services[0].name
+                    : `${appointmentData.services.length} serviços selecionados`}
                 </p>
-                <p className="text-xs text-muted-foreground">Serviço</p>
+                <p className="text-xs text-muted-foreground">
+                  {appointmentData.services.length === 1
+                    ? "Serviço"
+                    : "Serviços"}
+                </p>
               </div>
             </div>
 
@@ -100,9 +106,14 @@ export function SuccessScreen({
               <Clock className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
                 <p className="text-sm font-medium">
-                  {formatDuration(appointmentData.service.durationMin)}
+                  {formatDuration(
+                    appointmentData.services.reduce(
+                      (total, service) => total + service.durationMin,
+                      0
+                    )
+                  )}
                 </p>
-                <p className="text-xs text-muted-foreground">Duração</p>
+                <p className="text-xs text-muted-foreground">Duração Total</p>
               </div>
             </div>
 
@@ -110,12 +121,43 @@ export function SuccessScreen({
               <DollarSign className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
                 <Badge variant="outline" className="text-sm">
-                  {formatPrice(appointmentData.service.priceCents)}
+                  {formatPrice(
+                    appointmentData.services.reduce(
+                      (total, service) => total + service.priceCents,
+                      0
+                    )
+                  )}
                 </Badge>
-                <p className="text-xs text-muted-foreground mt-1">Preço</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Preço Total
+                </p>
               </div>
             </div>
           </div>
+
+          {/* Services List */}
+          {appointmentData.services.length > 1 && (
+            <div className="border-t pt-4">
+              <p className="text-sm text-muted-foreground mb-2">
+                Serviços agendados:
+              </p>
+              <div className="space-y-2">
+                {appointmentData.services.map((service, index) => (
+                  <div
+                    key={service.id}
+                    className="flex justify-between items-center p-2 bg-muted/20 rounded-lg"
+                  >
+                    <span className="text-sm font-medium">{service.name}</span>
+                    <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+                      <span>{formatDuration(service.durationMin)}</span>
+                      <span>•</span>
+                      <span>{formatPrice(service.priceCents)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Patient Info */}
           <div className="border-t pt-4">

@@ -78,7 +78,7 @@ export async function createAppointment(data: CreateAppointmentData) {
   try {
     console.log("🚀 Starting appointment creation...");
     console.log("📊 Input data:", JSON.stringify(data, null, 2));
-    
+
     // Testar conexão com o banco
     console.log("🔍 Testing database connection...");
     try {
@@ -88,7 +88,7 @@ export async function createAppointment(data: CreateAppointmentData) {
       console.error("❌ Database connection failed:", dbError);
       throw new Error("Falha na conexão com o banco de dados");
     }
-    
+
     // Calcular duração total e horário de fim
     const totalDuration = data.services.reduce(
       (total: number, service: Service) => total + service.durationMin,
@@ -96,13 +96,13 @@ export async function createAppointment(data: CreateAppointmentData) {
     );
     const startsAt = new Date(data.selectedSlot);
     const endsAt = new Date(startsAt.getTime() + totalDuration * 60 * 1000);
-    
+
     console.log("⏱️ Calculated duration:", totalDuration, "minutes");
     console.log("📅 Starts at:", startsAt.toISOString());
     console.log("⏰ Ends at:", endsAt.toISOString());
 
     console.log("🗄️ Attempting to create appointment in database...");
-    
+
     // Criar o agendamento principal com o primeiro serviço
     const appointment = await prisma.appointment.create({
       data: {
@@ -151,8 +151,10 @@ export async function createAppointment(data: CreateAppointmentData) {
           serviceStartsAt.getTime() + service.durationMin * 60 * 1000
         );
 
-        console.log(`🔄 Creating appointment for service ${i + 1}: ${service.name}`);
-        
+        console.log(
+          `🔄 Creating appointment for service ${i + 1}: ${service.name}`
+        );
+
         await prisma.appointment.create({
           data: {
             patientName: data.patientName,
@@ -173,7 +175,7 @@ export async function createAppointment(data: CreateAppointmentData) {
     }
 
     console.log("🔔 Notifying admin...");
-    
+
     // NOTIFICAR O ADMIN sobre o novo agendamento
     await notifyAdminAboutNewAppointment({
       id: appointment.id,
@@ -192,7 +194,7 @@ export async function createAppointment(data: CreateAppointmentData) {
     });
 
     console.log("📧 Attempting to send confirmation email...");
-    
+
     // Enviar email de confirmação
     try {
       const emailResult = await sendAppointmentConfirmation(appointment.id);
@@ -207,7 +209,7 @@ export async function createAppointment(data: CreateAppointmentData) {
     }
 
     console.log("🎉 Appointment creation completed successfully!");
-    
+
     return {
       success: true,
       appointmentId: appointment.id,
@@ -227,9 +229,9 @@ export async function createAppointment(data: CreateAppointmentData) {
   } catch (error) {
     console.error("❌ Error creating appointment:", error);
     console.error("❌ Error details:", {
-      name: error instanceof Error ? error.name : 'Unknown',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      stack: error instanceof Error ? error.stack : 'No stack trace'
+      name: error instanceof Error ? error.name : "Unknown",
+      message: error instanceof Error ? error.message : "Unknown error",
+      stack: error instanceof Error ? error.stack : "No stack trace",
     });
     return {
       success: false,
