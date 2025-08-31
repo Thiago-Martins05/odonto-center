@@ -76,6 +76,9 @@ export interface CreateAppointmentData {
 
 export async function createAppointment(data: CreateAppointmentData) {
   try {
+    console.log("🚀 Starting appointment creation...");
+    console.log("📊 Input data:", JSON.stringify(data, null, 2));
+    
     // Calcular duração total e horário de fim
     const totalDuration = data.services.reduce(
       (total: number, service: Service) => total + service.durationMin,
@@ -83,7 +86,13 @@ export async function createAppointment(data: CreateAppointmentData) {
     );
     const startsAt = new Date(data.selectedSlot);
     const endsAt = new Date(startsAt.getTime() + totalDuration * 60 * 1000);
+    
+    console.log("⏱️ Calculated duration:", totalDuration, "minutes");
+    console.log("📅 Starts at:", startsAt.toISOString());
+    console.log("⏰ Ends at:", endsAt.toISOString());
 
+    console.log("🗄️ Attempting to create appointment in database...");
+    
     // Criar o agendamento principal com o primeiro serviço
     const appointment = await prisma.appointment.create({
       data: {
@@ -103,22 +112,36 @@ export async function createAppointment(data: CreateAppointmentData) {
     console.log("⏰ Ends at:", endsAt.toLocaleString("pt-BR"));
     console.log("👤 Patient:", data.patientName);
     console.log("📧 Email:", data.patientEmail);
-    console.log("🦷 Services:", data.services.map((s: Service) => s.name).join(", "));
+    console.log(
+      "🦷 Services:",
+      data.services.map((s: Service) => s.name).join(", ")
+    );
     console.log("⏱️ Total duration:", totalDuration, "minutes");
     console.log(
       "💰 Total price:",
-      data.services.reduce((total: number, s: Service) => total + s.priceCents, 0) / 100,
+      data.services.reduce(
+        (total: number, s: Service) => total + s.priceCents,
+        0
+      ) / 100,
       "reais"
     );
 
     // Se houver múltiplos serviços, criar agendamentos adicionais
     if (data.services.length > 1) {
-      console.log("🔄 Creating additional appointments for multiple services...");
-      
+      console.log(
+        "🔄 Creating additional appointments for multiple services..."
+      );
+
       for (let i = 1; i < data.services.length; i++) {
         const service = data.services[i];
-        const serviceStartsAt = new Date(endsAt.getTime() + (i - 1) * 15 * 60 * 1000); // 15 min gap
-        const serviceEndsAt = new Date(serviceStartsAt.getTime() + service.durationMin * 60 * 1000);
+        const serviceStartsAt = new Date(
+          endsAt.getTime() + (i - 1) * 15 * 60 * 1000
+        ); // 15 min gap
+        const serviceEndsAt = new Date(
+          serviceStartsAt.getTime() + service.durationMin * 60 * 1000
+        );
+
+        console.log(`🔄 Creating appointment for service ${i + 1}: ${service.name}`);
         
         await prisma.appointment.create({
           data: {
@@ -127,16 +150,20 @@ export async function createAppointment(data: CreateAppointmentData) {
             phone: data.patientPhone || "",
             startsAt: serviceStartsAt,
             endsAt: serviceEndsAt,
-            notes: `Serviço adicional: ${service.name}. ${data.observations || ""}`,
+            notes: `Serviço adicional: ${service.name}. ${
+              data.observations || ""
+            }`,
             status: "scheduled",
             serviceId: service.id,
           },
         });
-        
+
         console.log(`✅ Additional appointment created for: ${service.name}`);
       }
     }
 
+    console.log("🔔 Notifying admin...");
+    
     // NOTIFICAR O ADMIN sobre o novo agendamento
     await notifyAdminAboutNewAppointment({
       id: appointment.id,
@@ -147,10 +174,15 @@ export async function createAppointment(data: CreateAppointmentData) {
       endsAt,
       services: data.services,
       totalDuration,
-      totalPrice: data.services.reduce((total: number, s: Service) => total + s.priceCents, 0),
+      totalPrice: data.services.reduce(
+        (total: number, s: Service) => total + s.priceCents,
+        0
+      ),
       observations: data.observations,
     });
 
+    console.log("📧 Attempting to send confirmation email...");
+    
     // Enviar email de confirmação
     try {
       const emailResult = await sendAppointmentConfirmation(appointment.id);
@@ -164,6 +196,8 @@ export async function createAppointment(data: CreateAppointmentData) {
       // Não falhar o agendamento se o email falhar
     }
 
+    console.log("🎉 Appointment creation completed successfully!");
+    
     return {
       success: true,
       appointmentId: appointment.id,
@@ -174,11 +208,19 @@ export async function createAppointment(data: CreateAppointmentData) {
         endsAt: appointment.endsAt,
         services: data.services,
         totalDuration,
-        totalPrice: data.services.reduce((total: number, s: Service) => total + s.priceCents, 0),
+        totalPrice: data.services.reduce(
+          (total: number, s: Service) => total + s.priceCents,
+          0
+        ),
       },
     };
   } catch (error) {
     console.error("❌ Error creating appointment:", error);
+    console.error("❌ Error details:", {
+      name: error instanceof Error ? error.name : 'Unknown',
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : 'No stack trace'
+    });
     return {
       success: false,
       error: "Falha ao criar agendamento. Tente novamente.",
