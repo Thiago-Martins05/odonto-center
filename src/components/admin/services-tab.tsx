@@ -73,32 +73,32 @@ export function ServicesTab() {
       const mockServices: Service[] = [
         {
           id: "1",
-          name: "Consulta de Avaliação",
-          slug: "consulta-avaliacao",
+          name: "Limpeza Dental Profunda",
+          slug: "limpeza-dental-profunda",
           description:
-            "Avaliação completa da saúde bucal com plano de tratamento personalizado",
-          durationMin: 60,
-          priceCents: 15000,
+            "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
+          durationMin: 40,
+          priceCents: 8000,
           active: true,
         },
         {
           id: "2",
-          name: "Limpeza e Profilaxia",
-          slug: "limpeza-profilaxia",
+          name: "Clareamento Dental",
+          slug: "clareamento-dental",
           description:
-            "Limpeza profissional, remoção de tártaro e polimento dos dentes",
-          durationMin: 45,
-          priceCents: 12000,
+            "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
+          durationMin: 60,
+          priceCents: 30000,
           active: true,
         },
         {
           id: "3",
-          name: "Tratamento de Canal",
-          slug: "tratamento-canal",
-          description: "Tratamento endodôntico completo com anestesia local",
+          name: "Tratamento de Canal (Endodontia)",
+          slug: "tratamento-canal-endodontia",
+          description: "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
           durationMin: 90,
-          priceCents: 80000,
-          active: false,
+          priceCents: 35000,
+          active: true,
         },
       ];
       setServices(mockServices);

@@ -36,41 +36,41 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
       const mockServices: Service[] = [
         {
           id: "1",
-          name: "Consulta de Avaliação",
+          name: "Limpeza Dental Profunda",
           description:
-            "Avaliação completa da saúde bucal com plano de tratamento personalizado",
-          durationMin: 60,
-          priceCents: 15000, // R$ 150,00
-          slug: "consulta-avaliacao",
+            "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
+          durationMin: 40,
+          priceCents: 8000, // R$ 80,00
+          slug: "limpeza-dental-profunda",
           active: true,
         },
         {
           id: "2",
-          name: "Limpeza e Profilaxia",
+          name: "Clareamento Dental",
           description:
-            "Limpeza profissional, remoção de tártaro e polimento dos dentes",
-          durationMin: 45,
-          priceCents: 12000, // R$ 120,00
-          slug: "limpeza-profilaxia",
+            "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
+          durationMin: 60,
+          priceCents: 30000, // R$ 300,00
+          slug: "clareamento-dental",
           active: true,
         },
         {
           id: "3",
-          name: "Tratamento de Canal",
-          description: "Tratamento endodôntico completo com anestesia local",
+          name: "Tratamento de Canal (Endodontia)",
+          description: "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
           durationMin: 90,
-          priceCents: 80000, // R$ 800,00
-          slug: "tratamento-canal",
+          priceCents: 35000, // R$ 350,00
+          slug: "tratamento-canal-endodontia",
           active: true,
         },
         {
           id: "4",
-          name: "Extração Simples",
+          name: "Restaurações (Obturações)",
           description:
-            "Remoção de dente com anestesia local e cuidados pós-operatórios",
-          durationMin: 30,
-          priceCents: 20000, // R$ 200,00
-          slug: "extracao-simples",
+            "A restauração dentária recupera a forma e a função de dentes danificados por cáries.",
+          durationMin: 45,
+          priceCents: 10000, // R$ 100,00
+          slug: "restauracoes-obturacao",
           active: true,
         },
       ];

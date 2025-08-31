@@ -29,11 +29,11 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
 
     const mockService: Service = {
       id: "1",
-      name: "Consulta de Avaliação",
-      slug: "consulta-avaliacao",
-      description: "Avaliação completa da saúde bucal",
-      durationMin: 60,
-      priceCents: 15000,
+      name: "Limpeza Dental Profunda",
+      slug: "limpeza-dental-profunda",
+      description: "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
+      durationMin: 40,
+      priceCents: 8000,
       active: true,
     };
 
