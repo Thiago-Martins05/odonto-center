@@ -10,6 +10,7 @@ import {
   ArrowRight,
   CheckCircle,
 } from "lucide-react";
+import { ServicesShowcase } from "@/components/services-showcase";
 
 export default function Home() {
   return (
@@ -230,67 +231,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-light-bg to-white p-8 rounded-3xl text-center border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Stethoscope className="w-10 h-10 text-blue-500" />
-              </div>
-              <h3 className="text-2xl font-semibold text-text-primary mb-3">
-                Consulta
-              </h3>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Avaliação completa da saúde bucal com diagnóstico detalhado
-              </p>
-              <div className="text-3xl font-bold text-primary mb-2">R$ 120</div>
-              <div className="text-sm text-text-secondary mb-4">30 minutos</div>
-              <a
-                href="/agenda"
-                className="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
-              >
-                Agendar <ArrowRight className="w-4 h-4 ml-1" />
-              </a>
-            </div>
-
-            <div className="bg-gradient-to-br from-light-bg to-white p-8 rounded-3xl text-center border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-green-50 to-green-100 rounded-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Microscope className="w-10 h-10 text-green-500" />
-              </div>
-              <h3 className="text-2xl font-semibold text-text-primary mb-3">
-                Avaliação
-              </h3>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Exame detalhado e planejamento personalizado do tratamento
-              </p>
-              <div className="text-3xl font-bold text-primary mb-2">R$ 150</div>
-              <div className="text-sm text-text-secondary mb-4">45 minutos</div>
-              <a
-                href="/agenda"
-                className="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
-              >
-                Agendar <ArrowRight className="w-4 h-4 ml-1" />
-              </a>
-            </div>
-
-            <div className="bg-gradient-to-br from-light-bg to-white p-8 rounded-3xl text-center border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-50 to-purple-100 rounded-3xl mb-6 group-hover:scale-110 transition-transform duration-300">
-                <Sparkles className="w-10 h-10 text-purple-500" />
-              </div>
-              <h3 className="text-2xl font-semibold text-text-primary mb-3">
-                Limpeza
-              </h3>
-              <p className="text-text-secondary mb-6 leading-relaxed">
-                Higienização profissional completa com tecnologia avançada
-              </p>
-              <div className="text-3xl font-bold text-primary mb-2">R$ 200</div>
-              <div className="text-sm text-text-secondary mb-4">60 minutos</div>
-              <a
-                href="/agenda"
-                className="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-colors"
-              >
-                Agendar <ArrowRight className="w-4 h-4 ml-1" />
-              </a>
-            </div>
-          </div>
+          <ServicesShowcase />
         </div>
       </section>
 

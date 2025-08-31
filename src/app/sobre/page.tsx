@@ -31,7 +31,10 @@ export default async function AboutPage() {
     "Ambiente acolhedor",
   ];
 
-  const highlights = clinic?.highlights || defaultHighlights;
+  // Converter highlights de string para array se necessário
+  const highlights = clinic?.highlights 
+    ? clinic.highlights.split(", ").map(h => h.trim())
+    : defaultHighlights;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">

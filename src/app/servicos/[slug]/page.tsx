@@ -9,15 +9,16 @@ import { Calendar, Clock, DollarSign, User } from "lucide-react";
 import Link from "next/link";
 
 interface ServiceDetailPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
 export default async function ServiceDetailPage({
   params,
 }: ServiceDetailPageProps) {
-  const service = await getServiceBySlug(params.slug);
+  const { slug } = await params;
+  const service = await getServiceBySlug(slug);
 
   if (!service) {
     notFound();

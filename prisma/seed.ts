@@ -17,7 +17,7 @@ async function main() {
       email: "contato@odontocenter.com.br",
       openingHours: [{ day: "Seg–Sex", time: "09:00–12:00 • 14:00–18:00" }],
       mapEmbedUrl: "https://maps.google.com/",
-      highlights: ["Biossegurança", "Tecnologia", "Atendimento humanizado"],
+      highlights: "Biossegurança, Tecnologia, Atendimento humanizado",
     },
   });
 
