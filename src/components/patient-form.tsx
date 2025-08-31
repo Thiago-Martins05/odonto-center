@@ -32,14 +32,14 @@ const patientFormSchema = z.object({
 type PatientFormData = z.infer<typeof patientFormSchema>;
 
 interface PatientFormProps {
-  service: Service;
+  services: Service[];
   selectedSlot: string;
   onSubmit: (data: PatientFormData) => void;
   onBack: () => void;
 }
 
 export function PatientForm({
-  service,
+  services,
   selectedSlot,
   onSubmit,
   onBack,
@@ -112,8 +112,10 @@ export function PatientForm({
             <div className="flex items-center space-x-3">
               <User className="w-4 h-4 text-muted-foreground" />
               <div>
-                <p className="text-sm font-medium">{service.name}</p>
-                <p className="text-xs text-muted-foreground">Serviço</p>
+                <p className="text-sm font-medium">
+                  {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''}
+                </p>
+                <p className="text-xs text-muted-foreground">Serviços</p>
               </div>
             </div>
 
@@ -131,17 +133,33 @@ export function PatientForm({
               <Clock className="w-4 h-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">
-                  {formatDuration(service.durationMin)}
+                  {formatDuration(services.reduce((total: number, s: Service) => total + s.durationMin, 0))}
                 </p>
-                <p className="text-xs text-muted-foreground">Duração</p>
+                <p className="text-xs text-muted-foreground">Duração Total</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className="text-sm">
-                {formatPrice(service.priceCents)}
+                {formatPrice(services.reduce((total: number, s: Service) => total + s.priceCents, 0))}
               </Badge>
-              <p className="text-xs text-muted-foreground">Preço</p>
+              <p className="text-xs text-muted-foreground">Preço Total</p>
+            </div>
+
+            {/* Lista detalhada dos serviços */}
+            <div className="border-t pt-3">
+              <p className="text-xs text-muted-foreground mb-2">Serviços selecionados:</p>
+              <div className="space-y-2">
+                {services.map((service) => (
+                  <div key={service.id} className="flex items-center justify-between text-sm bg-background p-2 rounded-lg">
+                    <span className="font-medium">{service.name}</span>
+                    <div className="flex items-center space-x-3 text-muted-foreground">
+                      <span>{formatDuration(service.durationMin)}</span>
+                      <span>{formatPrice(service.priceCents)}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </CardContent>

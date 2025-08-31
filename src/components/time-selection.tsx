@@ -14,7 +14,7 @@ import { Service } from "@/types/service";
 import { TimeSlotSkeleton } from "./skeletons/time-slot-skeleton";
 
 interface TimeSelectionProps {
-  service: Service;
+  services: Service[];
   onTimeSelect: (selectedSlot: string) => void;
   onBack: () => void;
 }
@@ -26,7 +26,7 @@ interface DaySlots {
 }
 
 export function TimeSelection({
-  service,
+  services,
   onTimeSelect,
   onBack,
 }: TimeSelectionProps) {
@@ -176,7 +176,7 @@ export function TimeSelection({
               Escolha o Horário
             </h2>
             <p className="text-muted-foreground">
-              {service.name} • {service.durationMin} min
+              {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''} • {services.reduce((total: number, s: Service) => total + s.durationMin, 0)} min total
             </p>
           </div>
           <div className="w-20"></div>
@@ -219,7 +219,7 @@ export function TimeSelection({
             Escolha o Horário
           </h2>
           <p className="text-muted-foreground">
-            {service.name} • {service.durationMin} min
+            {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''} • {services.reduce((total: number, s: Service) => total + s.durationMin, 0)} min total
           </p>
         </div>
         <div className="w-20"></div> {/* Spacer for centering */}

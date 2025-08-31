@@ -5,7 +5,7 @@ import { sendAppointmentConfirmation } from "./email";
 import { Service } from "@/types/service";
 
 export interface CreateAppointmentData {
-  service: Service;
+  services: Service[];
   selectedSlot: string;
   patientName: string;
   patientEmail: string;
@@ -21,10 +21,11 @@ export async function createAppointment(data: CreateAppointmentData) {
     // Generate a mock appointment ID
     const appointmentId = `apt_${Date.now()}`;
 
-    // Calculate appointment end time based on service duration
+    // Calculate appointment end time based on total service duration
+    const totalDuration = data.services.reduce((total, service) => total + service.durationMin, 0);
     const startsAt = new Date(data.selectedSlot);
     const endsAt = new Date(
-      startsAt.getTime() + data.service.durationMin * 60 * 1000
+      startsAt.getTime() + totalDuration * 60 * 1000
     );
 
     // Mock appointment object
@@ -36,9 +37,14 @@ export async function createAppointment(data: CreateAppointmentData) {
       patientEmail: data.patientEmail,
       patientPhone: data.patientPhone,
       observations: data.observations,
+      services: data.services,
+      totalDuration,
+      totalPrice: data.services.reduce((total, service) => total + service.priceCents, 0),
     };
 
     // TODO: Insert into database
+    // For multiple services, you might want to create multiple appointments
+    // or a single appointment with multiple service references
     // const dbAppointment = await prisma.appointment.create({
     //   data: {
     //     id: appointment.id,
@@ -48,12 +54,16 @@ export async function createAppointment(data: CreateAppointmentData) {
     //     patientEmail: appointment.patientEmail,
     //     patientPhone: appointment.patientPhone,
     //     observations: appointment.observations,
-    //     serviceId: data.service.id,
+    //     // You might need to adjust the schema to handle multiple services
+    //     // serviceId: data.services[0].id, // For now, using first service
     //     status: 'confirmed',
     //   },
     // });
 
     console.log("Appointment created in database:", appointment);
+    console.log("Services:", data.services.map(s => s.name).join(", "));
+    console.log("Total duration:", totalDuration, "minutes");
+    console.log("Total price:", appointment.totalPrice / 100, "reais");
 
     // Send confirmation email
     try {

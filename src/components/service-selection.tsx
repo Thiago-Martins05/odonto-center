@@ -13,14 +13,15 @@ import {
 } from "lucide-react";
 import { Service, formatPrice, formatDuration } from "@/types/service";
 import { ServiceSkeleton } from "./skeletons/service-skeleton";
+import { getServices } from "@/server/admin/services";
 
 interface ServiceSelectionProps {
-  onServiceSelect: (service: Service) => void;
+  onServiceSelect: (services: Service[]) => void;
 }
 
 export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   const [services, setServices] = useState<Service[]>([]);
-  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [selectedServices, setSelectedServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,58 +32,37 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   const fetchServices = async () => {
     try {
       setError(null);
-      // TODO: Replace with actual API call
-      // For now, using mock data
-      const mockServices: Service[] = [
-        {
-          id: "1",
-          name: "Limpeza Dental Profunda",
-          description:
-            "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
-          durationMin: 40,
-          priceCents: 8000, // R$ 80,00
-          slug: "limpeza-dental-profunda",
-          active: true,
-        },
-        {
-          id: "2",
-          name: "Clareamento Dental",
-          description:
-            "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
-          durationMin: 60,
-          priceCents: 30000, // R$ 300,00
-          slug: "clareamento-dental",
-          active: true,
-        },
-        {
-          id: "3",
-          name: "Tratamento de Canal (Endodontia)",
-          description:
-            "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
-          durationMin: 90,
-          priceCents: 35000, // R$ 350,00
-          slug: "tratamento-canal-endodontia",
-          active: true,
-        },
-        {
-          id: "4",
-          name: "Restaurações (Obturações)",
-          description:
-            "A restauração dentária recupera a forma e a função de dentes danificados por cáries.",
-          durationMin: 45,
-          priceCents: 10000, // R$ 100,00
-          slug: "restauracoes-obturacao",
-          active: true,
-        },
-      ];
-
-      setServices(mockServices);
+      const fetchedServices = await getServices();
+      setServices(fetchedServices);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching services:", error);
       setError("Não foi possível carregar os serviços. Tente novamente.");
       setLoading(false);
     }
+  };
+
+  const toggleServiceSelection = (service: Service) => {
+    setSelectedServices((prev) => {
+      const isSelected = prev.some((s) => s.id === service.id);
+      if (isSelected) {
+        return prev.filter((s) => s.id !== service.id);
+      } else {
+        return [...prev, service];
+      }
+    });
+  };
+
+  const isServiceSelected = (service: Service) => {
+    return selectedServices.some((s) => s.id === service.id);
+  };
+
+  const getTotalDuration = () => {
+    return selectedServices.reduce((total, service) => total + service.durationMin, 0);
+  };
+
+  const getTotalPrice = () => {
+    return selectedServices.reduce((total, service) => total + service.priceCents, 0);
   };
 
   if (loading) {
@@ -128,30 +108,58 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
     <div className="space-y-6">
       <div className="text-center">
         <h2 className="text-2xl font-bold text-foreground mb-2">
-          Escolha o Serviço
+          Escolha os Serviços
         </h2>
         <p className="text-muted-foreground">
-          Selecione o serviço que deseja agendar
+          Selecione um ou mais serviços que deseja agendar
         </p>
       </div>
+
+      {/* Resumo da seleção */}
+      {selectedServices.length > 0 && (
+        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4">
+          <h3 className="font-semibold text-primary mb-3">
+            Serviços Selecionados ({selectedServices.length})
+          </h3>
+          <div className="space-y-2">
+            {selectedServices.map((service) => (
+              <div key={service.id} className="flex items-center justify-between text-sm">
+                <span className="text-foreground">{service.name}</span>
+                <span className="text-muted-foreground">
+                  {formatPrice(service.priceCents)}
+                </span>
+              </div>
+            ))}
+            <div className="border-t border-primary/20 pt-2 mt-3">
+              <div className="flex items-center justify-between font-semibold">
+                <span>Total:</span>
+                <span className="text-primary">{formatPrice(getTotalPrice())}</span>
+              </div>
+              <div className="text-xs text-muted-foreground">
+                Duração total: {formatDuration(getTotalDuration())}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {services.map((service) => (
           <Card
             key={service.id}
             className={`cursor-pointer transition-all duration-300 hover:shadow-lg ${
-              selectedService?.id === service.id
+              isServiceSelected(service)
                 ? "ring-2 ring-primary bg-primary/5"
                 : "hover:bg-muted/50"
             }`}
-            onClick={() => setSelectedService(service)}
+            onClick={() => toggleServiceSelection(service)}
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <CardTitle className="text-lg font-semibold text-foreground">
                   {service.name}
                 </CardTitle>
-                {selectedService?.id === service.id && (
+                {isServiceSelected(service) && (
                   <CheckCircle className="w-6 h-6 text-primary" />
                 )}
               </div>
@@ -187,11 +195,11 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
       <div className="flex justify-center pt-6">
         <Button
           size="lg"
-          onClick={() => selectedService && onServiceSelect(selectedService)}
-          disabled={!selectedService}
+          onClick={() => selectedServices.length > 0 && onServiceSelect(selectedServices)}
+          disabled={selectedServices.length === 0}
           className="px-8 py-3 text-lg font-semibold rounded-2xl"
         >
-          Continuar
+          Continuar com {selectedServices.length} serviço{selectedServices.length !== 1 ? 's' : ''}
         </Button>
       </div>
     </div>

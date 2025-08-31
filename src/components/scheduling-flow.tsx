@@ -12,7 +12,7 @@ import { createAppointment } from "@/server/appointments";
 import { Service } from "@/types/service";
 
 export interface AppointmentData {
-  service: Service;
+  services: Service[];
   selectedSlot: string;
   patientName: string;
   patientEmail: string;
@@ -30,8 +30,8 @@ export function SchedulingFlow() {
   const steps = [
     {
       id: 1,
-      title: "Serviço",
-      description: "Escolha o serviço desejado",
+      title: "Serviços",
+      description: "Escolha os serviços desejados",
       icon: Calendar,
     },
     {
@@ -48,8 +48,8 @@ export function SchedulingFlow() {
     },
   ];
 
-  const handleServiceSelect = (service: Service) => {
-    setAppointmentData((prev) => ({ ...prev, service }));
+  const handleServiceSelect = (services: Service[]) => {
+    setAppointmentData((prev) => ({ ...prev, services }));
     setCurrentStep(2);
   };
 
@@ -157,14 +157,14 @@ export function SchedulingFlow() {
           )}
           {currentStep === 2 && (
             <TimeSelection
-              service={appointmentData.service!}
+              services={appointmentData.services!}
               onTimeSelect={handleTimeSelect}
               onBack={() => setCurrentStep(1)}
             />
           )}
           {currentStep === 3 && (
             <PatientForm
-              service={appointmentData.service!}
+              services={appointmentData.services!}
               selectedSlot={appointmentData.selectedSlot!}
               onSubmit={handleFormSubmit}
               onBack={() => setCurrentStep(2)}
