@@ -23,15 +23,15 @@ export function AdminNotificationBanner() {
       try {
         // Aqui você pode fazer uma chamada para verificar novos agendamentos
         // Por exemplo: const response = await fetch('/api/admin/new-appointments');
-        
+
         // Simulação para demonstração
         const mockNewAppointments: NewAppointment[] = [
           {
             id: "apt_123",
             patientName: "João Silva",
             startsAt: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 horas a partir de agora
-            services: ["Limpeza Dental Profunda", "Clareamento"]
-          }
+            services: ["Limpeza Dental Profunda", "Clareamento"],
+          },
         ];
 
         if (mockNewAppointments.length > 0) {
@@ -74,8 +74,12 @@ export function AdminNotificationBanner() {
               <span className="font-semibold">
                 🔔 Novos agendamentos recebidos!
               </span>
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                {newAppointments.length} novo{newAppointments.length !== 1 ? 's' : ''}
+              <Badge
+                variant="secondary"
+                className="bg-white/20 text-white border-white/30"
+              >
+                {newAppointments.length} novo
+                {newAppointments.length !== 1 ? "s" : ""}
               </Badge>
             </div>
           </div>
@@ -89,12 +93,12 @@ export function AdminNotificationBanner() {
                 <span>
                   {newAppointments[0].startsAt.toLocaleTimeString("pt-BR", {
                     hour: "2-digit",
-                    minute: "2-digit"
+                    minute: "2-digit",
                   })}
                 </span>
               </div>
             </div>
-            
+
             <Button
               variant="outline"
               size="sm"
@@ -104,7 +108,7 @@ export function AdminNotificationBanner() {
               <Calendar className="h-4 w-4 mr-2" />
               Ver agendamentos
             </Button>
-            
+
             <Button
               variant="ghost"
               size="sm"
@@ -127,9 +131,14 @@ export function AdminNotificationBanner() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4" />
-                    <span className="font-medium">{appointment.patientName}</span>
+                    <span className="font-medium">
+                      {appointment.patientName}
+                    </span>
                   </div>
-                  <Badge variant="secondary" className="bg-green-500/20 text-green-200 border-green-500/30">
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-500/20 text-green-200 border-green-500/30"
+                  >
                     Novo
                   </Badge>
                 </div>
@@ -140,7 +149,7 @@ export function AdminNotificationBanner() {
                       {appointment.startsAt.toLocaleDateString("pt-BR")} às{" "}
                       {appointment.startsAt.toLocaleTimeString("pt-BR", {
                         hour: "2-digit",
-                        minute: "2-digit"
+                        minute: "2-digit",
                       })}
                     </span>
                   </div>

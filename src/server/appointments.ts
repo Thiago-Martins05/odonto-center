@@ -25,17 +25,31 @@ async function notifyAdminAboutNewAppointment(appointmentData: {
     console.log(`📋 ID do Agendamento: ${appointmentData.id}`);
     console.log(`👤 Paciente: ${appointmentData.patientName}`);
     console.log(`📧 Email: ${appointmentData.patientEmail}`);
-    console.log(`📱 Telefone: ${appointmentData.patientPhone || "Não informado"}`);
-    console.log(`📅 Data: ${appointmentData.startsAt.toLocaleDateString("pt-BR")}`);
-    console.log(`⏰ Horário: ${appointmentData.startsAt.toLocaleTimeString("pt-BR")} - ${appointmentData.endsAt.toLocaleTimeString("pt-BR")}`);
-    console.log(`🦷 Serviços: ${appointmentData.services.map(s => s.name).join(", ")}`);
+    console.log(
+      `📱 Telefone: ${appointmentData.patientPhone || "Não informado"}`
+    );
+    console.log(
+      `📅 Data: ${appointmentData.startsAt.toLocaleDateString("pt-BR")}`
+    );
+    console.log(
+      `⏰ Horário: ${appointmentData.startsAt.toLocaleTimeString(
+        "pt-BR"
+      )} - ${appointmentData.endsAt.toLocaleTimeString("pt-BR")}`
+    );
+    console.log(
+      `🦷 Serviços: ${appointmentData.services.map((s) => s.name).join(", ")}`
+    );
     console.log(`⏱️ Duração Total: ${appointmentData.totalDuration} minutos`);
-    console.log(`💰 Valor Total: R$ ${(appointmentData.totalPrice / 100).toFixed(2)}`);
+    console.log(
+      `💰 Valor Total: R$ ${(appointmentData.totalPrice / 100).toFixed(2)}`
+    );
     if (appointmentData.observations) {
       console.log(`📝 Observações: ${appointmentData.observations}`);
     }
     console.log("=".repeat(80));
-    console.log("💡 AÇÃO REQUERIDA: Verificar disponibilidade e confirmar agendamento");
+    console.log(
+      "💡 AÇÃO REQUERIDA: Verificar disponibilidade e confirmar agendamento"
+    );
     console.log("=".repeat(80) + "\n");
 
     // TODO: Aqui você pode implementar:
@@ -43,7 +57,7 @@ async function notifyAdminAboutNewAppointment(appointmentData: {
     // 2. Notificação push
     // 3. Webhook para sistema externo
     // 4. Integração com WhatsApp Business API
-    
+
     return true;
   } catch (error) {
     console.error("❌ Erro ao notificar admin:", error);
@@ -64,13 +78,13 @@ export async function createAppointment(data: CreateAppointmentData) {
   try {
     // Calcular duração total e horário de fim
     const totalDuration = data.services.reduce(
-      (total, service) => total + service.durationMin,
+      (total: number, service: Service) => total + service.durationMin,
       0
     );
     const startsAt = new Date(data.selectedSlot);
     const endsAt = new Date(startsAt.getTime() + totalDuration * 60 * 1000);
 
-    // Criar o agendamento principal
+    // Criar o agendamento principal com o primeiro serviço
     const appointment = await prisma.appointment.create({
       data: {
         patientName: data.patientName,
@@ -80,8 +94,7 @@ export async function createAppointment(data: CreateAppointmentData) {
         endsAt,
         notes: data.observations || "",
         status: "scheduled",
-        // Usar o primeiro serviço como principal (schema atual)
-        serviceId: data.services[0].id,
+        serviceId: data.services[0].id, // Usar o primeiro serviço
       },
     });
 
@@ -90,29 +103,23 @@ export async function createAppointment(data: CreateAppointmentData) {
     console.log("⏰ Ends at:", endsAt.toLocaleString("pt-BR"));
     console.log("👤 Patient:", data.patientName);
     console.log("📧 Email:", data.patientEmail);
-    console.log("🦷 Services:", data.services.map((s) => s.name).join(", "));
+    console.log("🦷 Services:", data.services.map((s: Service) => s.name).join(", "));
     console.log("⏱️ Total duration:", totalDuration, "minutes");
     console.log(
       "💰 Total price:",
-      data.services.reduce((total, s) => total + s.priceCents, 0) / 100,
+      data.services.reduce((total: number, s: Service) => total + s.priceCents, 0) / 100,
       "reais"
     );
 
     // Se houver múltiplos serviços, criar agendamentos adicionais
     if (data.services.length > 1) {
-      console.log(
-        "🔄 Creating additional appointments for multiple services..."
-      );
-
+      console.log("🔄 Creating additional appointments for multiple services...");
+      
       for (let i = 1; i < data.services.length; i++) {
         const service = data.services[i];
-        const serviceStartsAt = new Date(
-          endsAt.getTime() + (i - 1) * 15 * 60 * 1000
-        ); // 15 min gap
-        const serviceEndsAt = new Date(
-          serviceStartsAt.getTime() + service.durationMin * 60 * 1000
-        );
-
+        const serviceStartsAt = new Date(endsAt.getTime() + (i - 1) * 15 * 60 * 1000); // 15 min gap
+        const serviceEndsAt = new Date(serviceStartsAt.getTime() + service.durationMin * 60 * 1000);
+        
         await prisma.appointment.create({
           data: {
             patientName: data.patientName,
@@ -120,14 +127,12 @@ export async function createAppointment(data: CreateAppointmentData) {
             phone: data.patientPhone || "",
             startsAt: serviceStartsAt,
             endsAt: serviceEndsAt,
-            notes: `Serviço adicional: ${service.name}. ${
-              data.observations || ""
-            }`,
+            notes: `Serviço adicional: ${service.name}. ${data.observations || ""}`,
             status: "scheduled",
             serviceId: service.id,
           },
         });
-
+        
         console.log(`✅ Additional appointment created for: ${service.name}`);
       }
     }
@@ -142,7 +147,7 @@ export async function createAppointment(data: CreateAppointmentData) {
       endsAt,
       services: data.services,
       totalDuration,
-      totalPrice: data.services.reduce((total, s) => total + s.priceCents, 0),
+      totalPrice: data.services.reduce((total: number, s: Service) => total + s.priceCents, 0),
       observations: data.observations,
     });
 
@@ -169,7 +174,7 @@ export async function createAppointment(data: CreateAppointmentData) {
         endsAt: appointment.endsAt,
         services: data.services,
         totalDuration,
-        totalPrice: data.services.reduce((total, s) => total + s.priceCents, 0),
+        totalPrice: data.services.reduce((total: number, s: Service) => total + s.priceCents, 0),
       },
     };
   } catch (error) {

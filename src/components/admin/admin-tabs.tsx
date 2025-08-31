@@ -43,11 +43,14 @@ export function AdminTabs() {
             <TabsTrigger value="availability" className="text-lg font-semibold">
               Disponibilidade
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="text-lg font-semibold relative">
+            <TabsTrigger
+              value="appointments"
+              className="text-lg font-semibold relative"
+            >
               Agendamentos
               {hasNewAppointments && (
-                <Badge 
-                  variant="destructive" 
+                <Badge
+                  variant="destructive"
                   className="absolute -top-2 -right-2 h-5 w-5 p-0 flex items-center justify-center text-xs"
                 >
                   !
@@ -62,7 +65,9 @@ export function AdminTabs() {
               {hasNewAppointments ? (
                 <div className="flex items-center gap-2 text-orange-600">
                   <Bell className="h-5 w-5 animate-pulse" />
-                  <span className="text-sm font-medium">Novos agendamentos</span>
+                  <span className="text-sm font-medium">
+                    Novos agendamentos
+                  </span>
                 </div>
               ) : (
                 <div className="flex items-center gap-2 text-gray-500">
