@@ -176,7 +176,13 @@ export function TimeSelection({
               Escolha o Horário
             </h2>
             <p className="text-muted-foreground">
-              {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''} • {services.reduce((total: number, s: Service) => total + s.durationMin, 0)} min total
+              {services.length} serviço{services.length !== 1 ? "s" : ""}{" "}
+              selecionado{services.length !== 1 ? "s" : ""} •{" "}
+              {services.reduce(
+                (total: number, s: Service) => total + s.durationMin,
+                0
+              )}{" "}
+              min total
             </p>
           </div>
           <div className="w-20"></div>
@@ -219,7 +225,13 @@ export function TimeSelection({
             Escolha o Horário
           </h2>
           <p className="text-muted-foreground">
-            {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''} • {services.reduce((total: number, s: Service) => total + s.durationMin, 0)} min total
+            {services.length} serviço{services.length !== 1 ? "s" : ""}{" "}
+            selecionado{services.length !== 1 ? "s" : ""} •{" "}
+            {services.reduce(
+              (total: number, s: Service) => total + s.durationMin,
+              0
+            )}{" "}
+            min total
           </p>
         </div>
         <div className="w-20"></div> {/* Spacer for centering */}

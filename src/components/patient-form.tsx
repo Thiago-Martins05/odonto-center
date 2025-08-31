@@ -113,7 +113,8 @@ export function PatientForm({
               <User className="w-4 h-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">
-                  {services.length} serviço{services.length !== 1 ? 's' : ''} selecionado{services.length !== 1 ? 's' : ''}
+                  {services.length} serviço{services.length !== 1 ? "s" : ""}{" "}
+                  selecionado{services.length !== 1 ? "s" : ""}
                 </p>
                 <p className="text-xs text-muted-foreground">Serviços</p>
               </div>
@@ -133,7 +134,12 @@ export function PatientForm({
               <Clock className="w-4 h-4 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">
-                  {formatDuration(services.reduce((total: number, s: Service) => total + s.durationMin, 0))}
+                  {formatDuration(
+                    services.reduce(
+                      (total: number, s: Service) => total + s.durationMin,
+                      0
+                    )
+                  )}
                 </p>
                 <p className="text-xs text-muted-foreground">Duração Total</p>
               </div>
@@ -141,17 +147,27 @@ export function PatientForm({
 
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className="text-sm">
-                {formatPrice(services.reduce((total: number, s: Service) => total + s.priceCents, 0))}
+                {formatPrice(
+                  services.reduce(
+                    (total: number, s: Service) => total + s.priceCents,
+                    0
+                  )
+                )}
               </Badge>
               <p className="text-xs text-muted-foreground">Preço Total</p>
             </div>
 
             {/* Lista detalhada dos serviços */}
             <div className="border-t pt-3">
-              <p className="text-xs text-muted-foreground mb-2">Serviços selecionados:</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                Serviços selecionados:
+              </p>
               <div className="space-y-2">
                 {services.map((service) => (
-                  <div key={service.id} className="flex items-center justify-between text-sm bg-background p-2 rounded-lg">
+                  <div
+                    key={service.id}
+                    className="flex items-center justify-between text-sm bg-background p-2 rounded-lg"
+                  >
                     <span className="font-medium">{service.name}</span>
                     <div className="flex items-center space-x-3 text-muted-foreground">
                       <span>{formatDuration(service.durationMin)}</span>

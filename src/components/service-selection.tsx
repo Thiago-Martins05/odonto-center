@@ -58,11 +58,17 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
   };
 
   const getTotalDuration = () => {
-    return selectedServices.reduce((total, service) => total + service.durationMin, 0);
+    return selectedServices.reduce(
+      (total, service) => total + service.durationMin,
+      0
+    );
   };
 
   const getTotalPrice = () => {
-    return selectedServices.reduce((total, service) => total + service.priceCents, 0);
+    return selectedServices.reduce(
+      (total, service) => total + service.priceCents,
+      0
+    );
   };
 
   if (loading) {
@@ -123,7 +129,10 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
           </h3>
           <div className="space-y-2">
             {selectedServices.map((service) => (
-              <div key={service.id} className="flex items-center justify-between text-sm">
+              <div
+                key={service.id}
+                className="flex items-center justify-between text-sm"
+              >
                 <span className="text-foreground">{service.name}</span>
                 <span className="text-muted-foreground">
                   {formatPrice(service.priceCents)}
@@ -133,7 +142,9 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
             <div className="border-t border-primary/20 pt-2 mt-3">
               <div className="flex items-center justify-between font-semibold">
                 <span>Total:</span>
-                <span className="text-primary">{formatPrice(getTotalPrice())}</span>
+                <span className="text-primary">
+                  {formatPrice(getTotalPrice())}
+                </span>
               </div>
               <div className="text-xs text-muted-foreground">
                 Duração total: {formatDuration(getTotalDuration())}
@@ -195,11 +206,14 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
       <div className="flex justify-center pt-6">
         <Button
           size="lg"
-          onClick={() => selectedServices.length > 0 && onServiceSelect(selectedServices)}
+          onClick={() =>
+            selectedServices.length > 0 && onServiceSelect(selectedServices)
+          }
           disabled={selectedServices.length === 0}
           className="px-8 py-3 text-lg font-semibold rounded-2xl"
         >
-          Continuar com {selectedServices.length} serviço{selectedServices.length !== 1 ? 's' : ''}
+          Continuar com {selectedServices.length} serviço
+          {selectedServices.length !== 1 ? "s" : ""}
         </Button>
       </div>
     </div>

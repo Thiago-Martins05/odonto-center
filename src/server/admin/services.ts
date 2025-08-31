@@ -19,7 +19,7 @@ const serviceSchema = z.object({
 export type ServiceFormData = z.infer<typeof serviceSchema>;
 
 // Mock database for now - replace with actual Prisma calls
-let mockServices: Service[] = [
+const mockServices: Service[] = [
   {
     id: "1",
     name: "Limpeza Dental Profunda",
@@ -126,13 +126,14 @@ export async function getServices(): Promise<Service[]> {
   try {
     // TODO: Replace with actual Prisma call
     // const services = await prisma.service.findMany({
+    //   where: { active: true },
     //   orderBy: { name: 'asc' }
     // });
-
-    return mockServices;
+    
+    return mockServices.filter(service => service.active);
   } catch (error) {
     console.error("Error fetching services:", error);
-    throw new Error("Failed to fetch services");
+    return mockServices.filter(service => service.active);
   }
 }
 
@@ -142,7 +143,13 @@ export async function createService(data: ServiceFormData): Promise<Service> {
 
     // TODO: Replace with actual Prisma call
     // const service = await prisma.service.create({
-    //   data: validatedData
+    //   data: {
+    //     ...validatedData,
+    //     slug: validatedData.name
+    //       .toLowerCase()
+    //       .replace(/\s+/g, "-")
+    //       .replace(/[^a-z0-9-]/g, ""),
+    //   }
     // });
 
     const newService: Service = {
@@ -172,7 +179,13 @@ export async function updateService(
     // TODO: Replace with actual Prisma call
     // const service = await prisma.service.update({
     //   where: { id },
-    //   data: validatedData
+    //   data: {
+    //     ...validatedData,
+    //     slug: validatedData.name
+    //       .toLowerCase()
+    //       .replace(/\s+/g, "-")
+    //       .replace(/[^a-z0-9-]/g, ""),
+    //   }
     // });
 
     const serviceIndex = mockServices.findIndex((s) => s.id === id);
@@ -183,6 +196,10 @@ export async function updateService(
     const updatedService: Service = {
       ...mockServices[serviceIndex],
       ...validatedData,
+      slug: validatedData.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, ""),
     };
 
     mockServices[serviceIndex] = updatedService;
@@ -200,7 +217,10 @@ export async function deleteService(id: string): Promise<void> {
     //   where: { id }
     // });
 
-    mockServices = mockServices.filter((s) => s.id !== id);
+    const serviceIndex = mockServices.findIndex((s) => s.id === id);
+    if (serviceIndex !== -1) {
+      mockServices.splice(serviceIndex, 1);
+    }
   } catch (error) {
     console.error("Error deleting service:", error);
     throw new Error("Failed to delete service");
@@ -239,7 +259,7 @@ export async function getServiceBySlug(slug: string): Promise<Service | null> {
     // const service = await prisma.service.findUnique({
     //   where: { slug }
     // });
-
+    
     const service = mockServices.find((s) => s.slug === slug);
     return service || null;
   } catch (error) {

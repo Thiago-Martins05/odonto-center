@@ -22,11 +22,12 @@ export async function createAppointment(data: CreateAppointmentData) {
     const appointmentId = `apt_${Date.now()}`;
 
     // Calculate appointment end time based on total service duration
-    const totalDuration = data.services.reduce((total, service) => total + service.durationMin, 0);
-    const startsAt = new Date(data.selectedSlot);
-    const endsAt = new Date(
-      startsAt.getTime() + totalDuration * 60 * 1000
+    const totalDuration = data.services.reduce(
+      (total, service) => total + service.durationMin,
+      0
     );
+    const startsAt = new Date(data.selectedSlot);
+    const endsAt = new Date(startsAt.getTime() + totalDuration * 60 * 1000);
 
     // Mock appointment object
     const appointment = {
@@ -39,7 +40,10 @@ export async function createAppointment(data: CreateAppointmentData) {
       observations: data.observations,
       services: data.services,
       totalDuration,
-      totalPrice: data.services.reduce((total, service) => total + service.priceCents, 0),
+      totalPrice: data.services.reduce(
+        (total, service) => total + service.priceCents,
+        0
+      ),
     };
 
     // TODO: Insert into database
@@ -61,7 +65,7 @@ export async function createAppointment(data: CreateAppointmentData) {
     // });
 
     console.log("Appointment created in database:", appointment);
-    console.log("Services:", data.services.map(s => s.name).join(", "));
+    console.log("Services:", data.services.map((s) => s.name).join(", "));
     console.log("Total duration:", totalDuration, "minutes");
     console.log("Total price:", appointment.totalPrice / 100, "reais");
 
