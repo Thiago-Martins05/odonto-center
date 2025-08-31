@@ -13,6 +13,7 @@ import {
   Home,
 } from "lucide-react";
 import { AppointmentData } from "./scheduling-flow";
+import { formatPrice, formatDuration } from "@/types/service";
 
 interface SuccessScreenProps {
   appointmentData: AppointmentData;
@@ -23,13 +24,6 @@ export function SuccessScreen({
   appointmentData,
   onBackToStart,
 }: SuccessScreenProps) {
-  const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(priceInCents / 100);
-  };
-
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
     return new Intl.DateTimeFormat("pt-BR", {
@@ -38,18 +32,6 @@ export function SuccessScreen({
       hour: "2-digit",
       minute: "2-digit",
     }).format(date);
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) {
-      return `${minutes} min`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    if (remainingMinutes === 0) {
-      return `${hours}h`;
-    }
-    return `${hours}h ${remainingMinutes}min`;
   };
 
   const handleAddToCalendar = () => {
@@ -121,7 +103,7 @@ export function SuccessScreen({
               <DollarSign className="w-5 h-5 text-muted-foreground" />
               <div className="text-left">
                 <Badge variant="outline" className="text-sm">
-                  {formatPrice(appointmentData.service.price)}
+                  {formatPrice(appointmentData.service.priceCents)}
                 </Badge>
                 <p className="text-xs text-muted-foreground mt-1">Preço</p>
               </div>

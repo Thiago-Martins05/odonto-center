@@ -27,7 +27,7 @@ export interface AvailabilityRule {
 
 export interface BlackoutDate {
   id: string;
-  date: string;
+  date: Date;
   reason: string;
 }
 
@@ -68,12 +68,12 @@ let mockAvailabilityRules: AvailabilityRule[] = [
 let mockBlackoutDates: BlackoutDate[] = [
   {
     id: "1",
-    date: "2024-12-25",
+    date: new Date("2024-12-25"),
     reason: "Natal",
   },
   {
     id: "2",
-    date: "2024-12-31",
+    date: new Date("2024-12-31"),
     reason: "Ano Novo",
   },
 ];
@@ -157,7 +157,8 @@ export async function createBlackoutDate(
 
     const newBlackout: BlackoutDate = {
       id: `blackout_${Date.now()}`,
-      ...validatedData,
+      date: new Date(validatedData.date),
+      reason: validatedData.reason,
     };
 
     mockBlackoutDates.push(newBlackout);

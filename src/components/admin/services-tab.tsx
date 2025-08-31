@@ -37,20 +37,13 @@ const serviceSchema = z.object({
     .number()
     .min(15, "Duração mínima é 15 minutos")
     .max(480, "Duração máxima é 8 horas"),
-  price: z.number().min(0, "Preço deve ser maior que zero"),
+  priceCents: z.number().min(0, "Preço deve ser maior que zero"),
   active: z.boolean(),
 });
 
 type ServiceFormData = z.infer<typeof serviceSchema>;
 
-interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  price: number;
-  active: boolean;
-}
+import { Service, formatPrice, formatDuration } from "@/types/service";
 
 export function ServicesTab() {
   const [services, setServices] = useState<Service[]>([]);
@@ -81,27 +74,30 @@ export function ServicesTab() {
         {
           id: "1",
           name: "Consulta de Avaliação",
+          slug: "consulta-avaliacao",
           description:
             "Avaliação completa da saúde bucal com plano de tratamento personalizado",
           durationMin: 60,
-          price: 15000,
+          priceCents: 15000,
           active: true,
         },
         {
           id: "2",
           name: "Limpeza e Profilaxia",
+          slug: "limpeza-profilaxia",
           description:
             "Limpeza profissional, remoção de tártaro e polimento dos dentes",
           durationMin: 45,
-          price: 12000,
+          priceCents: 12000,
           active: true,
         },
         {
           id: "3",
           name: "Tratamento de Canal",
+          slug: "tratamento-canal",
           description: "Tratamento endodôntico completo com anestesia local",
           durationMin: 90,
-          price: 80000,
+          priceCents: 80000,
           active: false,
         },
       ];
@@ -126,6 +122,10 @@ export function ServicesTab() {
         // Create new service
         const newService: Service = {
           id: `service_${Date.now()}`,
+          slug: data.name
+            .toLowerCase()
+            .replace(/\s+/g, "-")
+            .replace(/[^a-z0-9-]/g, ""),
           ...data,
         };
         setServices((prev) => [...prev, newService]);
@@ -143,7 +143,7 @@ export function ServicesTab() {
     setValue("name", service.name);
     setValue("description", service.description);
     setValue("durationMin", service.durationMin);
-    setValue("price", service.price);
+    setValue("priceCents", service.priceCents);
     setValue("active", service.active);
     setIsCreateDialogOpen(true);
   };
@@ -170,21 +170,6 @@ export function ServicesTab() {
     setIsCreateDialogOpen(false);
     setEditingService(null);
     reset();
-  };
-
-  const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(priceInCents / 100);
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) return `${minutes} min`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    if (remainingMinutes === 0) return `${hours}h`;
-    return `${hours}h ${remainingMinutes}min`;
   };
 
   if (loading) {
@@ -230,7 +215,7 @@ export function ServicesTab() {
                     {service.description}
                   </TableCell>
                   <TableCell>{formatDuration(service.durationMin)}</TableCell>
-                  <TableCell>{formatPrice(service.price)}</TableCell>
+                  <TableCell>{formatPrice(service.priceCents)}</TableCell>
                   <TableCell>
                     <Badge variant={service.active ? "default" : "secondary"}>
                       {service.active ? "Ativo" : "Inativo"}
@@ -326,16 +311,16 @@ export function ServicesTab() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="price">Preço (centavos) *</Label>
+                <Label htmlFor="priceCents">Preço (centavos) *</Label>
                 <Input
-                  id="price"
+                  id="priceCents"
                   type="number"
                   placeholder="15000"
-                  {...register("price", { valueAsNumber: true })}
+                  {...register("priceCents", { valueAsNumber: true })}
                 />
-                {errors.price && (
+                {errors.priceCents && (
                   <p className="text-sm text-destructive">
-                    {errors.price.message}
+                    {errors.priceCents.message}
                   </p>
                 )}
                 <p className="text-xs text-muted-foreground">

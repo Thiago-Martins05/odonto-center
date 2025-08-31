@@ -38,22 +38,9 @@ import {
   XCircle,
 } from "lucide-react";
 
-interface Appointment {
-  id: string;
-  patientName: string;
-  patientEmail: string;
-  patientPhone?: string;
-  serviceName: string;
-  startsAt: string;
-  endsAt: string;
-  status: "confirmed" | "done" | "cancelled";
-  observations?: string;
-}
+import { Appointment } from "@/server/admin/appointments";
 
-interface Service {
-  id: string;
-  name: string;
-}
+import { Service } from "@/types/service";
 
 const appointmentStatuses = [
   { value: "confirmed", label: "Confirmado", variant: "default" as const },
@@ -96,8 +83,8 @@ export function AppointmentsTab() {
           patientEmail: "joao@email.com",
           patientPhone: "(11) 99999-9999",
           serviceName: "Consulta de Avaliação",
-          startsAt: "2024-12-20T10:00:00Z",
-          endsAt: "2024-12-20T11:00:00Z",
+          startsAt: new Date("2024-12-20T10:00:00Z"),
+          endsAt: new Date("2024-12-20T11:00:00Z"),
           status: "confirmed",
           observations: "Primeira consulta",
         },
@@ -107,8 +94,8 @@ export function AppointmentsTab() {
           patientEmail: "maria@email.com",
           patientPhone: "(11) 88888-8888",
           serviceName: "Limpeza e Profilaxia",
-          startsAt: "2024-12-20T14:00:00Z",
-          endsAt: "2024-12-20T14:45:00Z",
+          startsAt: new Date("2024-12-20T14:00:00Z"),
+          endsAt: new Date("2024-12-20T14:45:00Z"),
           status: "done",
         },
         {
@@ -117,17 +104,41 @@ export function AppointmentsTab() {
           patientEmail: "pedro@email.com",
           patientPhone: "(11) 77777-7777",
           serviceName: "Tratamento de Canal",
-          startsAt: "2024-12-21T09:00:00Z",
-          endsAt: "2024-12-21T10:30:00Z",
+          startsAt: new Date("2024-12-21T09:00:00Z"),
+          endsAt: new Date("2024-12-21T10:30:00Z"),
           status: "cancelled",
           observations: "Paciente solicitou cancelamento",
         },
       ];
 
       const mockServices: Service[] = [
-        { id: "1", name: "Consulta de Avaliação" },
-        { id: "2", name: "Limpeza e Profilaxia" },
-        { id: "3", name: "Tratamento de Canal" },
+        {
+          id: "1",
+          name: "Consulta de Avaliação",
+          slug: "consulta-avaliacao",
+          description: "Avaliação completa da saúde bucal",
+          durationMin: 60,
+          priceCents: 15000,
+          active: true,
+        },
+        {
+          id: "2",
+          name: "Limpeza e Profilaxia",
+          slug: "limpeza-profilaxia",
+          description: "Limpeza profissional",
+          durationMin: 45,
+          priceCents: 12000,
+          active: true,
+        },
+        {
+          id: "3",
+          name: "Tratamento de Canal",
+          slug: "tratamento-canal",
+          description: "Tratamento endodôntico",
+          durationMin: 90,
+          priceCents: 80000,
+          active: true,
+        },
       ];
 
       setAppointments(mockAppointments);
@@ -321,7 +332,9 @@ export function AppointmentsTab() {
                   <TableCell>
                     <div className="flex items-center space-x-2">
                       <Calendar className="w-4 h-4 text-muted-foreground" />
-                      <span>{formatDate(appointment.startsAt)}</span>
+                      <span>
+                        {formatDate(appointment.startsAt.toISOString())}
+                      </span>
                     </div>
                   </TableCell>
                   <TableCell>{getStatusBadge(appointment.status)}</TableCell>
@@ -442,7 +455,7 @@ export function AppointmentsTab() {
                     <Clock className="w-5 h-5 text-muted-foreground" />
                     <div>
                       <p className="font-medium">
-                        {formatDate(selectedAppointment.startsAt)}
+                        {formatDate(selectedAppointment.startsAt.toISOString())}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         Data e Hora

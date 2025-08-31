@@ -2,14 +2,10 @@
 
 import { sendAppointmentConfirmation } from "./email";
 
+import { Service } from "@/types/service";
+
 export interface CreateAppointmentData {
-  service: {
-    id: string;
-    name: string;
-    description: string;
-    durationMin: number;
-    price: number;
-  };
+  service: Service;
   selectedSlot: string;
   patientName: string;
   patientEmail: string;

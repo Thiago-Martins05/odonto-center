@@ -47,24 +47,11 @@ const blackoutDateSchema = z.object({
 type AvailabilityRuleFormData = z.infer<typeof availabilityRuleSchema>;
 type BlackoutDateFormData = z.infer<typeof blackoutDateSchema>;
 
-interface AvailabilityRule {
-  id: string;
-  weekday: number;
-  start: string;
-  end: string;
-  serviceId?: string;
-}
+import { AvailabilityRule } from "@/server/admin/availability";
 
-interface BlackoutDate {
-  id: string;
-  date: string;
-  reason: string;
-}
+import { BlackoutDate } from "@/server/admin/availability";
 
-interface Service {
-  id: string;
-  name: string;
-}
+import { Service } from "@/types/service";
 
 const weekdays = [
   { value: "0", label: "Domingo" },
@@ -139,20 +126,44 @@ export function AvailabilityTab() {
       const mockBlackouts: BlackoutDate[] = [
         {
           id: "1",
-          date: "2024-12-25",
+          date: new Date("2024-12-25"),
           reason: "Natal",
         },
         {
           id: "2",
-          date: "2024-12-31",
+          date: new Date("2024-12-31"),
           reason: "Ano Novo",
         },
       ];
 
       const mockServices: Service[] = [
-        { id: "1", name: "Consulta de Avaliação" },
-        { id: "2", name: "Limpeza e Profilaxia" },
-        { id: "3", name: "Tratamento de Canal" },
+        {
+          id: "1",
+          name: "Consulta de Avaliação",
+          slug: "consulta-avaliacao",
+          description: "Avaliação completa da saúde bucal",
+          durationMin: 60,
+          priceCents: 15000,
+          active: true,
+        },
+        {
+          id: "2",
+          name: "Limpeza e Profilaxia",
+          slug: "limpeza-profilaxia",
+          description: "Limpeza profissional",
+          durationMin: 45,
+          priceCents: 12000,
+          active: true,
+        },
+        {
+          id: "3",
+          name: "Tratamento de Canal",
+          slug: "tratamento-canal",
+          description: "Tratamento endodôntico",
+          durationMin: 90,
+          priceCents: 80000,
+          active: true,
+        },
       ];
 
       setAvailabilityRules(mockRules);
@@ -187,7 +198,7 @@ export function AvailabilityTab() {
     try {
       const newBlackout: BlackoutDate = {
         id: `blackout_${Date.now()}`,
-        date: data.date,
+        date: new Date(data.date),
         reason: data.reason,
       };
 

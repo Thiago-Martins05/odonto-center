@@ -11,13 +11,7 @@ import { PatientForm } from "./patient-form";
 import { SuccessScreen } from "./success-screen";
 import { createAppointment } from "@/server/appointments";
 
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  price: number;
-}
+import { Service } from "@/types/service";
 
 export interface AppointmentData {
   service: Service;

@@ -12,7 +12,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
-import { Service } from "./scheduling-flow";
+import { Service } from "@/types/service";
 import { TimeSlotSkeleton } from "./skeletons/time-slot-skeleton";
 
 interface TimeSelectionProps {

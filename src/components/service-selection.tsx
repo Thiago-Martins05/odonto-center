@@ -11,7 +11,7 @@ import {
   AlertCircle,
   RefreshCw,
 } from "lucide-react";
-import { Service } from "./scheduling-flow";
+import { Service, formatPrice, formatDuration } from "@/types/service";
 import { ServiceSkeleton } from "./skeletons/service-skeleton";
 
 interface ServiceSelectionProps {
@@ -40,7 +40,9 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
           description:
             "Avaliação completa da saúde bucal com plano de tratamento personalizado",
           durationMin: 60,
-          price: 15000, // R$ 150,00
+          priceCents: 15000, // R$ 150,00
+          slug: "consulta-avaliacao",
+          active: true,
         },
         {
           id: "2",
@@ -48,14 +50,18 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
           description:
             "Limpeza profissional, remoção de tártaro e polimento dos dentes",
           durationMin: 45,
-          price: 12000, // R$ 120,00
+          priceCents: 12000, // R$ 120,00
+          slug: "limpeza-profilaxia",
+          active: true,
         },
         {
           id: "3",
           name: "Tratamento de Canal",
           description: "Tratamento endodôntico completo com anestesia local",
           durationMin: 90,
-          price: 80000, // R$ 800,00
+          priceCents: 80000, // R$ 800,00
+          slug: "tratamento-canal",
+          active: true,
         },
         {
           id: "4",
@@ -63,7 +69,9 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
           description:
             "Remoção de dente com anestesia local e cuidados pós-operatórios",
           durationMin: 30,
-          price: 20000, // R$ 200,00
+          priceCents: 20000, // R$ 200,00
+          slug: "extracao-simples",
+          active: true,
         },
       ];
 
@@ -74,25 +82,6 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
       setError("Não foi possível carregar os serviços. Tente novamente.");
       setLoading(false);
     }
-  };
-
-  const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(priceInCents / 100);
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) {
-      return `${minutes} min`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    if (remainingMinutes === 0) {
-      return `${hours}h`;
-    }
-    return `${hours}h ${remainingMinutes}min`;
   };
 
   if (loading) {
@@ -185,7 +174,7 @@ export function ServiceSelection({ onServiceSelect }: ServiceSelectionProps) {
                     className="flex items-center space-x-1"
                   >
                     <DollarSign className="w-3 h-3" />
-                    <span>{formatPrice(service.price)}</span>
+                    <span>{formatPrice(service.priceCents)}</span>
                   </Badge>
                 </div>
               </div>

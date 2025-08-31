@@ -1,10 +1,7 @@
 import { Resend } from "resend";
-import {
-  makeIcs,
-  type Appointment,
-  type Service,
-  type Clinic,
-} from "../lib/ics";
+import { makeIcs, type Appointment, type Clinic } from "../lib/ics";
+import { Service } from "@/types/service";
+import { formatPrice } from "@/types/service";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -33,9 +30,11 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
     const mockService: Service = {
       id: "1",
       name: "Consulta de Avaliação",
+      slug: "consulta-avaliacao",
       description: "Avaliação completa da saúde bucal",
       durationMin: 60,
-      price: 15000,
+      priceCents: 15000,
+      active: true,
     };
 
     // Generate ICS calendar file
@@ -58,13 +57,6 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
         hour: "2-digit",
         minute: "2-digit",
       }).format(date);
-    };
-
-    const formatPrice = (priceInCents: number) => {
-      return new Intl.NumberFormat("pt-BR", {
-        style: "currency",
-        currency: "BRL",
-      }).format(priceInCents / 100);
     };
 
     // Send email
@@ -127,7 +119,7 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
                 <div class="detail-row">
                   <span class="detail-label">Preço:</span>
                   <span class="detail-value">${formatPrice(
-                    mockService.price
+                    mockService.priceCents
                   )}</span>
                 </div>
                 <div class="detail-row">

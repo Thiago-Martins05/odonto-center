@@ -20,7 +20,7 @@ import {
   Phone,
   FileText,
 } from "lucide-react";
-import { Service } from "./scheduling-flow";
+import { Service, formatPrice, formatDuration } from "@/types/service";
 
 const patientFormSchema = z.object({
   patientName: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
@@ -49,18 +49,12 @@ export function PatientForm({
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid },
   } = useForm<PatientFormData>({
     resolver: zodResolver(patientFormSchema),
     mode: "onChange",
   });
-
-  const formatPrice = (priceInCents: number) => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(priceInCents / 100);
-  };
 
   const formatDate = (isoString: string) => {
     const date = new Date(isoString);
@@ -70,18 +64,6 @@ export function PatientForm({
       hour: "2-digit",
       minute: "2-digit",
     }).format(date);
-  };
-
-  const formatDuration = (minutes: number) => {
-    if (minutes < 60) {
-      return `${minutes} min`;
-    }
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    if (remainingMinutes === 0) {
-      return `${hours}h`;
-    }
-    return `${hours}h ${remainingMinutes}min`;
   };
 
   const onFormSubmit = async (data: PatientFormData) => {
@@ -157,7 +139,7 @@ export function PatientForm({
 
             <div className="flex items-center space-x-3">
               <Badge variant="outline" className="text-sm">
-                {formatPrice(service.price)}
+                {formatPrice(service.priceCents)}
               </Badge>
               <p className="text-xs text-muted-foreground">Preço</p>
             </div>
@@ -222,7 +204,7 @@ export function PatientForm({
           </Label>
           <PhoneInput
             id="patientPhone"
-            {...register("patientPhone")}
+            onChange={(value) => setValue("patientPhone", value)}
             className="h-12 rounded-xl"
           />
         </div>

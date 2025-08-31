@@ -14,7 +14,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
@@ -25,11 +25,7 @@ export function LoginForm() {
     e.preventDefault();
 
     if (!email) {
-      toast({
-        title: "Erro",
-        description: "Por favor, insira seu e-mail.",
-        variant: "destructive",
-      });
+      toast.error("Por favor, insira seu e-mail.");
       return;
     }
 
@@ -42,24 +38,15 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast({
-          title: "Erro de autenticação",
-          description: "E-mail não autorizado para acesso administrativo.",
-          variant: "destructive",
-        });
+        toast.error("E-mail não autorizado para acesso administrativo.");
       } else if (result?.ok) {
-        toast({
-          title: "Login realizado com sucesso!",
-          description: "Redirecionando para o painel administrativo...",
-        });
+        toast.success(
+          "Login realizado com sucesso! Redirecionando para o painel administrativo..."
+        );
         router.push("/admin");
       }
     } catch (error) {
-      toast({
-        title: "Erro inesperado",
-        description: "Ocorreu um erro durante o login. Tente novamente.",
-        variant: "destructive",
-      });
+      toast.error("Ocorreu um erro durante o login. Tente novamente.");
     } finally {
       setIsLoading(false);
     }

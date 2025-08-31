@@ -8,13 +8,7 @@ export interface Appointment {
   observations?: string;
 }
 
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  price: number;
-}
+import { Service } from "@/types/service";
 
 export interface Clinic {
   name: string;

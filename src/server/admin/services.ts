@@ -11,47 +11,43 @@ const serviceSchema = z.object({
     .number()
     .min(15, "Duração mínima é 15 minutos")
     .max(480, "Duração máxima é 8 horas"),
-  price: z.number().min(0, "Preço deve ser maior que zero"),
+  priceCents: z.number().min(0, "Preço deve ser maior que zero"),
   active: z.boolean(),
 });
 
 export type ServiceFormData = z.infer<typeof serviceSchema>;
 
-export interface Service {
-  id: string;
-  name: string;
-  description: string;
-  durationMin: number;
-  price: number;
-  active: boolean;
-}
+import { Service } from "@/types/service";
 
 // Mock database for now - replace with actual Prisma calls
 let mockServices: Service[] = [
   {
     id: "1",
     name: "Consulta de Avaliação",
+    slug: "consulta-avaliacao",
     description:
       "Avaliação completa da saúde bucal com plano de tratamento personalizado",
     durationMin: 60,
-    price: 15000,
+    priceCents: 15000,
     active: true,
   },
   {
     id: "2",
     name: "Limpeza e Profilaxia",
+    slug: "limpeza-profilaxia",
     description:
       "Limpeza profissional, remoção de tártaro e polimento dos dentes",
     durationMin: 45,
-    price: 12000,
+    priceCents: 12000,
     active: true,
   },
   {
     id: "3",
     name: "Tratamento de Canal",
+    slug: "tratamento-canal",
     description: "Tratamento endodôntico completo com anestesia local",
     durationMin: 90,
-    price: 80000,
+    priceCents: 80000,
     active: false,
   },
 ];
@@ -81,6 +77,10 @@ export async function createService(data: ServiceFormData): Promise<Service> {
 
     const newService: Service = {
       id: `service_${Date.now()}`,
+      slug: validatedData.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, ""),
       ...validatedData,
     };
 

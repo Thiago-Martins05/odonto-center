@@ -12,8 +12,8 @@ export interface Appointment {
   patientEmail: string;
   patientPhone?: string;
   serviceName: string;
-  startsAt: string;
-  endsAt: string;
+  startsAt: Date;
+  endsAt: Date;
   status: AppointmentStatus;
   observations?: string;
 }
@@ -33,8 +33,8 @@ let mockAppointments: Appointment[] = [
     patientEmail: "joao@email.com",
     patientPhone: "(11) 99999-9999",
     serviceName: "Consulta de Avaliação",
-    startsAt: "2024-12-20T10:00:00Z",
-    endsAt: "2024-12-20T11:00:00Z",
+    startsAt: new Date("2024-12-20T10:00:00Z"),
+    endsAt: new Date("2024-12-20T11:00:00Z"),
     status: "confirmed",
     observations: "Primeira consulta",
   },
@@ -44,8 +44,8 @@ let mockAppointments: Appointment[] = [
     patientEmail: "maria@email.com",
     patientPhone: "(11) 88888-8888",
     serviceName: "Limpeza e Profilaxia",
-    startsAt: "2024-12-20T14:00:00Z",
-    endsAt: "2024-12-20T14:45:00Z",
+    startsAt: new Date("2024-12-20T14:00:00Z"),
+    endsAt: new Date("2024-12-20T14:45:00Z"),
     status: "done",
   },
   {
@@ -54,8 +54,8 @@ let mockAppointments: Appointment[] = [
     patientEmail: "pedro@email.com",
     patientPhone: "(11) 77777-7777",
     serviceName: "Tratamento de Canal",
-    startsAt: "2024-12-21T09:00:00Z",
-    endsAt: "2024-12-21T10:30:00Z",
+    startsAt: new Date("2024-12-21T09:00:00Z"),
+    endsAt: new Date("2024-12-21T10:30:00Z"),
     status: "cancelled",
     observations: "Paciente solicitou cancelamento",
   },
