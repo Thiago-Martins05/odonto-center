@@ -1,7 +1,6 @@
 "use server";
 
 import { sendAppointmentConfirmation } from "./email";
-
 import { Service } from "@/types/service";
 
 export interface CreateAppointmentData {
@@ -71,8 +70,12 @@ export async function createAppointment(data: CreateAppointmentData) {
 
     // Send confirmation email
     try {
-      await sendAppointmentConfirmation(appointmentId);
-      console.log("Confirmation email sent successfully");
+      const emailResult = await sendAppointmentConfirmation(appointmentId);
+      if (emailResult.success) {
+        console.log("Confirmation email sent successfully");
+      } else {
+        console.log("Email service not available:", emailResult.message);
+      }
     } catch (emailError) {
       console.error("Failed to send confirmation email:", emailError);
       // Don't fail the appointment creation if email fails
