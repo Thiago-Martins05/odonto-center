@@ -9,8 +9,19 @@ export const metadata: Metadata = {
   description: "Conheça nossa missão, diferenciais e estrutura.",
 };
 
+// Forçar renderização dinâmica para evitar problemas no build
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function AboutPage() {
-  const clinic = await prisma.clinicInfo.findFirst();
+  let clinic = null;
+  
+  try {
+    clinic = await prisma.clinicInfo.findFirst();
+  } catch (error) {
+    console.error('Erro ao carregar informações da clínica:', error);
+    // Em caso de erro, clinic permanece null
+  }
 
   const defaultHighlights = [
     "Biossegurança",

@@ -2,7 +2,7 @@ export interface Service {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   durationMin: number;
   priceCents: number;
   active: boolean;

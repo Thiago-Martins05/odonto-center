@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -20,6 +20,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, Save, X } from "lucide-react";
@@ -140,7 +141,7 @@ export function ServicesTab() {
   const handleEdit = (service: Service) => {
     setEditingService(service);
     setValue("name", service.name);
-    setValue("description", service.description);
+    setValue("description", service.description || "");
     setValue("durationMin", service.durationMin);
     setValue("priceCents", service.priceCents);
     setValue("active", service.active);
@@ -211,7 +212,7 @@ export function ServicesTab() {
                 <TableRow key={service.id}>
                   <TableCell className="font-medium">{service.name}</TableCell>
                   <TableCell className="max-w-xs truncate">
-                    {service.description}
+                    {service.description || "Sem descrição"}
                   </TableCell>
                   <TableCell>{formatDuration(service.durationMin)}</TableCell>
                   <TableCell>{formatPrice(service.priceCents)}</TableCell>

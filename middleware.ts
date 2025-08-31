@@ -1,19 +1,16 @@
-import { withAuth } from "next-auth/middleware";
+import { auth } from "@/lib/auth";
 
-export default withAuth(
-  function middleware(req) {
-    // This function runs after authentication is verified
-    // You can add additional logic here if needed
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => {
-        // Only allow access if user has admin role
-        return token?.role === "admin";
-      },
-    },
+export default auth((req) => {
+  const isLoggedIn = !!req.auth;
+  const isAdmin = req.auth?.user?.role === "admin";
+  
+  // Proteger rotas admin
+  if (req.nextUrl.pathname.startsWith("/admin")) {
+    if (!isLoggedIn || !isAdmin) {
+      return Response.redirect(new URL("/login", req.nextUrl));
+    }
   }
-);
+});
 
 export const config = {
   matcher: ["/admin/:path*"],

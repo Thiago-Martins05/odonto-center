@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: true, // Temporário para completar a análise
+    ignoreBuildErrors: false, // Build funcionando, removendo configuração temporária
+  },
+  // Resolver problema de múltiplos lockfiles
+  outputFileTracingRoot: process.cwd(),
+  // Desabilitar pré-renderização para páginas que dependem do banco
+  experimental: {
+    // Desabilitar SSG para páginas que fazem queries no banco
+    workerThreads: false,
   },
 };
 

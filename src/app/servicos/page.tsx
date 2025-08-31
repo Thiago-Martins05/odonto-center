@@ -8,11 +8,22 @@ export const metadata: Metadata = {
   description: "Tratamentos odontológicos com agendamento online.",
 };
 
+// Forçar renderização dinâmica para evitar problemas no build
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function ServicesPage() {
-  const services = await prisma.service.findMany({
-    where: { active: true },
-    orderBy: { name: "asc" },
-  });
+  let services: Service[] = [];
+  
+  try {
+    services = await prisma.service.findMany({
+      where: { active: true },
+      orderBy: { name: "asc" },
+    });
+  } catch (error) {
+    console.error('Erro ao carregar serviços:', error);
+    // Em caso de erro, retorna array vazio
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
