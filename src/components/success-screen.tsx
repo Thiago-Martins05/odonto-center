@@ -57,6 +57,11 @@ export function SuccessScreen({
           Sua consulta foi agendada com sucesso! Enviamos a confirmação por
           e-mail. Verifique sua caixa de entrada.
         </p>
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-2xl mx-auto">
+          <p className="text-sm text-blue-800">
+            ✅ <strong>Notificação enviada:</strong> O administrador da clínica foi notificado sobre seu agendamento e entrará em contato se necessário.
+          </p>
+        </div>
       </div>
 
       {/* Appointment Summary */}

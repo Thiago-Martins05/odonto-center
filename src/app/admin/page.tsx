@@ -1,11 +1,11 @@
 import { Metadata } from "next";
 import { Navigation } from "@/components/navigation";
 import { AdminTabs } from "@/components/admin/admin-tabs";
+import { AdminNotificationBanner } from "@/components/admin/admin-notification-banner";
 
 export const metadata: Metadata = {
-  title: "Painel Administrativo | Odonto Center",
-  description:
-    "Painel administrativo para gerenciar serviços, disponibilidade e agendamentos da clínica odontológica.",
+  title: "Painel Administrativo - Odonto Center",
+  description: "Gerencie serviços, disponibilidade e agendamentos",
   robots: {
     index: false,
     follow: false,
@@ -16,6 +16,7 @@ export default function AdminPage() {
   return (
     <div>
       <Navigation />
+      <AdminNotificationBanner />
       <div className="max-w-7xl mx-auto px-4 py-20">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-text-primary font-dm-serif mb-4">
