@@ -68,7 +68,7 @@ export function ServicesTab() {
       const response = await fetch("/api/admin/services");
       console.log("📡 Status da resposta fetchServices:", response.status);
       console.log("📡 Response OK fetchServices:", response.ok);
-      
+
       if (response.ok) {
         const data = await response.json();
         console.log("📦 Dados recebidos do fetchServices:", data);

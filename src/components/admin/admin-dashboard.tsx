@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -21,6 +21,7 @@ import {
   Trash2,
   Eye,
   LogOut,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
@@ -30,10 +31,46 @@ import { useAuth } from "@/lib/auth-hook";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
+interface DashboardStats {
+  totalAppointments: number;
+  activeServices: number;
+  todayAppointments: number;
+  monthlyRevenue: number;
+  recentActivity: Array<{
+    id: string;
+    type: string;
+    description: string;
+    timestamp: string;
+  }>;
+}
+
 export function AdminDashboard() {
   const { user, logout } = useAuth();
   const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  const fetchDashboardStats = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/admin/dashboard/stats");
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      } else {
+        console.error("Failed to fetch dashboard stats");
+      }
+    } catch (error) {
+      console.error("Error fetching dashboard stats:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -45,8 +82,8 @@ export function AdminDashboard() {
     setActiveTab(tab);
     const tabNames = {
       services: "Serviços",
-      appointments: "Agendamentos", 
-      availability: "Disponibilidade"
+      appointments: "Agendamentos",
+      availability: "Disponibilidade",
     };
     toast.success(`Navegando para ${tabNames[tab as keyof typeof tabNames]}`);
   };
@@ -120,7 +157,11 @@ export function AdminDashboard() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <OverviewContent onQuickAction={handleQuickAction} />
+            <OverviewContent
+              onQuickAction={handleQuickAction}
+              stats={stats}
+              loading={loading}
+            />
           </TabsContent>
 
           {/* Services Tab */}
@@ -148,7 +189,26 @@ export function AdminDashboard() {
   );
 }
 
-function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => void }) {
+function OverviewContent({
+  onQuickAction,
+  stats,
+  loading,
+}: {
+  onQuickAction: (tab: string) => void;
+  stats: DashboardStats | null;
+  loading: boolean;
+}) {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p className="text-gray-600">Carregando estatísticas...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -161,9 +221,11 @@ function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => vo
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">24</div>
+            <div className="text-2xl font-bold">
+              {stats?.totalAppointments || 0}
+            </div>
             <p className="text-xs text-muted-foreground">
-              +2 desde o último mês
+              Todos os agendamentos
             </p>
           </CardContent>
         </Card>
@@ -176,8 +238,12 @@ function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => vo
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8</div>
-            <p className="text-xs text-muted-foreground">Todos disponíveis</p>
+            <div className="text-2xl font-bold">
+              {stats?.activeServices || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Disponíveis para agendamento
+            </p>
           </CardContent>
         </Card>
 
@@ -189,8 +255,14 @@ function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => vo
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">Próximo às 14:00</p>
+            <div className="text-2xl font-bold">
+              {stats?.todayAppointments || 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {(stats?.todayAppointments || 0) > 0
+                ? "Agendamentos para hoje"
+                : "Nenhum agendamento hoje"}
+            </p>
           </CardContent>
         </Card>
 
@@ -202,10 +274,10 @@ function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => vo
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ 12.450</div>
-            <p className="text-xs text-muted-foreground">
-              +15% desde o último mês
-            </p>
+            <div className="text-2xl font-bold">
+              R$ {(stats?.monthlyRevenue || 0).toFixed(2)}
+            </div>
+            <p className="text-xs text-muted-foreground">Este mês</p>
           </CardContent>
         </Card>
       </div>
@@ -255,36 +327,36 @@ function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => vo
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Novo agendamento criado</p>
-                <p className="text-xs text-gray-500">
-                  Consulta de Rotina - 15:30
-                </p>
+            {stats?.recentActivity && stats.recentActivity.length > 0 ? (
+              stats.recentActivity.map((activity) => (
+                <div
+                  key={activity.id}
+                  className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg"
+                >
+                  <div
+                    className={`w-2 h-2 rounded-full ${
+                      activity.type === "appointment"
+                        ? "bg-green-500"
+                        : activity.type === "service"
+                        ? "bg-blue-500"
+                        : "bg-yellow-500"
+                    }`}
+                  ></div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">
+                      {activity.description}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(activity.timestamp).toLocaleString("pt-BR")}
+                    </p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-500">Nenhuma atividade recente</p>
               </div>
-              <span className="text-xs text-gray-500">2 min atrás</span>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Serviço atualizado</p>
-                <p className="text-xs text-gray-500">
-                  Limpeza Dental - Preço alterado
-                </p>
-              </div>
-              <span className="text-xs text-gray-500">1 hora atrás</span>
-            </div>
-            <div className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-              <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Agendamento cancelado</p>
-                <p className="text-xs text-gray-500">
-                  Clareamento - Motivo: Cliente
-                </p>
-              </div>
-              <span className="text-xs text-gray-500">3 horas atrás</span>
-            </div>
+            )}
           </div>
         </CardContent>
       </Card>
