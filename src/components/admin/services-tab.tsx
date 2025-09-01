@@ -64,11 +64,19 @@ export function ServicesTab() {
 
   const fetchServices = async () => {
     try {
+      console.log("🔄 Iniciando fetchServices...");
       const response = await fetch("/api/admin/services");
+      console.log("📡 Status da resposta fetchServices:", response.status);
+      console.log("📡 Response OK fetchServices:", response.ok);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log("📦 Dados recebidos do fetchServices:", data);
+        console.log("📦 Quantidade de serviços:", data.length);
         setServices(data);
+        console.log("✅ Serviços atualizados no estado");
       } else {
+        console.log("❌ Erro na resposta fetchServices, usando fallback");
         // Fallback para dados mockados
         setServices([
           {
@@ -102,7 +110,7 @@ export function ServicesTab() {
         ]);
       }
     } catch (error) {
-      console.error("Error fetching services:", error);
+      console.error("❌ Error fetching services:", error);
       toast.error("Erro ao carregar serviços");
     } finally {
       setLoading(false);
@@ -144,7 +152,7 @@ export function ServicesTab() {
       if (response.ok) {
         const responseData = await response.json();
         console.log("Dados da resposta:", responseData);
-        
+
         toast.success(
           editingService
             ? "Serviço atualizado com sucesso!"
@@ -152,6 +160,7 @@ export function ServicesTab() {
         );
         setIsDialogOpen(false);
         resetForm();
+        console.log("🔄 Chamando fetchServices após criar serviço...");
         fetchServices();
       } else {
         const errorData = await response.text();
