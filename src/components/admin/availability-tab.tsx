@@ -1,20 +1,25 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { 
-  Clock, 
-  Calendar, 
-  Save,
-  Plus,
-  Trash2,
-  AlertCircle
-} from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Clock, Calendar, Save, Plus, Trash2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface TimeSlot {
@@ -40,9 +45,30 @@ const daysOfWeek = [
 ];
 
 const timeOptions = [
-  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-  "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
+  "08:00",
+  "08:30",
+  "09:00",
+  "09:30",
+  "10:00",
+  "10:30",
+  "11:00",
+  "11:30",
+  "12:00",
+  "12:30",
+  "13:00",
+  "13:30",
+  "14:00",
+  "14:30",
+  "15:00",
+  "15:30",
+  "16:00",
+  "16:30",
+  "17:00",
+  "17:30",
+  "18:00",
+  "18:30",
+  "19:00",
+  "19:30",
 ];
 
 export function AvailabilityTab() {
@@ -59,15 +85,22 @@ export function AvailabilityTab() {
       // Mock data for now - replace with actual API call
       const mockSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
         day: day.value,
-        enabled: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.value),
-        timeSlots: day.value === "saturday" 
-          ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
-          : day.value === "sunday"
-          ? []
-          : [
-              { id: "1", startTime: "08:00", endTime: "12:00" },
-              { id: "2", startTime: "14:00", endTime: "18:00" },
-            ],
+        enabled: [
+          "monday",
+          "tuesday",
+          "wednesday",
+          "thursday",
+          "friday",
+        ].includes(day.value),
+        timeSlots:
+          day.value === "saturday"
+            ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
+            : day.value === "sunday"
+            ? []
+            : [
+                { id: "1", startTime: "08:00", endTime: "12:00" },
+                { id: "2", startTime: "14:00", endTime: "18:00" },
+              ],
       }));
 
       setSchedule(mockSchedule);
@@ -169,17 +202,17 @@ export function AvailabilityTab() {
       const slot = slots[i];
       const start = new Date(`2000-01-01T${slot.startTime}`);
       const end = new Date(`2000-01-01T${slot.endTime}`);
-      
+
       if (start >= end) {
         return false;
       }
-      
+
       // Check for overlaps with other slots
       for (let j = i + 1; j < slots.length; j++) {
         const otherSlot = slots[j];
         const otherStart = new Date(`2000-01-01T${otherSlot.startTime}`);
         const otherEnd = new Date(`2000-01-01T${otherSlot.endTime}`);
-        
+
         if (start < otherEnd && end > otherStart) {
           return false;
         }
@@ -208,10 +241,16 @@ export function AvailabilityTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gerenciar Disponibilidade</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Gerenciar Disponibilidade
+          </h2>
           <p className="text-gray-600">Configure os horários de atendimento</p>
         </div>
-        <Button onClick={saveSchedule} disabled={saving} className="flex items-center gap-2">
+        <Button
+          onClick={saveSchedule}
+          disabled={saving}
+          className="flex items-center gap-2"
+        >
           <Save className="h-4 w-4" />
           {saving ? "Salvando..." : "Salvar Horários"}
         </Button>
@@ -228,7 +267,9 @@ export function AvailabilityTab() {
                     checked={day.enabled}
                     onCheckedChange={() => toggleDay(day.day)}
                   />
-                  <CardTitle className="text-lg">{getDayLabel(day.day)}</CardTitle>
+                  <CardTitle className="text-lg">
+                    {getDayLabel(day.day)}
+                  </CardTitle>
                   <Badge variant={day.enabled ? "default" : "secondary"}>
                     {day.enabled ? "Ativo" : "Inativo"}
                   </Badge>
@@ -246,14 +287,16 @@ export function AvailabilityTab() {
                 )}
               </div>
             </CardHeader>
-            
+
             {day.enabled && (
               <CardContent>
                 {day.timeSlots.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
                     <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                     <p>Nenhum horário configurado</p>
-                    <p className="text-sm">Clique em &quot;Adicionar Horário&quot; para começar</p>
+                    <p className="text-sm">
+                      Clique em &quot;Adicionar Horário&quot; para começar
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -263,22 +306,34 @@ export function AvailabilityTab() {
                         <div
                           key={slot.id}
                           className={`flex items-center gap-4 p-4 border rounded-lg ${
-                            isValid ? "border-gray-200" : "border-red-200 bg-red-50"
+                            isValid
+                              ? "border-gray-200"
+                              : "border-red-200 bg-red-50"
                           }`}
                         >
                           <div className="flex items-center gap-2">
                             <Clock className="h-4 w-4 text-gray-500" />
-                            <span className="text-sm font-medium">Horário {index + 1}</span>
+                            <span className="text-sm font-medium">
+                              Horário {index + 1}
+                            </span>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
-                            <Label htmlFor={`start-${slot.id}`} className="text-sm">
+                            <Label
+                              htmlFor={`start-${slot.id}`}
+                              className="text-sm"
+                            >
                               Início:
                             </Label>
                             <Select
                               value={slot.startTime}
                               onValueChange={(value) =>
-                                updateTimeSlot(day.day, slot.id, "startTime", value)
+                                updateTimeSlot(
+                                  day.day,
+                                  slot.id,
+                                  "startTime",
+                                  value
+                                )
                               }
                             >
                               <SelectTrigger className="w-32">
@@ -293,15 +348,23 @@ export function AvailabilityTab() {
                               </SelectContent>
                             </Select>
                           </div>
-                          
+
                           <div className="flex items-center gap-2">
-                            <Label htmlFor={`end-${slot.id}`} className="text-sm">
+                            <Label
+                              htmlFor={`end-${slot.id}`}
+                              className="text-sm"
+                            >
                               Fim:
                             </Label>
                             <Select
                               value={slot.endTime}
                               onValueChange={(value) =>
-                                updateTimeSlot(day.day, slot.id, "endTime", value)
+                                updateTimeSlot(
+                                  day.day,
+                                  slot.id,
+                                  "endTime",
+                                  value
+                                )
                               }
                             >
                               <SelectTrigger className="w-32">
@@ -316,12 +379,14 @@ export function AvailabilityTab() {
                               </SelectContent>
                             </Select>
                           </div>
-                          
+
                           <div className="flex items-center gap-2 ml-auto">
                             {!isValid && (
                               <div className="flex items-center gap-1 text-red-600">
                                 <AlertCircle className="h-4 w-4" />
-                                <span className="text-xs">Conflito de horários</span>
+                                <span className="text-xs">
+                                  Conflito de horários
+                                </span>
                               </div>
                             )}
                             <Button
@@ -360,7 +425,10 @@ export function AvailabilityTab() {
                 {schedule
                   .filter((day) => day.enabled)
                   .map((day) => (
-                    <div key={day.day} className="flex items-center justify-between">
+                    <div
+                      key={day.day}
+                      className="flex items-center justify-between"
+                    >
                       <span className="text-sm">{getDayLabel(day.day)}</span>
                       <Badge variant="outline" className="text-xs">
                         {day.timeSlots.length} horário(s)
@@ -369,7 +437,7 @@ export function AvailabilityTab() {
                   ))}
               </div>
             </div>
-            
+
             <div>
               <h4 className="font-semibold mb-3">Estatísticas</h4>
               <div className="space-y-2">
@@ -382,20 +450,35 @@ export function AvailabilityTab() {
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Total de horários:</span>
                   <Badge variant="default">
-                    {schedule.reduce((total, day) => total + day.timeSlots.length, 0)}
+                    {schedule.reduce(
+                      (total, day) => total + day.timeSlots.length,
+                      0
+                    )}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm">Horas por semana:</span>
                   <Badge variant="default">
-                    {schedule.reduce((total, day) => {
-                      const dayHours = day.timeSlots.reduce((dayTotal, slot) => {
-                        const start = new Date(`2000-01-01T${slot.startTime}`);
-                        const end = new Date(`2000-01-01T${slot.endTime}`);
-                        return dayTotal + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-                      }, 0);
-                      return total + dayHours;
-                    }, 0).toFixed(1)}h
+                    {schedule
+                      .reduce((total, day) => {
+                        const dayHours = day.timeSlots.reduce(
+                          (dayTotal, slot) => {
+                            const start = new Date(
+                              `2000-01-01T${slot.startTime}`
+                            );
+                            const end = new Date(`2000-01-01T${slot.endTime}`);
+                            return (
+                              dayTotal +
+                              (end.getTime() - start.getTime()) /
+                                (1000 * 60 * 60)
+                            );
+                          },
+                          0
+                        );
+                        return total + dayHours;
+                      }, 0)
+                      .toFixed(1)}
+                    h
                   </Badge>
                 </div>
               </div>
@@ -421,11 +504,31 @@ export function AvailabilityTab() {
                 setSchedule((prev) =>
                   prev.map((day) => ({
                     ...day,
-                    enabled: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.day),
-                    timeSlots: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.day)
+                    enabled: [
+                      "monday",
+                      "tuesday",
+                      "wednesday",
+                      "thursday",
+                      "friday",
+                    ].includes(day.day),
+                    timeSlots: [
+                      "monday",
+                      "tuesday",
+                      "wednesday",
+                      "thursday",
+                      "friday",
+                    ].includes(day.day)
                       ? [
-                          { id: `slot_${Date.now()}_1`, startTime: "08:00", endTime: "12:00" },
-                          { id: `slot_${Date.now()}_2`, startTime: "14:00", endTime: "18:00" },
+                          {
+                            id: `slot_${Date.now()}_1`,
+                            startTime: "08:00",
+                            endTime: "12:00",
+                          },
+                          {
+                            id: `slot_${Date.now()}_2`,
+                            startTime: "14:00",
+                            endTime: "18:00",
+                          },
                         ]
                       : [],
                   }))
@@ -435,7 +538,7 @@ export function AvailabilityTab() {
             >
               Horário Comercial
             </Button>
-            
+
             <Button
               variant="outline"
               onClick={() => {
@@ -443,10 +546,28 @@ export function AvailabilityTab() {
                 setSchedule((prev) =>
                   prev.map((day) => ({
                     ...day,
-                    enabled: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].includes(day.day),
-                    timeSlots: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].includes(day.day)
+                    enabled: [
+                      "monday",
+                      "tuesday",
+                      "wednesday",
+                      "thursday",
+                      "friday",
+                      "saturday",
+                    ].includes(day.day),
+                    timeSlots: [
+                      "monday",
+                      "tuesday",
+                      "wednesday",
+                      "thursday",
+                      "friday",
+                      "saturday",
+                    ].includes(day.day)
                       ? [
-                          { id: `slot_${Date.now()}_1`, startTime: "08:00", endTime: "20:00" },
+                          {
+                            id: `slot_${Date.now()}_1`,
+                            startTime: "08:00",
+                            endTime: "20:00",
+                          },
                         ]
                       : [],
                   }))
@@ -456,7 +577,7 @@ export function AvailabilityTab() {
             >
               Horário Estendido
             </Button>
-            
+
             <Button
               variant="outline"
               onClick={() => {

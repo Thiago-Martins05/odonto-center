@@ -7,14 +7,14 @@ export async function PATCH(
   try {
     const { id } = await params;
     const { status } = await request.json();
-    
+
     // TODO: Replace with actual database update operation
     console.log(`Updating appointment ${id} status to: ${status}`);
-    
-    return NextResponse.json({ 
-      success: true, 
-      appointmentId: id, 
-      status: status 
+
+    return NextResponse.json({
+      success: true,
+      appointmentId: id,
+      status: status,
     });
   } catch (error) {
     console.error("Error updating appointment status:", error);

@@ -2,18 +2,24 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Calendar, 
-  Settings, 
-  Users, 
-  FileText, 
-  BarChart3, 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Calendar,
+  Settings,
+  Users,
+  FileText,
+  BarChart3,
   Clock,
   Plus,
   Edit,
   Trash2,
-  Eye
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
@@ -41,7 +47,7 @@ export function AdminDashboard() {
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-sm text-gray-500">
-                Último acesso: {new Date().toLocaleDateString('pt-BR')}
+                Último acesso: {new Date().toLocaleDateString("pt-BR")}
               </div>
             </div>
           </div>
@@ -50,7 +56,11 @@ export function AdminDashboard() {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -60,11 +70,17 @@ export function AdminDashboard() {
               <Settings className="h-4 w-4" />
               Serviços
             </TabsTrigger>
-            <TabsTrigger value="appointments" className="flex items-center gap-2">
+            <TabsTrigger
+              value="appointments"
+              className="flex items-center gap-2"
+            >
               <Calendar className="h-4 w-4" />
               Agendamentos
             </TabsTrigger>
-            <TabsTrigger value="availability" className="flex items-center gap-2">
+            <TabsTrigger
+              value="availability"
+              className="flex items-center gap-2"
+            >
               <Clock className="h-4 w-4" />
               Disponibilidade
             </TabsTrigger>
@@ -111,7 +127,9 @@ function OverviewContent() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total de Agendamentos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Total de Agendamentos
+            </CardTitle>
             <Calendar className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -124,33 +142,35 @@ function OverviewContent() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Serviços Ativos</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Serviços Ativos
+            </CardTitle>
             <Settings className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">8</div>
-            <p className="text-xs text-muted-foreground">
-              Todos disponíveis
-            </p>
+            <p className="text-xs text-muted-foreground">Todos disponíveis</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Agendamentos Hoje</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Agendamentos Hoje
+            </CardTitle>
             <Clock className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">3</div>
-            <p className="text-xs text-muted-foreground">
-              Próximo às 14:00
-            </p>
+            <p className="text-xs text-muted-foreground">Próximo às 14:00</p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Receita Mensal</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Receita Mensal
+            </CardTitle>
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -172,15 +192,26 @@ function OverviewContent() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button className="flex items-center gap-2" onClick={() => window.location.href = '/admin?tab=services'}>
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => (window.location.href = "/admin?tab=services")}
+            >
               <Plus className="h-4 w-4" />
               Adicionar Serviço
             </Button>
-            <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/admin?tab=appointments'}>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => (window.location.href = "/admin?tab=appointments")}
+            >
               <Eye className="h-4 w-4" />
               Ver Agendamentos
             </Button>
-            <Button variant="outline" className="flex items-center gap-2" onClick={() => window.location.href = '/admin?tab=availability'}>
+            <Button
+              variant="outline"
+              className="flex items-center gap-2"
+              onClick={() => (window.location.href = "/admin?tab=availability")}
+            >
               <Clock className="h-4 w-4" />
               Configurar Horários
             </Button>
@@ -192,9 +223,7 @@ function OverviewContent() {
       <Card>
         <CardHeader>
           <CardTitle>Atividade Recente</CardTitle>
-          <CardDescription>
-            Últimas ações realizadas no sistema
-          </CardDescription>
+          <CardDescription>Últimas ações realizadas no sistema</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -202,7 +231,9 @@ function OverviewContent() {
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">Novo agendamento criado</p>
-                <p className="text-xs text-gray-500">Consulta de Rotina - 15:30</p>
+                <p className="text-xs text-gray-500">
+                  Consulta de Rotina - 15:30
+                </p>
               </div>
               <span className="text-xs text-gray-500">2 min atrás</span>
             </div>
@@ -210,7 +241,9 @@ function OverviewContent() {
               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">Serviço atualizado</p>
-                <p className="text-xs text-gray-500">Limpeza Dental - Preço alterado</p>
+                <p className="text-xs text-gray-500">
+                  Limpeza Dental - Preço alterado
+                </p>
               </div>
               <span className="text-xs text-gray-500">1 hora atrás</span>
             </div>
@@ -218,7 +251,9 @@ function OverviewContent() {
               <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
               <div className="flex-1">
                 <p className="text-sm font-medium">Agendamento cancelado</p>
-                <p className="text-xs text-gray-500">Clareamento - Motivo: Cliente</p>
+                <p className="text-xs text-gray-500">
+                  Clareamento - Motivo: Cliente
+                </p>
               </div>
               <span className="text-xs text-gray-500">3 horas atrás</span>
             </div>

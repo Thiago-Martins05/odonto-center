@@ -1,25 +1,46 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
-import { 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Eye, 
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
   Settings,
   DollarSign,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Service, formatPrice, formatDuration } from "@/types/service";
@@ -54,7 +75,8 @@ export function ServicesTab() {
             id: "1",
             name: "Consulta de Rotina",
             slug: "consulta-rotina",
-            description: "Avaliação geral da saúde bucal, limpeza e orientações",
+            description:
+              "Avaliação geral da saúde bucal, limpeza e orientações",
             durationMin: 60,
             priceCents: 15000,
             active: true,
@@ -89,14 +111,14 @@ export function ServicesTab() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const url = editingService 
+      const url = editingService
         ? `/api/admin/services/${editingService.id}`
         : "/api/admin/services";
-      
+
       const method = editingService ? "PUT" : "POST";
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -107,8 +129,8 @@ export function ServicesTab() {
 
       if (response.ok) {
         toast.success(
-          editingService 
-            ? "Serviço atualizado com sucesso!" 
+          editingService
+            ? "Serviço atualizado com sucesso!"
             : "Serviço criado com sucesso!"
         );
         setIsDialogOpen(false);
@@ -145,7 +167,10 @@ export function ServicesTab() {
     }
   };
 
-  const handleToggleStatus = async (serviceId: string, currentStatus: boolean) => {
+  const handleToggleStatus = async (
+    serviceId: string,
+    currentStatus: boolean
+  ) => {
     try {
       const response = await fetch(`/api/admin/services/${serviceId}/toggle`, {
         method: "PATCH",
@@ -211,8 +236,12 @@ export function ServicesTab() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Gerenciar Serviços</h2>
-          <p className="text-gray-600">Adicione, edite ou remova serviços oferecidos</p>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Gerenciar Serviços
+          </h2>
+          <p className="text-gray-600">
+            Adicione, edite ou remova serviços oferecidos
+          </p>
         </div>
         <Button onClick={openCreateDialog} className="flex items-center gap-2">
           <Plus className="h-4 w-4" />
@@ -253,7 +282,9 @@ export function ServicesTab() {
                     <div className="flex items-center gap-2">
                       <Switch
                         checked={service.active}
-                        onCheckedChange={() => handleToggleStatus(service.id, service.active)}
+                        onCheckedChange={() =>
+                          handleToggleStatus(service.id, service.active)
+                        }
                       />
                       <Badge variant={service.active ? "default" : "secondary"}>
                         {service.active ? "Ativo" : "Inativo"}
@@ -293,20 +324,21 @@ export function ServicesTab() {
               {editingService ? "Editar Serviço" : "Adicionar Novo Serviço"}
             </DialogTitle>
             <DialogDescription>
-              {editingService 
+              {editingService
                 ? "Modifique as informações do serviço selecionado."
-                : "Preencha as informações para criar um novo serviço."
-              }
+                : "Preencha as informações para criar um novo serviço."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nome do Serviço</Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 placeholder="Ex: Consulta de Rotina"
                 required
               />
@@ -317,7 +349,9 @@ export function ServicesTab() {
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Descreva o serviço oferecido..."
                 rows={3}
               />
@@ -330,7 +364,12 @@ export function ServicesTab() {
                   id="duration"
                   type="number"
                   value={formData.durationMin}
-                  onChange={(e) => setFormData({ ...formData, durationMin: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      durationMin: parseInt(e.target.value),
+                    })
+                  }
                   min="15"
                   max="480"
                   required
@@ -343,7 +382,12 @@ export function ServicesTab() {
                   id="price"
                   type="number"
                   value={formData.priceCents}
-                  onChange={(e) => setFormData({ ...formData, priceCents: parseInt(e.target.value) })}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      priceCents: parseInt(e.target.value),
+                    })
+                  }
                   min="0"
                   required
                 />
@@ -354,13 +398,19 @@ export function ServicesTab() {
               <Switch
                 id="active"
                 checked={formData.active}
-                onCheckedChange={(checked) => setFormData({ ...formData, active: checked })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, active: checked })
+                }
               />
               <Label htmlFor="active">Serviço ativo</Label>
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsDialogOpen(false)}
+              >
                 Cancelar
               </Button>
               <Button type="submit">

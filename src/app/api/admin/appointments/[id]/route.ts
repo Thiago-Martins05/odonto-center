@@ -6,10 +6,10 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    
+
     // TODO: Replace with actual database delete operation
     console.log(`Deleting appointment with id: ${id}`);
-    
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error deleting appointment:", error);
