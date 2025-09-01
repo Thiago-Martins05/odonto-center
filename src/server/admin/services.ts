@@ -121,7 +121,7 @@ export async function updateService(
     }
 
     const updateData: Record<string, unknown> = { ...validatedData };
-    
+
     // Só atualiza o slug se o nome mudou
     if (existingService.name !== data.name) {
       updateData.slug = data.name
