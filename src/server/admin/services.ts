@@ -8,7 +8,9 @@ const serviceSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   description: z
     .string()
-    .min(10, "Descrição deve ter pelo menos 10 caracteres"),
+    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .optional()
+    .nullable(),
   durationMin: z
     .number()
     .min(15, "Duração mínima é 15 minutos")
