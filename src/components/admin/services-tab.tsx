@@ -119,12 +119,18 @@ export function ServicesTab() {
 
       const method = editingService ? "PUT" : "POST";
 
+      // Preparar dados para envio, omitindo descrição vazia
+      const dataToSend = {
+        ...formData,
+        description: formData.description.trim() === "" ? undefined : formData.description,
+      };
+
       const response = await fetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(dataToSend),
       });
 
       if (response.ok) {
@@ -345,14 +351,14 @@ export function ServicesTab() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Descrição</Label>
+              <Label htmlFor="description">Descrição (opcional)</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
-                placeholder="Descreva o serviço oferecido..."
+                placeholder="Descreva o serviço oferecido... (mínimo 10 caracteres se preenchido)"
                 rows={3}
               />
             </div>

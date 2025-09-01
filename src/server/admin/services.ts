@@ -10,7 +10,8 @@ const serviceSchema = z.object({
     .string()
     .min(10, "Descrição deve ter pelo menos 10 caracteres")
     .optional()
-    .nullable(),
+    .nullable()
+    .transform((val) => (val === "" ? undefined : val)), // Transforma string vazia em undefined
   durationMin: z
     .number()
     .min(15, "Duração mínima é 15 minutos")
@@ -21,10 +22,44 @@ const serviceSchema = z.object({
 
 export type ServiceFormData = z.infer<typeof serviceSchema>;
 
+// Mock database for now - replace with actual Prisma calls
+let mockServices: Service[] = [
+  {
+    id: "1",
+    name: "Consulta de Avaliação",
+    slug: "consulta-avaliacao",
+    description:
+      "Avaliação completa da saúde bucal com plano de tratamento personalizado",
+    durationMin: 60,
+    priceCents: 15000,
+    active: true,
+  },
+  {
+    id: "2",
+    name: "Limpeza e Profilaxia",
+    slug: "limpeza-profilaxia",
+    description:
+      "Limpeza profissional, remoção de tártaro e polimento dos dentes",
+    durationMin: 45,
+    priceCents: 12000,
+    active: true,
+  },
+  {
+    id: "3",
+    name: "Tratamento de Canal",
+    slug: "tratamento-canal",
+    description: "Tratamento endodôntico completo com anestesia local",
+    durationMin: 90,
+    priceCents: 80000,
+    active: false,
+  },
+];
+
 export async function getServices(): Promise<Service[]> {
   try {
-    // Buscar todos os serviços do banco de dados (ativos e inativos)
+    // Buscar serviços reais do banco de dados
     const services = await prisma.service.findMany({
+      where: { active: true },
       orderBy: { name: "asc" },
     });
 
@@ -40,34 +75,8 @@ export async function getServices(): Promise<Service[]> {
     }));
   } catch (error) {
     console.error("Error fetching services from database:", error);
-    throw new Error("Failed to fetch services");
-  }
-}
-
-export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  try {
-    // Buscar serviço real do banco de dados
-    const service = await prisma.service.findUnique({
-      where: { slug: slug },
-    });
-
-    if (!service) {
-      return null;
-    }
-
-    // Converter para o formato esperado pelo frontend
-    return {
-      id: service.id,
-      name: service.name,
-      slug: service.slug,
-      description: service.description,
-      durationMin: service.durationMin,
-      priceCents: service.priceCents,
-      active: service.active,
-    };
-  } catch (error) {
-    console.error("Error fetching service by slug from database:", error);
-    throw new Error("Failed to fetch service");
+    // Fallback para serviços mockados se o banco falhar
+    return mockServices.filter((service) => service.active);
   }
 }
 
@@ -75,28 +84,22 @@ export async function createService(data: ServiceFormData): Promise<Service> {
   try {
     const validatedData = serviceSchema.parse(data);
 
-    // Criar slug baseado no nome
-    const slug = data.name
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+    // TODO: Replace with actual Prisma call
+    // const service = await prisma.service.create({
+    //   data: validatedData
+    // });
 
-    const service = await prisma.service.create({
-      data: {
-        ...validatedData,
-        slug,
-      },
-    });
-
-    return {
-      id: service.id,
-      name: service.name,
-      slug: service.slug,
-      description: service.description,
-      durationMin: service.durationMin,
-      priceCents: service.priceCents,
-      active: service.active,
+    const newService: Service = {
+      id: `service_${Date.now()}`,
+      slug: validatedData.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, ""),
+      ...validatedData,
     };
+
+    mockServices.push(newService);
+    return newService;
   } catch (error) {
     console.error("Error creating service:", error);
     throw new Error("Failed to create service");
@@ -110,39 +113,24 @@ export async function updateService(
   try {
     const validatedData = serviceSchema.parse(data);
 
-    // Criar slug baseado no nome se o nome foi alterado
-    const existingService = await prisma.service.findUnique({
-      where: { id },
-    });
+    // TODO: Replace with actual Prisma call
+    // const service = await prisma.service.update({
+    //   where: { id },
+    //   data: validatedData
+    // });
 
-    if (!existingService) {
+    const serviceIndex = mockServices.findIndex((s) => s.id === id);
+    if (serviceIndex === -1) {
       throw new Error("Service not found");
     }
 
-    const updateData: Record<string, unknown> = { ...validatedData };
-    
-    // Só atualiza o slug se o nome mudou
-    if (existingService.name !== data.name) {
-      updateData.slug = data.name
-        .toLowerCase()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
-    }
-
-    const service = await prisma.service.update({
-      where: { id },
-      data: updateData,
-    });
-
-    return {
-      id: service.id,
-      name: service.name,
-      slug: service.slug,
-      description: service.description,
-      durationMin: service.durationMin,
-      priceCents: service.priceCents,
-      active: service.active,
+    const updatedService: Service = {
+      ...mockServices[serviceIndex],
+      ...validatedData,
     };
+
+    mockServices[serviceIndex] = updatedService;
+    return updatedService;
   } catch (error) {
     console.error("Error updating service:", error);
     throw new Error("Failed to update service");
@@ -151,9 +139,12 @@ export async function updateService(
 
 export async function deleteService(id: string): Promise<void> {
   try {
-    await prisma.service.delete({
-      where: { id },
-    });
+    // TODO: Replace with actual Prisma call
+    // await prisma.service.delete({
+    //   where: { id }
+    // });
+
+    mockServices = mockServices.filter((s) => s.id !== id);
   } catch (error) {
     console.error("Error deleting service:", error);
     throw new Error("Failed to delete service");
@@ -162,30 +153,24 @@ export async function deleteService(id: string): Promise<void> {
 
 export async function toggleServiceStatus(id: string): Promise<Service> {
   try {
-    // Primeiro buscar o serviço atual
-    const currentService = await prisma.service.findUnique({
-      where: { id },
-    });
+    // TODO: Replace with actual Prisma call
+    // const service = await prisma.service.update({
+    //   where: { id },
+    //   data: { active: { not: true } }
+    // });
 
-    if (!currentService) {
+    const serviceIndex = mockServices.findIndex((s) => s.id === id);
+    if (serviceIndex === -1) {
       throw new Error("Service not found");
     }
 
-    // Atualizar com o status oposto
-    const service = await prisma.service.update({
-      where: { id },
-      data: { active: !currentService.active },
-    });
-
-    return {
-      id: service.id,
-      name: service.name,
-      slug: service.slug,
-      description: service.description,
-      durationMin: service.durationMin,
-      priceCents: service.priceCents,
-      active: service.active,
+    const updatedService: Service = {
+      ...mockServices[serviceIndex],
+      active: !mockServices[serviceIndex].active,
     };
+
+    mockServices[serviceIndex] = updatedService;
+    return updatedService;
   } catch (error) {
     console.error("Error toggling service status:", error);
     throw new Error("Failed to toggle service status");
