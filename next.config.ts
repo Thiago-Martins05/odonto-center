@@ -18,6 +18,10 @@ const nextConfig: NextConfig = {
     // Desabilitar SSG para páginas que fazem queries no banco
     workerThreads: false,
   },
+  // Configurar porta padrão
+  env: {
+    PORT: "3000",
+  },
 };
 
 export default nextConfig;
