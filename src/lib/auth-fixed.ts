@@ -3,14 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-// Instância global do Prisma
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -27,7 +20,7 @@ const handler = NextAuth({
 
         try {
           const user = await prisma.user.findUnique({
-            where: { email: credentials.email as string },
+            where: { email: credentials.email },
           });
 
           if (!user || !user.active) {
@@ -35,7 +28,7 @@ const handler = NextAuth({
           }
 
           const isPasswordValid = await bcrypt.compare(
-            credentials.password as string,
+            credentials.password,
             user.password
           );
 
@@ -58,20 +51,6 @@ const handler = NextAuth({
   ],
   pages: {
     signIn: "/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token) {
-        session.user.role = token.role;
-      }
-      return session;
-    },
   },
 });
 

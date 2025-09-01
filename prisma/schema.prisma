@@ -68,3 +68,16 @@ model ClinicInfo {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("admin") // admin, user
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([email])
+}

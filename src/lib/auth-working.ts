@@ -3,14 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-// Instância global do Prisma
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined;
-};
-
-const prisma = globalForPrisma.prisma ?? new PrismaClient();
-
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+const prisma = new PrismaClient();
 
 const handler = NextAuth({
   providers: [
@@ -59,6 +52,9 @@ const handler = NextAuth({
   pages: {
     signIn: "/login",
   },
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
@@ -73,6 +69,7 @@ const handler = NextAuth({
       return session;
     },
   },
+  debug: true,
 });
 
 export { handler as GET, handler as POST };

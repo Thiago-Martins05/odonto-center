@@ -9,9 +9,11 @@ export default auth((req) => {
     if (!isLoggedIn || !isAdmin) {
       return Response.redirect(new URL("/login", req.nextUrl));
     }
+
   }
 });
 
 export const config = {
   matcher: ["/admin/:path*"],
 };
+

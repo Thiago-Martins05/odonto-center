@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,37 +13,40 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-hook";
 
 export function LoginForm() {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email) {
-      toast.error("Por favor, insira seu e-mail.");
+    if (!email || !password) {
+      toast.error("Por favor, preencha todos os campos.");
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        redirect: false,
-      });
+      const result = await login(email, password);
 
-      if (result?.error) {
-        toast.error("E-mail não autorizado para acesso administrativo.");
-      } else if (result?.ok) {
+      if (result.success) {
         toast.success(
           "Login realizado com sucesso! Redirecionando para o painel administrativo..."
         );
         router.push("/admin");
+      } else {
+        toast.error(
+          result.error || "Credenciais inválidas. Verifique seu e-mail e senha."
+        );
       }
-    } catch {
+    } catch (error) {
+      console.error("Erro no login:", error);
       toast.error("Ocorreu um erro durante o login. Tente novamente.");
     } finally {
       setIsLoading(false);
@@ -59,7 +61,7 @@ export function LoginForm() {
             Acesso Administrativo
           </CardTitle>
           <CardDescription>
-            Entre com seu e-mail para acessar o painel administrativo
+            Entre com suas credenciais para acessar o painel administrativo
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -76,6 +78,18 @@ export function LoginForm() {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Sua senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                required
+              />
+            </div>
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Entrando..." : "Entrar"}
             </Button>
@@ -83,7 +97,7 @@ export function LoginForm() {
 
           <div className="mt-6 text-center text-sm text-muted-foreground">
             <p>
-              Apenas e-mails autorizados podem acessar o painel administrativo.
+              Apenas usuários autorizados podem acessar o painel administrativo.
             </p>
           </div>
         </CardContent>
