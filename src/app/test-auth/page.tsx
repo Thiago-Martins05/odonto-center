@@ -37,8 +37,9 @@ export default function TestAuthPage() {
       }
     } catch (error) {
       console.error("Erro no login:", error);
-      setLoginResult({ error: error.message });
-      alert("❌ Erro no login: " + error.message);
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      setLoginResult({ error: errorMessage });
+      alert("❌ Erro no login: " + errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -53,7 +54,8 @@ export default function TestAuthPage() {
       setLoginResult(null);
     } catch (error) {
       console.error("Erro no logout:", error);
-      alert("❌ Erro no logout: " + error.message);
+      const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+      alert("❌ Erro no logout: " + errorMessage);
     }
   };
 

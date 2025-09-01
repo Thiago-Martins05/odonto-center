@@ -1,499 +1,481 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Plus, Trash2, Save, X } from "lucide-react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Clock, 
+  Calendar, 
+  Save,
+  Plus,
+  Trash2,
+  AlertCircle
+} from "lucide-react";
+import { toast } from "sonner";
 
-const availabilityRuleSchema = z.object({
-  weekday: z.string().min(1, "Selecione um dia da semana"),
-  start: z.string().min(1, "Horário de início é obrigatório"),
-  end: z.string().min(1, "Horário de fim é obrigatório"),
-  serviceId: z.string().optional(),
-});
+interface TimeSlot {
+  id: string;
+  startTime: string;
+  endTime: string;
+}
 
-const blackoutDateSchema = z.object({
-  date: z.string().min(1, "Data é obrigatória"),
-  reason: z.string().min(5, "Motivo deve ter pelo menos 5 caracteres"),
-});
+interface DaySchedule {
+  day: string;
+  enabled: boolean;
+  timeSlots: TimeSlot[];
+}
 
-type AvailabilityRuleFormData = z.infer<typeof availabilityRuleSchema>;
-type BlackoutDateFormData = z.infer<typeof blackoutDateSchema>;
+const daysOfWeek = [
+  { value: "monday", label: "Segunda-feira" },
+  { value: "tuesday", label: "Terça-feira" },
+  { value: "wednesday", label: "Quarta-feira" },
+  { value: "thursday", label: "Quinta-feira" },
+  { value: "friday", label: "Sexta-feira" },
+  { value: "saturday", label: "Sábado" },
+  { value: "sunday", label: "Domingo" },
+];
 
-import { AvailabilityRule } from "@/server/admin/availability";
-
-import { BlackoutDate } from "@/server/admin/availability";
-
-import { Service } from "@/types/service";
-
-const weekdays = [
-  { value: "0", label: "Domingo" },
-  { value: "1", label: "Segunda-feira" },
-  { value: "2", label: "Terça-feira" },
-  { value: "3", label: "Quarta-feira" },
-  { value: "4", label: "Quinta-feira" },
-  { value: "5", label: "Sexta-feira" },
-  { value: "6", label: "Sábado" },
+const timeOptions = [
+  "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+  "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+  "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
 ];
 
 export function AvailabilityTab() {
-  const [availabilityRules, setAvailabilityRules] = useState<
-    AvailabilityRule[]
-  >([]);
-  const [blackoutDates, setBlackoutDates] = useState<BlackoutDate[]>([]);
-  const [services, setServices] = useState<Service[]>([]);
-  const [isRuleFormOpen, setIsRuleFormOpen] = useState(false);
-  const [isBlackoutFormOpen, setIsBlackoutFormOpen] = useState(false);
+  const [schedule, setSchedule] = useState<DaySchedule[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const ruleForm = useForm<AvailabilityRuleFormData>({
-    resolver: zodResolver(availabilityRuleSchema),
-    mode: "onChange",
-  });
-
-  const blackoutForm = useForm<BlackoutDateFormData>({
-    resolver: zodResolver(blackoutDateSchema),
-    mode: "onChange",
-  });
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetchData();
+    fetchSchedule();
   }, []);
 
-  const fetchData = async () => {
+  const fetchSchedule = async () => {
     try {
-      // TODO: Replace with actual API calls
-      const mockRules: AvailabilityRule[] = [
-        {
-          id: "1",
-          weekday: 1,
-          start: "09:00",
-          end: "17:00",
-        },
-        {
-          id: "2",
-          weekday: 2,
-          start: "09:00",
-          end: "17:00",
-        },
-        {
-          id: "3",
-          weekday: 3,
-          start: "09:00",
-          end: "17:00",
-        },
-        {
-          id: "4",
-          weekday: 4,
-          start: "09:00",
-          end: "17:00",
-        },
-        {
-          id: "5",
-          weekday: 5,
-          start: "09:00",
-          end: "17:00",
-        },
-      ];
+      // Mock data for now - replace with actual API call
+      const mockSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
+        day: day.value,
+        enabled: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.value),
+        timeSlots: day.value === "saturday" 
+          ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
+          : day.value === "sunday"
+          ? []
+          : [
+              { id: "1", startTime: "08:00", endTime: "12:00" },
+              { id: "2", startTime: "14:00", endTime: "18:00" },
+            ],
+      }));
 
-      const mockBlackouts: BlackoutDate[] = [
-        {
-          id: "1",
-          date: new Date("2024-12-25"),
-          reason: "Natal",
-        },
-        {
-          id: "2",
-          date: new Date("2024-12-31"),
-          reason: "Ano Novo",
-        },
-      ];
-
-      const mockServices: Service[] = [
-        {
-          id: "1",
-          name: "Limpeza Dental Profunda",
-          slug: "limpeza-dental-profunda",
-          description:
-            "A limpeza profissional, também conhecida como profilaxia, é fundamental para a saúde bucal.",
-          durationMin: 40,
-          priceCents: 8000,
-          active: true,
-        },
-        {
-          id: "2",
-          name: "Clareamento Dental",
-          slug: "clareamento-dental",
-          description:
-            "O clareamento dental é um procedimento seguro e eficaz que remove pigmentações.",
-          durationMin: 60,
-          priceCents: 30000,
-          active: true,
-        },
-        {
-          id: "3",
-          name: "Tratamento de Canal (Endodontia)",
-          slug: "tratamento-canal-endodontia",
-          description:
-            "O tratamento de canal é necessário quando a polpa dentária está inflamada ou infectada.",
-          durationMin: 90,
-          priceCents: 35000,
-          active: true,
-        },
-      ];
-
-      setAvailabilityRules(mockRules);
-      setBlackoutDates(mockBlackouts);
-      setServices(mockServices);
-      setLoading(false);
+      setSchedule(mockSchedule);
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("Error fetching schedule:", error);
+      toast.error("Erro ao carregar horários");
+    } finally {
       setLoading(false);
     }
   };
 
-  const onSubmitRule = async (data: AvailabilityRuleFormData) => {
+  const saveSchedule = async () => {
+    setSaving(true);
     try {
-      const newRule: AvailabilityRule = {
-        id: `rule_${Date.now()}`,
-        weekday: parseInt(data.weekday),
-        start: data.start,
-        end: data.end,
-        serviceId: data.serviceId,
-      };
+      const response = await fetch("/api/admin/availability", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ schedule }),
+      });
 
-      setAvailabilityRules((prev) => [...prev, newRule]);
-      ruleForm.reset();
-      setIsRuleFormOpen(false);
+      if (response.ok) {
+        toast.success("Horários salvos com sucesso!");
+      } else {
+        toast.error("Erro ao salvar horários");
+      }
     } catch (error) {
-      console.error("Error creating rule:", error);
+      console.error("Error saving schedule:", error);
+      toast.error("Erro ao salvar horários");
+    } finally {
+      setSaving(false);
     }
   };
 
-  const onSubmitBlackout = async (data: BlackoutDateFormData) => {
-    try {
-      const newBlackout: BlackoutDate = {
-        id: `blackout_${Date.now()}`,
-        date: new Date(data.date),
-        reason: data.reason,
-      };
-
-      setBlackoutDates((prev) => [...prev, newBlackout]);
-      blackoutForm.reset();
-      setIsBlackoutFormOpen(false);
-    } catch (error) {
-      console.error("Error creating blackout date:", error);
-    }
-  };
-
-  const deleteRule = async (ruleId: string) => {
-    if (confirm("Tem certeza que deseja excluir esta regra?")) {
-      setAvailabilityRules((prev) => prev.filter((r) => r.id !== ruleId));
-    }
-  };
-
-  const deleteBlackout = async (blackoutId: string) => {
-    if (confirm("Tem certeza que deseja excluir esta data bloqueada?")) {
-      setBlackoutDates((prev) => prev.filter((b) => b.id !== blackoutId));
-    }
-  };
-
-  const getWeekdayName = (weekday: number) => {
-    return (
-      weekdays.find((w) => w.value === weekday.toString())?.label ||
-      "Desconhecido"
+  const toggleDay = (dayValue: string) => {
+    setSchedule((prev) =>
+      prev.map((day) =>
+        day.day === dayValue ? { ...day, enabled: !day.enabled } : day
+      )
     );
   };
 
-  const formatTime = (time: string) => {
-    return time;
+  const addTimeSlot = (dayValue: string) => {
+    setSchedule((prev) =>
+      prev.map((day) =>
+        day.day === dayValue
+          ? {
+              ...day,
+              timeSlots: [
+                ...day.timeSlots,
+                {
+                  id: `slot_${Date.now()}`,
+                  startTime: "09:00",
+                  endTime: "10:00",
+                },
+              ],
+            }
+          : day
+      )
+    );
+  };
+
+  const removeTimeSlot = (dayValue: string, slotId: string) => {
+    setSchedule((prev) =>
+      prev.map((day) =>
+        day.day === dayValue
+          ? {
+              ...day,
+              timeSlots: day.timeSlots.filter((slot) => slot.id !== slotId),
+            }
+          : day
+      )
+    );
+  };
+
+  const updateTimeSlot = (
+    dayValue: string,
+    slotId: string,
+    field: "startTime" | "endTime",
+    value: string
+  ) => {
+    setSchedule((prev) =>
+      prev.map((day) =>
+        day.day === dayValue
+          ? {
+              ...day,
+              timeSlots: day.timeSlots.map((slot) =>
+                slot.id === slotId ? { ...slot, [field]: value } : slot
+              ),
+            }
+          : day
+      )
+    );
+  };
+
+  const validateTimeSlots = (slots: TimeSlot[]) => {
+    for (let i = 0; i < slots.length; i++) {
+      const slot = slots[i];
+      const start = new Date(`2000-01-01T${slot.startTime}`);
+      const end = new Date(`2000-01-01T${slot.endTime}`);
+      
+      if (start >= end) {
+        return false;
+      }
+      
+      // Check for overlaps with other slots
+      for (let j = i + 1; j < slots.length; j++) {
+        const otherSlot = slots[j];
+        const otherStart = new Date(`2000-01-01T${otherSlot.startTime}`);
+        const otherEnd = new Date(`2000-01-01T${otherSlot.endTime}`);
+        
+        if (start < otherEnd && end > otherStart) {
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const getDayLabel = (dayValue: string) => {
+    return daysOfWeek.find((day) => day.value === dayValue)?.label || dayValue;
   };
 
   if (loading) {
     return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-        <p className="mt-4 text-muted-foreground">Carregando dados...</p>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Carregando horários...</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-8">
-      {/* Availability Rules Section */}
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Regras de Disponibilidade</h2>
-          <Button
-            onClick={() => setIsRuleFormOpen(true)}
-            className="flex items-center space-x-2"
-          >
-            <Plus className="w-4 h-4" />
-            <span>Nova Regra</span>
-          </Button>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-900">Gerenciar Disponibilidade</h2>
+          <p className="text-gray-600">Configure os horários de atendimento</p>
         </div>
-
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Dia da Semana</TableHead>
-                  <TableHead>Início</TableHead>
-                  <TableHead>Fim</TableHead>
-                  <TableHead>Serviço Específico</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {availabilityRules.map((rule) => (
-                  <TableRow key={rule.id}>
-                    <TableCell className="font-medium">
-                      {getWeekdayName(rule.weekday)}
-                    </TableCell>
-                    <TableCell>{formatTime(rule.start)}</TableCell>
-                    <TableCell>{formatTime(rule.end)}</TableCell>
-                    <TableCell>
-                      {rule.serviceId ? (
-                        services.find((s) => s.id === rule.serviceId)?.name ||
-                        "N/A"
-                      ) : (
-                        <Badge variant="secondary">Todos os serviços</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteRule(rule.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+        <Button onClick={saveSchedule} disabled={saving} className="flex items-center gap-2">
+          <Save className="h-4 w-4" />
+          {saving ? "Salvando..." : "Salvar Horários"}
+        </Button>
       </div>
 
-      {/* Blackout Dates Section */}
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold">Datas Bloqueadas</h2>
-          <Button
-            onClick={() => setIsBlackoutFormOpen(true)}
-            className="flex items-center space-x-2"
-          >
-            <Calendar className="w-4 h-4" />
-            <span>Adicionar Data Bloqueada</span>
-          </Button>
-        </div>
-
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Motivo</TableHead>
-                  <TableHead>Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {blackoutDates.map((blackout) => (
-                  <TableRow key={blackout.id}>
-                    <TableCell className="font-medium">
-                      {new Date(blackout.date).toLocaleDateString("pt-BR")}
-                    </TableCell>
-                    <TableCell>{blackout.reason}</TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteBlackout(blackout.id)}
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+      {/* Schedule Configuration */}
+      <div className="space-y-4">
+        {schedule.map((day) => (
+          <Card key={day.day}>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={day.enabled}
+                    onCheckedChange={() => toggleDay(day.day)}
+                  />
+                  <CardTitle className="text-lg">{getDayLabel(day.day)}</CardTitle>
+                  <Badge variant={day.enabled ? "default" : "secondary"}>
+                    {day.enabled ? "Ativo" : "Inativo"}
+                  </Badge>
+                </div>
+                {day.enabled && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addTimeSlot(day.day)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Adicionar Horário
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            
+            {day.enabled && (
+              <CardContent>
+                {day.timeSlots.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>Nenhum horário configurado</p>
+                    <p className="text-sm">Clique em &quot;Adicionar Horário&quot; para começar</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {day.timeSlots.map((slot, index) => {
+                      const isValid = validateTimeSlots(day.timeSlots);
+                      return (
+                        <div
+                          key={slot.id}
+                          className={`flex items-center gap-4 p-4 border rounded-lg ${
+                            isValid ? "border-gray-200" : "border-red-200 bg-red-50"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-gray-500" />
+                            <span className="text-sm font-medium">Horário {index + 1}</span>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor={`start-${slot.id}`} className="text-sm">
+                              Início:
+                            </Label>
+                            <Select
+                              value={slot.startTime}
+                              onValueChange={(value) =>
+                                updateTimeSlot(day.day, slot.id, "startTime", value)
+                              }
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {timeOptions.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor={`end-${slot.id}`} className="text-sm">
+                              Fim:
+                            </Label>
+                            <Select
+                              value={slot.endTime}
+                              onValueChange={(value) =>
+                                updateTimeSlot(day.day, slot.id, "endTime", value)
+                              }
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {timeOptions.map((time) => (
+                                  <SelectItem key={time} value={time}>
+                                    {time}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 ml-auto">
+                            {!isValid && (
+                              <div className="flex items-center gap-1 text-red-600">
+                                <AlertCircle className="h-4 w-4" />
+                                <span className="text-xs">Conflito de horários</span>
+                              </div>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => removeTimeSlot(day.day, slot.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            )}
+          </Card>
+        ))}
       </div>
 
-      {/* New Rule Dialog */}
-      <Dialog open={isRuleFormOpen} onOpenChange={setIsRuleFormOpen}>
-        <DialogContent className="max-w-md">
-          <CardHeader>
-            <CardTitle>Nova Regra de Disponibilidade</CardTitle>
-          </CardHeader>
-
-          <form
-            onSubmit={ruleForm.handleSubmit(onSubmitRule)}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="weekday">Dia da Semana *</Label>
-              <Select
-                onValueChange={(value) => ruleForm.setValue("weekday", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecione o dia" />
-                </SelectTrigger>
-                <SelectContent>
-                  {weekdays.map((day) => (
-                    <SelectItem key={day.value} value={day.value}>
-                      {day.label}
-                    </SelectItem>
+      {/* Summary */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calendar className="h-5 w-5" />
+            Resumo da Disponibilidade
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-semibold mb-3">Dias Ativos</h4>
+              <div className="space-y-2">
+                {schedule
+                  .filter((day) => day.enabled)
+                  .map((day) => (
+                    <div key={day.day} className="flex items-center justify-between">
+                      <span className="text-sm">{getDayLabel(day.day)}</span>
+                      <Badge variant="outline" className="text-xs">
+                        {day.timeSlots.length} horário(s)
+                      </Badge>
+                    </div>
                   ))}
-                </SelectContent>
-              </Select>
-              {ruleForm.formState.errors.weekday && (
-                <p className="text-sm text-destructive">
-                  {ruleForm.formState.errors.weekday.message}
-                </p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="start">Início *</Label>
-                <Input id="start" type="time" {...ruleForm.register("start")} />
-                {ruleForm.formState.errors.start && (
-                  <p className="text-sm text-destructive">
-                    {ruleForm.formState.errors.start.message}
-                  </p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="end">Fim *</Label>
-                <Input id="end" type="time" {...ruleForm.register("end")} />
-                {ruleForm.formState.errors.end && (
-                  <p className="text-sm text-destructive">
-                    {ruleForm.formState.errors.end.message}
-                  </p>
-                )}
               </div>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="serviceId">Serviço Específico (opcional)</Label>
-              <Select
-                onValueChange={(value) => ruleForm.setValue("serviceId", value)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Todos os serviços" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">Todos os serviços</SelectItem>
-                  {services.map((service) => (
-                    <SelectItem key={service.id} value={service.id}>
-                      {service.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            
+            <div>
+              <h4 className="font-semibold mb-3">Estatísticas</h4>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Total de dias ativos:</span>
+                  <Badge variant="default">
+                    {schedule.filter((day) => day.enabled).length}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Total de horários:</span>
+                  <Badge variant="default">
+                    {schedule.reduce((total, day) => total + day.timeSlots.length, 0)}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Horas por semana:</span>
+                  <Badge variant="default">
+                    {schedule.reduce((total, day) => {
+                      const dayHours = day.timeSlots.reduce((dayTotal, slot) => {
+                        const start = new Date(`2000-01-01T${slot.startTime}`);
+                        const end = new Date(`2000-01-01T${slot.endTime}`);
+                        return dayTotal + (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+                      }, 0);
+                      return total + dayHours;
+                    }, 0).toFixed(1)}h
+                  </Badge>
+                </div>
+              </div>
             </div>
+          </div>
+        </CardContent>
+      </Card>
 
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsRuleFormOpen(false)}
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={!ruleForm.formState.isValid}>
-                <Save className="w-4 h-4 mr-2" />
-                Criar Regra
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* New Blackout Date Dialog */}
-      <Dialog open={isBlackoutFormOpen} onOpenChange={setIsBlackoutFormOpen}>
-        <DialogContent className="max-w-md">
-          <CardHeader>
-            <CardTitle>Nova Data Bloqueada</CardTitle>
-          </CardHeader>
-
-          <form
-            onSubmit={blackoutForm.handleSubmit(onSubmitBlackout)}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="date">Data *</Label>
-              <Input id="date" type="date" {...blackoutForm.register("date")} />
-              {blackoutForm.formState.errors.date && (
-                <p className="text-sm text-destructive">
-                  {blackoutForm.formState.errors.date.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="reason">Motivo *</Label>
-              <Input
-                id="reason"
-                placeholder="Ex: Feriado, Manutenção, etc."
-                {...blackoutForm.register("reason")}
-              />
-              {blackoutForm.formState.errors.reason && (
-                <p className="text-sm text-destructive">
-                  {blackoutForm.formState.errors.reason.message}
-                </p>
-              )}
-            </div>
-
-            <div className="flex justify-end space-x-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setIsBlackoutFormOpen(false)}
-              >
-                <X className="w-4 h-4 mr-2" />
-                Cancelar
-              </Button>
-              <Button type="submit" disabled={!blackoutForm.formState.isValid}>
-                <Save className="w-4 h-4 mr-2" />
-                Adicionar
-              </Button>
-            </div>
-          </form>
-        </DialogContent>
-      </Dialog>
+      {/* Quick Actions */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Ações Rápidas</CardTitle>
+          <CardDescription>
+            Configure rapidamente horários comuns
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Set standard business hours (Mon-Fri, 8-18)
+                setSchedule((prev) =>
+                  prev.map((day) => ({
+                    ...day,
+                    enabled: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.day),
+                    timeSlots: ["monday", "tuesday", "wednesday", "thursday", "friday"].includes(day.day)
+                      ? [
+                          { id: `slot_${Date.now()}_1`, startTime: "08:00", endTime: "12:00" },
+                          { id: `slot_${Date.now()}_2`, startTime: "14:00", endTime: "18:00" },
+                        ]
+                      : [],
+                  }))
+                );
+                toast.success("Horário comercial padrão aplicado!");
+              }}
+            >
+              Horário Comercial
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Set extended hours (Mon-Sat, 8-20)
+                setSchedule((prev) =>
+                  prev.map((day) => ({
+                    ...day,
+                    enabled: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].includes(day.day),
+                    timeSlots: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"].includes(day.day)
+                      ? [
+                          { id: `slot_${Date.now()}_1`, startTime: "08:00", endTime: "20:00" },
+                        ]
+                      : [],
+                  }))
+                );
+                toast.success("Horário estendido aplicado!");
+              }}
+            >
+              Horário Estendido
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => {
+                // Clear all schedules
+                setSchedule((prev) =>
+                  prev.map((day) => ({
+                    ...day,
+                    enabled: false,
+                    timeSlots: [],
+                  }))
+                );
+                toast.success("Todos os horários foram limpos!");
+              }}
+            >
+              Limpar Tudo
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
