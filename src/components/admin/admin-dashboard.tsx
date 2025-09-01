@@ -20,16 +20,26 @@ import {
   Edit,
   Trash2,
   Eye,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
 import { AppointmentsTab } from "./appointments-tab";
 import { AvailabilityTab } from "./availability-tab";
 import { useAuth } from "@/lib/auth-hook";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function AdminDashboard() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("overview");
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logout realizado com sucesso!");
+    router.push("/login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -49,6 +59,14 @@ export function AdminDashboard() {
               <div className="text-sm text-gray-500">
                 Último acesso: {new Date().toLocaleDateString("pt-BR")}
               </div>
+              <Button
+                variant="outline"
+                onClick={handleLogout}
+                className="flex items-center gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                Sair
+              </Button>
             </div>
           </div>
         </div>
