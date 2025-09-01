@@ -122,8 +122,13 @@ export function ServicesTab() {
       // Preparar dados para envio, omitindo descrição vazia
       const dataToSend = {
         ...formData,
-        description: formData.description.trim() === "" ? undefined : formData.description,
+        description:
+          formData.description.trim() === "" ? undefined : formData.description,
       };
+
+      console.log("Enviando dados:", dataToSend);
+      console.log("URL:", url);
+      console.log("Método:", method);
 
       const response = await fetch(url, {
         method,
@@ -133,7 +138,13 @@ export function ServicesTab() {
         body: JSON.stringify(dataToSend),
       });
 
+      console.log("Status da resposta:", response.status);
+      console.log("Resposta OK:", response.ok);
+
       if (response.ok) {
+        const responseData = await response.json();
+        console.log("Dados da resposta:", responseData);
+        
         toast.success(
           editingService
             ? "Serviço atualizado com sucesso!"
@@ -143,6 +154,8 @@ export function ServicesTab() {
         resetForm();
         fetchServices();
       } else {
+        const errorData = await response.text();
+        console.error("Erro na resposta:", errorData);
         toast.error("Erro ao salvar serviço");
       }
     } catch (error) {
