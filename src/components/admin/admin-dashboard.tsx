@@ -41,6 +41,16 @@ export function AdminDashboard() {
     router.push("/login");
   };
 
+  const handleQuickAction = (tab: string) => {
+    setActiveTab(tab);
+    const tabNames = {
+      services: "Serviços",
+      appointments: "Agendamentos", 
+      availability: "Disponibilidade"
+    };
+    toast.success(`Navegando para ${tabNames[tab as keyof typeof tabNames]}`);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -110,7 +120,7 @@ export function AdminDashboard() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <OverviewContent />
+            <OverviewContent onQuickAction={handleQuickAction} />
           </TabsContent>
 
           {/* Services Tab */}
@@ -138,7 +148,7 @@ export function AdminDashboard() {
   );
 }
 
-function OverviewContent() {
+function OverviewContent({ onQuickAction }: { onQuickAction: (tab: string) => void }) {
   return (
     <div className="space-y-6">
       {/* Stats Cards */}
@@ -212,7 +222,7 @@ function OverviewContent() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Button
               className="flex items-center gap-2"
-              onClick={() => (window.location.href = "/admin?tab=services")}
+              onClick={() => onQuickAction("services")}
             >
               <Plus className="h-4 w-4" />
               Adicionar Serviço
@@ -220,7 +230,7 @@ function OverviewContent() {
             <Button
               variant="outline"
               className="flex items-center gap-2"
-              onClick={() => (window.location.href = "/admin?tab=appointments")}
+              onClick={() => onQuickAction("appointments")}
             >
               <Eye className="h-4 w-4" />
               Ver Agendamentos
@@ -228,7 +238,7 @@ function OverviewContent() {
             <Button
               variant="outline"
               className="flex items-center gap-2"
-              onClick={() => (window.location.href = "/admin?tab=availability")}
+              onClick={() => onQuickAction("availability")}
             >
               <Clock className="h-4 w-4" />
               Configurar Horários
