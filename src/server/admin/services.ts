@@ -8,10 +8,10 @@ const serviceSchema = z.object({
   name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
   description: z
     .string()
-    .min(10, "Descrição deve ter pelo menos 10 caracteres")
+    .min(3, "Descrição deve ter pelo menos 3 caracteres")
     .optional()
     .nullable()
-    .transform((val) => (val === "" ? undefined : val)), // Transforma string vazia em undefined
+    .transform((val) => (val === "" || val === null ? null : val)), // Transforma string vazia em null
   durationMin: z
     .number()
     .min(15, "Duração mínima é 15 minutos")
