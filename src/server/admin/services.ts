@@ -77,6 +77,34 @@ export async function getServices(): Promise<Service[]> {
   }
 }
 
+export async function getServiceBySlug(slug: string): Promise<Service | null> {
+  try {
+    // Buscar serviço real do banco de dados
+    const service = await prisma.service.findUnique({
+      where: { slug: slug },
+    });
+
+    if (!service) {
+      return null;
+    }
+
+    // Converter para o formato esperado pelo frontend
+    return {
+      id: service.id,
+      name: service.name,
+      slug: service.slug,
+      description: service.description,
+      durationMin: service.durationMin,
+      priceCents: service.priceCents,
+      active: service.active,
+    };
+  } catch (error) {
+    console.error("Error fetching service by slug from database:", error);
+    // Fallback para serviços mockados se o banco falhar
+    return mockServices.find((service) => service.slug === slug) || null;
+  }
+}
+
 export async function createService(data: ServiceFormData): Promise<Service> {
   try {
     const validatedData = serviceSchema.parse(data);
