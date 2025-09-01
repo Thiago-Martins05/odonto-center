@@ -1,16 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServices, createService } from "@/server/admin/services";
 
 export async function GET() {
   try {
-    // Teste simples sem importação
-    return NextResponse.json({ 
-      message: "API funcionando!", 
-      timestamp: new Date().toISOString(),
-      services: [
-        { id: "1", name: "Teste 1", active: true },
-        { id: "2", name: "Teste 2", active: false }
-      ]
-    });
+    const services = await getServices();
+    return NextResponse.json(services);
   } catch (error) {
     console.error("Error fetching services:", error);
     return NextResponse.json(
@@ -23,11 +17,8 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    return NextResponse.json({ 
-      message: "Dados recebidos!", 
-      data,
-      timestamp: new Date().toISOString()
-    }, { status: 201 });
+    const service = await createService(data);
+    return NextResponse.json(service, { status: 201 });
   } catch (error) {
     console.error("Error creating service:", error);
     return NextResponse.json(
