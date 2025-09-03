@@ -1,0 +1,278 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/server/db";
+import { getDailySlots } from "@/lib/availability";
+
+export async function GET(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const weekStart = searchParams.get("weekStart");
+    const weekEnd = searchParams.get("weekEnd");
+    const serviceId = searchParams.get("serviceId");
+
+    console.log("🔍 API Availability Slots - Parameters:");
+    console.log("📅 Week start:", weekStart);
+    console.log("📅 Week end:", weekEnd);
+    console.log("🦷 Service ID:", serviceId);
+
+    if (!weekStart || !weekEnd) {
+      return NextResponse.json(
+        { success: false, error: "weekStart e weekEnd são obrigatórios" },
+        { status: 400 }
+      );
+    }
+
+    // Parse dates - handle timezone issues
+    const startDate = new Date(weekStart);
+    const endDate = new Date(weekEnd);
+    
+    // Extract date components from ISO string to avoid timezone issues
+    const startDateStr = weekStart.split('T')[0]; // Get YYYY-MM-DD part
+    const endDateStr = weekEnd.split('T')[0]; // Get YYYY-MM-DD part
+    
+    const [startYear, startMonth, startDay] = startDateStr.split('-').map(Number);
+    const [endYear, endMonth, endDay] = endDateStr.split('-').map(Number);
+    
+    // Create dates in local timezone using extracted components
+    const normalizedStartDate = new Date(startYear, startMonth - 1, startDay, 0, 0, 0, 0);
+    const normalizedEndDate = new Date(endYear, endMonth - 1, endDay, 23, 59, 59, 999);
+
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return NextResponse.json(
+        { success: false, error: "Datas inválidas" },
+        { status: 400 }
+      );
+    }
+
+    console.log("📅 Parsed dates:");
+    console.log("  Start (original):", startDate.toISOString());
+    console.log("  End (original):", endDate.toISOString());
+    console.log("  Start (normalized):", normalizedStartDate.toISOString());
+    console.log("  End (normalized):", normalizedEndDate.toISOString());
+
+    // Fetch availability rules - INCLUINDO REGRAS GLOBAIS!
+    const rules = await prisma.availabilityRule.findMany({
+      where: {
+        OR: [
+          // Regras específicas do serviço
+          ...(serviceId ? [{ serviceId }] : []),
+          // Regras globais (sem serviceId) - IMPORTANTE!
+          { serviceId: null },
+        ],
+      },
+      orderBy: { weekday: "asc" },
+    });
+
+    console.log("📊 Found rules:", rules.length);
+    console.log("🔍 Rules breakdown:");
+    console.log(
+      "  - Service-specific:",
+      rules.filter((r) => r.serviceId === serviceId).length
+    );
+    console.log(
+      "  - Global rules:",
+      rules.filter((r) => r.serviceId === null).length
+    );
+
+    // Fetch blackout dates
+    const blackoutDates = await prisma.blackoutDate.findMany({
+      where: {
+        date: {
+          gte: normalizedStartDate,
+          lte: normalizedEndDate,
+        },
+      },
+    });
+
+    console.log("🚫 Found blackout dates:", blackoutDates.length);
+
+    // Fetch existing appointments
+    const existingAppointments = await prisma.appointment.findMany({
+      where: {
+        startsAt: {
+          gte: normalizedStartDate,
+          lte: normalizedEndDate,
+        },
+        status: {
+          not: "cancelled",
+        },
+      },
+      select: {
+        id: true,
+        startsAt: true,
+        endsAt: true,
+      },
+    });
+
+    console.log("📅 Found appointments:", existingAppointments.length);
+
+    // Fetch service if serviceId is provided
+    let service = null;
+    if (serviceId) {
+      service = await prisma.service.findUnique({
+        where: { id: serviceId },
+        select: {
+          id: true,
+          name: true,
+          durationMin: true,
+        },
+      });
+      console.log("🦷 Service:", service);
+    }
+
+    // Generate slots for each day
+    const daysMap = new Map<string, string[]>();
+    // Use normalized dates to avoid timezone issues
+    const currentDate = new Date(normalizedStartDate);
+
+    while (currentDate <= normalizedEndDate) {
+      // Create proper date key using local date components
+      const year = currentDate.getFullYear();
+      const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+      const day = String(currentDate.getDate()).padStart(2, '0');
+      const dateKey = `${year}-${month}-${day}`;
+      
+      const weekday = currentDate.getDay();
+
+      // Check if this date is in the past - additional validation
+      const today = new Date();
+      const todayYear = today.getFullYear();
+      const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
+      const todayDay = String(today.getDate()).padStart(2, '0');
+      const todayString = `${todayYear}-${todayMonth}-${todayDay}`;
+      
+      const isDateInPast = dateKey < todayString;
+
+      console.log(`🔍 Processing date: ${dateKey}, weekday: ${weekday}, isPast: ${isDateInPast}`);
+
+      // Skip past dates entirely
+      if (isDateInPast) {
+        console.log(`🔍 Skipping past date: ${dateKey}`);
+        currentDate.setDate(currentDate.getDate() + 1);
+        continue;
+      }
+
+      // Find rules for this weekday
+      const dayRules = rules.filter((rule) => rule.weekday === weekday);
+
+      if (dayRules.length > 0) {
+        // Check if this date is blacked out
+        const isBlackedOut = blackoutDates.some(
+          (blackout) => blackout.date.toISOString().split("T")[0] === dateKey
+        );
+
+        console.log(`🔍 Date ${dateKey}: rules=${dayRules.length}, blackedOut=${isBlackedOut}`);
+
+        if (!isBlackedOut) {
+          // Convert Prisma rules to the format expected by getDailySlots
+          const availabilityRules = dayRules.map((rule) => ({
+            id: rule.id,
+            weekday: rule.weekday,
+            start: rule.start,
+            end: rule.end,
+            serviceId: rule.serviceId || undefined,
+          }));
+
+          const slots = getDailySlots({
+            date: currentDate,
+            serviceDurationMin: service?.durationMin || 30,
+            rules: availabilityRules,
+            blackouts: blackoutDates.map((blackout) => ({
+              id: blackout.id,
+              date: blackout.date,
+              reason: blackout.reason || undefined,
+            })),
+            existingAppointments: existingAppointments,
+            stepMin: 15,
+            bufferMin: 10,
+          });
+
+          if (slots.length > 0) {
+            // Convert Date[] to string[] for storage
+            // Corrigir problema de fuso horário - garantir que os slots sejam convertidos corretamente
+            const slotStrings = slots.map((slot) => {
+              // Criar uma nova data no fuso horário local para evitar problemas de UTC
+              const localSlot = new Date(
+                slot.getFullYear(),
+                slot.getMonth(),
+                slot.getDate(),
+                slot.getHours(),
+                slot.getMinutes(),
+                0,
+                0
+              );
+              return localSlot.toISOString();
+            });
+            daysMap.set(dateKey, slotStrings);
+          }
+        }
+      }
+
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+
+    // Convert map to array format
+    const days: Array<{
+      date: string;
+      slots: string[];
+      dateKey: string;
+    }> = [];
+
+    daysMap.forEach((slots, dateKey) => {
+      // Parse date key properly to avoid timezone issues
+      const [year, month, day] = dateKey.split('-').map(Number);
+      const date = new Date(year, month - 1, day);
+      const formattedDate = new Intl.DateTimeFormat("pt-BR", {
+        day: "2-digit",
+        month: "2-digit",
+      }).format(date);
+
+      days.push({
+        date: formattedDate,
+        slots,
+        dateKey,
+      });
+    });
+
+    // Sort days by date
+    days.sort(
+      (a, b) => new Date(a.dateKey).getTime() - new Date(b.dateKey).getTime()
+    );
+
+    const response = {
+      success: true,
+      data: {
+        days,
+        service,
+        totalRules: rules.length,
+        totalBlackouts: blackoutDates.length,
+        totalAppointments: existingAppointments.length,
+        rules: rules.map((r) => ({
+          weekday: r.weekday,
+          start: r.start,
+          end: r.end,
+          serviceId: r.serviceId,
+        })),
+      },
+    };
+
+    console.log("✅ Generated response:", {
+      daysCount: days.length,
+      totalSlots: days.reduce((sum, day) => sum + day.slots.length, 0),
+    });
+
+    // Return response with cache headers to prevent caching issues
+    return NextResponse.json(response, {
+      headers: {
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
+  } catch (error) {
+    console.error("❌ Error in availability slots API:", error);
+    return NextResponse.json(
+      { success: false, error: "Erro interno do servidor" },
+      { status: 500 }
+    );
+  }
+}

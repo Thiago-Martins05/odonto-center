@@ -40,74 +40,58 @@ export function TimeSelection({
     setLoading(true);
     setError(null);
     try {
-      // TODO: Replace with actual API call to getAvailableSlots
-      // For now, using mock data
       const weekStart = getWeekStart(currentWeek);
-      const mockSlots: DaySlots[] = [];
+      const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
 
-      for (let i = 0; i < 7; i++) {
-        const date = new Date(weekStart);
-        date.setDate(date.getDate() + i);
+      // Usar a API real de disponibilidade com timestamp para evitar cache
+      const timestamp = Date.now();
+      const apiUrl = `/api/availability/slots?weekStart=${weekStart.toISOString()}&weekEnd=${weekEnd.toISOString()}&serviceId=${
+        services[0]?.id || ""
+      }&t=${timestamp}`;
 
-        // Skip past dates
-        if (date < new Date()) continue;
+      console.log("🔍 Fetching availability from API:", apiUrl);
+      console.log("📅 Week start:", weekStart.toISOString());
+      console.log("📅 Week end:", weekEnd.toISOString());
+      console.log("🦷 Service ID:", services[0]?.id || "none");
 
-        const dateKey = date.toISOString().split("T")[0];
-        const formattedDate = formatDate(date);
+      const response = await fetch(apiUrl);
 
-        // Generate mock slots for weekdays (Mon-Fri)
-        const weekday = date.getDay();
-        if (weekday >= 1 && weekday <= 5) {
-          const slots = generateMockSlots(date);
-          if (slots.length > 0) {
-            mockSlots.push({
-              date: formattedDate,
-              slots,
-              dateKey,
-            });
-          }
-        }
+      if (!response.ok) {
+        throw new Error(
+          `Falha ao buscar horários disponíveis: ${response.status} ${response.statusText}`
+        );
       }
 
-      setAvailableSlots(mockSlots);
-      setLoading(false);
+      const data = await response.json();
+      console.log("✅ API Response:", data);
+
+      if (data.success) {
+        console.log("🎯 Available slots loaded:", data.data.days);
+        console.log("📊 Total rules:", data.data.totalRules);
+        console.log("🚫 Total blackouts:", data.data.totalBlackouts);
+        console.log("📅 Total appointments:", data.data.totalAppointments);
+        setAvailableSlots(data.data.days);
+      } else {
+        throw new Error(data.error || "Erro desconhecido na API");
+      }
     } catch (error) {
-      console.error("Error fetching slots:", error);
+      console.error("❌ Error fetching slots:", error);
       setError(
-        "Não foi possível carregar os horários disponíveis. Tente novamente."
+        `Não foi possível carregar os horários disponíveis: ${
+          error instanceof Error ? error.message : "Erro desconhecido"
+        }`
       );
+
+      // NÃO usar dados mockados - manter array vazio para forçar usuário a tentar novamente
+      setAvailableSlots([]);
+    } finally {
       setLoading(false);
     }
-  }, [currentWeek]);
+  }, [currentWeek, services]);
 
   useEffect(() => {
     fetchAvailableSlots();
   }, [fetchAvailableSlots]);
-
-  const generateMockSlots = (date: Date): string[] => {
-    const slots: string[] = [];
-    const startHour = 9; // 9 AM
-    const endHour = 17; // 5 PM
-
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute = 0; minute < 60; minute += 30) {
-        const slotTime = new Date(date);
-        slotTime.setHours(hour, minute, 0, 0);
-
-        // Skip past times for today
-        if (
-          date.toDateString() === new Date().toDateString() &&
-          slotTime < new Date()
-        ) {
-          continue;
-        }
-
-        slots.push(slotTime.toISOString());
-      }
-    }
-
-    return slots;
-  };
 
   const getWeekStart = (date: Date): Date => {
     const d = new Date(date);
@@ -142,6 +126,8 @@ export function TimeSelection({
     } else {
       newWeek.setDate(newWeek.getDate() + 7);
     }
+    
+    // Always allow navigation - the API will filter out past dates
     setCurrentWeek(newWeek);
   };
 
@@ -243,6 +229,13 @@ export function TimeSelection({
           variant="outline"
           size="sm"
           onClick={() => navigateWeek("prev")}
+          disabled={(() => {
+            const today = new Date();
+            const weekStart = getWeekStart(currentWeek);
+            const todayWeekStart = getWeekStart(today);
+            // Disable only if we're at today's week
+            return weekStart.getTime() === todayWeekStart.getTime();
+          })()}
           className="flex items-center space-x-2"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -271,18 +264,63 @@ export function TimeSelection({
         </Button>
       </div>
 
-      {/* Weekly Slots */}
-      {availableSlots.length === 0 ? (
+      {/* Refresh Button */}
+      <div className="flex justify-center mb-6">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={fetchAvailableSlots}
+          disabled={loading}
+          className="flex items-center space-x-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          <span>{loading ? "Carregando..." : "Atualizar horários"}</span>
+        </Button>
+      </div>
+
+      {/* Status Info */}
+      {availableSlots.length > 0 && (
+        <div className="text-center mb-6 p-4 bg-muted/50 rounded-lg">
+          <div className="flex items-center justify-center space-x-2 mb-2">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <p className="text-sm font-medium text-green-700">
+              ✅ Horários sincronizados com o painel administrativo
+            </p>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            📅 {availableSlots.length} dia
+            {availableSlots.length !== 1 ? "s" : ""} com horários disponíveis
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Última atualização: {new Date().toLocaleTimeString("pt-BR")}
+          </p>
+        </div>
+      )}
+
+      {/* No Slots Message */}
+      {availableSlots.length === 0 && !loading && !error && (
         <div className="text-center py-12">
           <Calendar className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
           <h3 className="text-lg font-semibold text-foreground mb-2">
             Nenhum horário disponível nesta semana
           </h3>
-          <p className="text-muted-foreground">
-            Tente navegar para outra semana ou entre em contato conosco
+          <p className="text-muted-foreground mb-4">
+            Verifique as configurações de disponibilidade no painel
+            administrativo
           </p>
+          <Button
+            onClick={fetchAvailableSlots}
+            variant="outline"
+            className="flex items-center space-x-2 mx-auto"
+          >
+            <RefreshCw className="w-4 h-4" />
+            <span>Verificar novamente</span>
+          </Button>
         </div>
-      ) : (
+      )}
+
+      {/* Weekly Slots */}
+      {availableSlots.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {availableSlots.map((day) => (
             <Card key={day.dateKey} className="rounded-2xl">
@@ -328,3 +366,4 @@ export function TimeSelection({
     </div>
   );
 }
+

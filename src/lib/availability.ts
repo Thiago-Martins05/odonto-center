@@ -55,7 +55,56 @@ export function getDailySlots({
   // Generate slots for each rule window
   const allSlots: Date[] = [];
   const now = new Date();
-  const bufferTime = new Date(now.getTime() + bufferMin * 60 * 1000);
+
+  // Check if the date is in the past - more robust comparison
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  
+  // Additional check: compare date strings to avoid timezone issues
+  const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD
+  const targetDateString = targetDate.toISOString().split('T')[0]; // YYYY-MM-DD
+  
+  const isPast = targetDateString < todayString;
+  
+  console.log(`🔍 Debug - Date comparison:`, {
+    inputDate: date.toISOString(),
+    targetDate: targetDate.toISOString(),
+    today: today.toISOString(),
+    todayString,
+    targetDateString,
+    isPast,
+    comparison: `${targetDateString} < ${todayString} = ${isPast}`
+  });
+  
+  if (isPast) {
+    // Date is in the past, no slots available
+    console.log(`🔍 Debug - Date is in the past, returning empty array`);
+    return [];
+  }
+
+  // Only apply buffer if the date is today
+  const isToday = targetDateString === todayString;
+  const bufferTime = isToday
+    ? new Date(now.getTime() + bufferMin * 60 * 1000)
+    : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+
+  console.log(`🔍 Debug - Time validation:`, {
+    isToday,
+    now: now.toISOString(),
+    bufferTime: bufferTime.toISOString(),
+    bufferMin,
+    todayString,
+    targetDateString,
+  });
+
+  console.log(`🔍 Debug - getDailySlots:`, {
+    date: date.toISOString(),
+    weekday,
+    applicableRules: applicableRules.length,
+    isToday,
+    bufferTime: bufferTime.toISOString(),
+    now: now.toISOString(),
+  });
 
   for (const rule of applicableRules) {
     const { start, end } = rule;
@@ -63,10 +112,32 @@ export function getDailySlots({
     const { hours: endHour, minutes: endMin } = parseHHMM(end);
 
     // Create rule start and end times for this date
-    const ruleStart = new Date(date);
-    ruleStart.setHours(startHour, startMin, 0, 0);
-    const ruleEnd = new Date(date);
-    ruleEnd.setHours(endHour, endMin, 0, 0);
+    // Corrigir problema de fuso horário - garantir que as datas sejam criadas no fuso local
+    const ruleStart = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      startHour,
+      startMin,
+      0,
+      0
+    );
+    const ruleEnd = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      endHour,
+      endMin,
+      0,
+      0
+    );
+
+    console.log(`🔍 Debug - Regra:`, {
+      start: `${startHour}:${startMin}`,
+      end: `${endHour}:${endMin}`,
+      ruleStart: ruleStart.toISOString(),
+      ruleEnd: ruleEnd.toISOString(),
+    });
 
     // Generate candidate slots in stepMin increments
     let currentSlot = new Date(ruleStart);
@@ -74,7 +145,10 @@ export function getDailySlots({
     while (currentSlot < ruleEnd) {
       const slotEnd = addMinutes(currentSlot, serviceDurationMin);
 
-      if (slotEnd <= ruleEnd && currentSlot >= bufferTime) {
+      // Check if slot is in the future (considering buffer time)
+      const isSlotInFuture = currentSlot >= bufferTime;
+      
+      if (slotEnd <= ruleEnd && isSlotInFuture) {
         // Check for overlaps with existing appointments
         const hasOverlap = existingAppointments.some((appointment) => {
           const appointmentStart = new Date(appointment.startsAt);
@@ -84,13 +158,26 @@ export function getDailySlots({
         });
 
         if (!hasOverlap) {
-          allSlots.push(new Date(currentSlot));
+          // Corrigir problema de fuso horário - garantir que o slot seja criado no fuso local
+          allSlots.push(
+            new Date(
+              currentSlot.getFullYear(),
+              currentSlot.getMonth(),
+              currentSlot.getDate(),
+              currentSlot.getHours(),
+              currentSlot.getMinutes(),
+              0,
+              0
+            )
+          );
         }
       }
 
       currentSlot = addMinutes(currentSlot, stepMin);
     }
   }
+
+  console.log(`🔍 Debug - Total de slots gerados:`, allSlots.length);
 
   // Return sorted unique slots
   return allSlots
