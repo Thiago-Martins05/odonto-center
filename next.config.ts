@@ -9,19 +9,24 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: false,
   },
   typescript: {
-    ignoreBuildErrors: false, // Build funcionando, removendo configuração temporária
+    ignoreBuildErrors: false,
   },
-  // Resolver problema de múltiplos lockfiles
+  // Configurações para produção na Vercel
   outputFileTracingRoot: process.cwd(),
-  // Desabilitar pré-renderização para páginas que dependem do banco
   experimental: {
-    // Desabilitar SSG para páginas que fazem queries no banco
     workerThreads: false,
   },
+  // Configurações de build para produção
+  swcMinify: true,
+  compress: true,
+  poweredByHeader: false,
   // Configurar porta padrão
   env: {
     PORT: "3000",
   },
+  // Configurações para deploy na Vercel
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
 };
 
 export default nextConfig;
