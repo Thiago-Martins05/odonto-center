@@ -13,23 +13,34 @@ export async function GET() {
     });
 
     // Transformar os dados para o formato esperado pelo frontend
-    const formattedAppointments = appointments.map((appointment) => ({
-      id: appointment.id,
-      patientName: appointment.patientName,
-      patientEmail: appointment.email,
-      patientPhone: appointment.phone || "",
-      serviceName: appointment.service.name,
-      serviceId: appointment.serviceId,
-      date: appointment.startsAt.toISOString().split("T")[0],
-      time: appointment.startsAt.toTimeString().slice(0, 5),
-      duration: Math.round(
-        (appointment.endsAt.getTime() - appointment.startsAt.getTime()) /
-          (1000 * 60)
-      ),
-      status: appointment.status,
-      notes: appointment.notes || "",
-      createdAt: appointment.createdAt.toISOString(),
-    }));
+    const formattedAppointments = appointments.map((appointment) => {
+      // Corrigir problema de fuso horário - usar componentes de data locais
+      const localStartsAt = new Date(appointment.startsAt);
+      
+      // Extrair componentes de data locais para evitar problemas de timezone
+      const year = localStartsAt.getFullYear();
+      const month = String(localStartsAt.getMonth() + 1).padStart(2, '0');
+      const day = String(localStartsAt.getDate()).padStart(2, '0');
+      const dateString = `${year}-${month}-${day}`; // Formato YYYY-MM-DD
+
+      return {
+        id: appointment.id,
+        patientName: appointment.patientName,
+        patientEmail: appointment.email,
+        patientPhone: appointment.phone || "",
+        serviceName: appointment.service.name,
+        serviceId: appointment.serviceId,
+        date: dateString,
+        time: `${String(localStartsAt.getHours()).padStart(2, '0')}:${String(localStartsAt.getMinutes()).padStart(2, '0')}`,
+        duration: Math.round(
+          (appointment.endsAt.getTime() - appointment.startsAt.getTime()) /
+            (1000 * 60)
+        ),
+        status: appointment.status,
+        notes: appointment.notes || "",
+        createdAt: appointment.createdAt.toISOString(),
+      };
+    });
 
     return NextResponse.json(formattedAppointments);
   } catch (error) {

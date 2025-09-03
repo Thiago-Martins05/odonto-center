@@ -48,6 +48,7 @@ import {
   Edit,
   Trash2,
   CheckCircle,
+  CheckCircle2,
   XCircle,
   AlertCircle,
   CalendarDays,
@@ -277,7 +278,16 @@ export function AppointmentsTab() {
         return;
       }
 
-      const startsAt = new Date(`${formData.date}T${formData.time}`);
+      // Corrigir problema de fuso horário - garantir que a data seja tratada no fuso local
+      const startsAt = new Date(
+        new Date(`${formData.date}T${formData.time}`).getFullYear(),
+        new Date(`${formData.date}T${formData.time}`).getMonth(),
+        new Date(`${formData.date}T${formData.time}`).getDate(),
+        new Date(`${formData.date}T${formData.time}`).getHours(),
+        new Date(`${formData.date}T${formData.time}`).getMinutes(),
+        0,
+        0
+      );
       const endsAt = new Date(
         startsAt.getTime() + selectedService.durationMin * 60 * 1000
       );
@@ -355,9 +365,14 @@ export function AppointmentsTab() {
   };
 
   const filteredAppointments = appointments.filter((appointment) => {
+    // Verificar status
     const matchesStatus =
       filters.status === "all" || appointment.status === filters.status;
+    
+    // Verificar data - se filtro de data estiver ativo
     const matchesDate = !filters.date || appointment.date === filters.date;
+    
+    // Verificar busca
     const matchesSearch =
       !filters.search ||
       appointment.patientName
@@ -374,7 +389,10 @@ export function AppointmentsTab() {
   });
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("pt-BR");
+    // dateString já vem no formato YYYY-MM-DD da API
+    // Converter para DD/MM/YYYY para exibição
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
   };
 
   const formatTime = (timeString: string) => {
@@ -584,6 +602,16 @@ export function AppointmentsTab() {
                           disabled={appointment.status === "cancelled"}
                         >
                           <XCircle className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            handleStatusChange(appointment.id, "done")
+                          }
+                          disabled={appointment.status === "done"}
+                        >
+                          <CheckCircle2 className="h-4 w-4" />
                         </Button>
                         <Button
                           variant="outline"
