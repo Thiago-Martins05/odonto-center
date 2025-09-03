@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
 import { AppointmentsTab } from "./appointments-tab";
 import { AvailabilityTab } from "./availability-tab";
+import { ReportsTab } from "./reports-tab";
 import { useAuth } from "@/lib/auth-hook";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -181,7 +182,7 @@ export function AdminDashboard() {
 
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
-            <ReportsContent />
+            <ReportsTab />
           </TabsContent>
         </Tabs>
       </div>
@@ -364,37 +365,4 @@ function OverviewContent({
   );
 }
 
-function ReportsContent() {
-  return (
-    <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Relatórios</CardTitle>
-          <CardDescription>
-            Gere relatórios detalhados sobre agendamentos e serviços
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Button variant="outline" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Relatório de Agendamentos
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Relatório Financeiro
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Users className="h-4 w-4" />
-              Relatório de Serviços
-            </Button>
-            <Button variant="outline" className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              Relatório de Disponibilidade
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+
