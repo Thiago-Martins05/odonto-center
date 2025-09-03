@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Select,
   SelectContent,
@@ -362,6 +363,10 @@ export function AppointmentsTab() {
       time: "",
       notes: "",
     });
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, patientPhone: value }));
   };
 
   const filteredAppointments = appointments.filter((appointment) => {
@@ -829,12 +834,10 @@ export function AppointmentsTab() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="patientPhone">Telefone</Label>
-                <Input
+                <PhoneInput
                   id="patientPhone"
                   value={formData.patientPhone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, patientPhone: e.target.value })
-                  }
+                  onChange={handlePhoneChange}
                   placeholder="(11) 99999-9999"
                 />
               </div>
@@ -962,12 +965,10 @@ export function AppointmentsTab() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="editPatientPhone">Telefone</Label>
-                <Input
+                <PhoneInput
                   id="editPatientPhone"
                   value={formData.patientPhone}
-                  onChange={(e) =>
-                    setFormData({ ...formData, patientPhone: e.target.value })
-                  }
+                  onChange={handlePhoneChange}
                   placeholder="(11) 99999-9999"
                 />
               </div>

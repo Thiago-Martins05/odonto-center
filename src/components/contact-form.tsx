@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { PhoneInput } from "@/components/ui/phone-input";
 import {
   Card,
   CardContent,
@@ -72,6 +73,10 @@ export function ContactForm() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handlePhoneChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, phone: value }));
+  };
+
   return (
     <Card className="w-full max-w-2xl">
       <CardHeader>
@@ -114,11 +119,10 @@ export function ContactForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="phone">Telefone</Label>
-              <Input
+              <PhoneInput
                 id="phone"
-                name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handlePhoneChange}
                 placeholder="(11) 99999-9999"
               />
             </div>

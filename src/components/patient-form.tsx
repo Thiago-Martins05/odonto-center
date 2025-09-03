@@ -50,6 +50,7 @@ export function PatientForm({
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { errors, isValid },
   } = useForm<PatientFormData>({
     resolver: zodResolver(patientFormSchema),
@@ -238,6 +239,7 @@ export function PatientForm({
           </Label>
           <PhoneInput
             id="patientPhone"
+            value={watch("patientPhone") || ""}
             onChange={(value) => setValue("patientPhone", value)}
             className="h-12 rounded-xl"
           />
