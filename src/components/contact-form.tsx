@@ -29,9 +29,19 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     try {
-      // Aqui você pode implementar a lógica para enviar o email
-      // Por enquanto, vamos simular um envio
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Erro ao enviar mensagem");
+      }
 
       toast.success(
         "Mensagem enviada com sucesso! Entraremos em contato em breve."
@@ -44,7 +54,12 @@ export function ContactForm() {
         message: "",
       });
     } catch (error) {
-      toast.error("Erro ao enviar mensagem. Tente novamente.");
+      console.error("Erro ao enviar formulário:", error);
+      toast.error(
+        error instanceof Error 
+          ? error.message 
+          : "Erro ao enviar mensagem. Tente novamente."
+      );
     } finally {
       setIsSubmitting(false);
     }

@@ -22,12 +22,14 @@ import {
   Eye,
   LogOut,
   Loader2,
+  MessageSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
 import { AppointmentsTab } from "./appointments-tab";
 import { AvailabilityTab } from "./availability-tab";
 import { ReportsTab } from "./reports-tab";
+import { ContactMessagesTab } from "./contact-messages-tab";
 import { useAuth } from "@/lib/auth-hook";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -127,7 +129,7 @@ export function AdminDashboard() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
               Visão Geral
@@ -153,6 +155,10 @@ export function AdminDashboard() {
             <TabsTrigger value="reports" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               Relatórios
+            </TabsTrigger>
+            <TabsTrigger value="messages" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
+              Mensagens
             </TabsTrigger>
           </TabsList>
 
@@ -183,6 +189,11 @@ export function AdminDashboard() {
           {/* Reports Tab */}
           <TabsContent value="reports" className="space-y-6">
             <ReportsTab />
+          </TabsContent>
+
+          {/* Messages Tab */}
+          <TabsContent value="messages" className="space-y-6">
+            <ContactMessagesTab />
           </TabsContent>
         </Tabs>
       </div>

@@ -16,6 +16,122 @@ const clinic: Clinic = {
   email: "contato@odontocenter.com",
 };
 
+export interface ContactFormData {
+  name: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendContactEmail(contactData: ContactFormData) {
+  try {
+    // Se não houver Resend configurado, apenas logar
+    if (!resend) {
+      console.log(
+        "Email service not configured. Mock contact email:",
+        contactData
+      );
+      return { success: true, message: "Email service not configured" };
+    }
+
+    // Enviar email para o administrador
+    const { data, error } = await resend.emails.send({
+      from: "Odonto Center <noreply@odontocenter.com>",
+      to: [clinic.email], // Email do administrador
+      replyTo: contactData.email, // Permitir resposta direta ao cliente
+      subject: `Nova mensagem de contato: ${contactData.subject}`,
+      html: `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Nova Mensagem de Contato</title>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { text-align: center; padding: 20px 0; border-bottom: 2px solid #e5e7eb; }
+            .logo { font-size: 24px; font-weight: bold; color: #2563eb; }
+            .content { padding: 30px 0; }
+            .contact-details { background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .detail-row { display: flex; justify-content: space-between; margin: 10px 0; }
+            .detail-label { font-weight: bold; color: #6b7280; }
+            .detail-value { color: #111827; }
+            .message-content { background: #ffffff; border: 1px solid #e5e7eb; padding: 20px; border-radius: 8px; margin: 20px 0; }
+            .footer { text-align: center; padding: 20px 0; border-top: 2px solid #e5e7eb; color: #6b7280; font-size: 14px; }
+            .reply-button { background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block; margin: 20px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <div class="logo">Odonto Center</div>
+              <p>Nova Mensagem de Contato</p>
+            </div>
+            
+            <div class="content">
+              <h2>Você recebeu uma nova mensagem de contato!</h2>
+              
+              <div class="contact-details">
+                <div class="detail-row">
+                  <span class="detail-label">Nome:</span>
+                  <span class="detail-value">${contactData.name}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Email:</span>
+                  <span class="detail-value">${contactData.email}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Telefone:</span>
+                  <span class="detail-value">${contactData.phone}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Assunto:</span>
+                  <span class="detail-value">${contactData.subject}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Data:</span>
+                  <span class="detail-value">${new Date().toLocaleString('pt-BR')}</span>
+                </div>
+              </div>
+              
+              <div class="message-content">
+                <h3>Mensagem:</h3>
+                <p>${contactData.message.replace(/\n/g, '<br>')}</p>
+              </div>
+              
+              <div style="text-align: center;">
+                <a href="mailto:${contactData.email}?subject=Re: ${contactData.subject}" class="reply-button">
+                  Responder por Email
+                </a>
+              </div>
+            </div>
+            
+            <div class="footer">
+              <p><strong>Odonto Center</strong></p>
+              <p>${clinic.address}</p>
+              <p>${clinic.phone} | ${clinic.email}</p>
+            </div>
+          </div>
+        </body>
+        </html>
+      `,
+    });
+
+    if (error) {
+      console.error("Error sending contact email:", error);
+      return { success: false, error: error.message };
+    }
+
+    console.log("Contact email sent successfully:", data);
+    return { success: true, data };
+  } catch (error) {
+    console.error("Error in sendContactEmail:", error);
+    return { success: false, error: "Failed to send contact email" };
+  }
+}
+
 export async function sendAppointmentConfirmation(appointmentId: string) {
   try {
     // Se não houver Resend configurado, apenas logar
