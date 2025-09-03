@@ -1,61 +1,308 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Odonto Center
 
-## Getting Started
+A comprehensive dental clinic management system with online appointment scheduling and administrative dashboard.
+
+[![Next.js](https://img.shields.io/badge/Next.js-15.5.2-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Prisma](https://img.shields.io/badge/Prisma-6.15.0-2D3748?style=flat-square&logo=prisma)](https://prisma.io/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+
+## Table of Contents
+
+- [About](#about)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Usage](#usage)
+- [Project Structure](#project-structure)
+- [API Endpoints](#api-endpoints)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+
+## About
+
+**Odonto Center** is a modern, comprehensive web application designed for dental clinic management. Built with Next.js 15, it provides a seamless experience for both patients and administrators, featuring online appointment scheduling, complete administrative dashboard, and automated email notifications.
+
+### Key Features
+
+- **Modern Interface**: Responsive and intuitive design with Tailwind CSS
+- **Online Scheduling**: Complete appointment booking system
+- **Administrative Dashboard**: Full management of appointments, services, and reports
+- **Secure Authentication**: Login system with NextAuth.js
+- **Email Notifications**: Automated confirmation emails
+- **Detailed Reports**: PDF report generation
+
+## Features
+
+### For Patients
+- **Online Scheduling**: View available time slots and book appointments
+- **Service Catalog**: Detailed view of available treatments
+- **Email Confirmation**: Automatic confirmation emails
+- **Responsive Interface**: Optimized access on mobile devices
+
+### For Administrators
+- **Complete Dashboard**: Overview of appointments and statistics
+- **Appointment Management**: View, edit, and cancel appointments
+- **Service Management**: Create and edit treatments
+- **Schedule Configuration**: Define availability and rules
+- **Detailed Reports**: Performance and billing analysis
+- **Contact Messages**: Manage contact forms
+- **Notifications**: Alert system for new appointments
+
+## Technology Stack
+
+### Frontend
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Static typing
+- **Tailwind CSS** - Utility-first CSS framework
+- **Radix UI** - Accessible components
+- **React Hook Form** - Form management
+- **Zod** - Schema validation
+- **Lucide React** - Modern icons
+
+### Backend
+- **Next.js API Routes** - Integrated API
+- **Prisma** - ORM and database management
+- **SQLite** - Database (development)
+- **NextAuth.js** - Authentication
+- **bcryptjs** - Password hashing
+
+### Integrations
+- **Resend** - Email service
+- **Date-fns** - Date manipulation
+- **React Query** - Data caching and synchronization
+
+## Prerequisites
+
+- **Node.js** 18.17 or higher
+- **npm** 9.0 or higher
+- **Git** for repository cloning
+
+## Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/seu-usuario/odonto-center.git
+   cd odonto-center
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   cp env.example .env.local
+   ```
+
+4. **Set up the database**
+   ```bash
+   npm run db:push
+   ```
+
+5. **Seed the database with initial data**
+   ```bash
+   npm run db:seed
+   ```
+
+6. **Start the development server**
+   ```bash
+   npm run dev
+   ```
+
+Visit [http://localhost:3000](http://localhost:3000) to view the application.
+
+## Configuration
 
 ### Environment Variables
 
-Create a `.env.local` file in the root directory with the following variables:
+Create a `.env.local` file in the project root:
 
 ```bash
 # Database
-DATABASE_URL="postgresql://username:password@localhost:5432/odonto_center"
+DATABASE_URL="file:./prisma/dev.db"
 
-# Email (Resend)
-RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# Next.js
+# NextAuth
 NEXTAUTH_SECRET="your-secret-key-here"
 NEXTAUTH_URL="http://localhost:3000"
 
-# Authentication
-ADMIN_EMAILS="admin@example.com,manager@example.com"
+# Email (Optional - for notifications)
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 ```
 
-**Note:** You'll need to sign up for [Resend](https://resend.com) to get an API key for email functionality.
+### Email Configuration
 
-**Authentication:** The admin panel is protected by email-based authentication. Add authorized admin emails to the `ADMIN_EMAILS` environment variable, separated by commas.
+To enable email notifications:
 
-### Development Server
+1. Create an account at [Resend](https://resend.com)
+2. Obtain your API key
+3. Add the `RESEND_API_KEY` variable to `.env.local`
 
-First, run the development server:
+### Administrator User
+
+The system automatically creates an admin user during seeding:
+
+- **Email**: `admin@odontocenter.com`
+- **Password**: `admin123`
+
+⚠️ **Important**: Change the default password in production!
+
+## Usage
+
+### Available Scripts
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Development
+npm run dev          # Start development server
+
+# Production
+npm run build        # Generate production build
+npm run start        # Start production server
+
+# Database
+npm run db:push      # Apply schema changes
+npm run db:studio    # Open Prisma Studio
+npm run db:seed      # Seed database with initial data
+
+# Code Quality
+npm run lint         # Run ESLint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Initial Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Access the administrative panel**: `/admin`
+2. **Login** with default credentials
+3. **Configure available services**
+4. **Set operating hours**
+5. **Customize clinic information**
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+odonto-center/
+├── prisma/                 # Database schema and migrations
+│   ├── schema.prisma      # Database definition
+│   ├── seed.ts           # Initial data
+│   └── dev.db            # SQLite database (development)
+├── public/               # Static files
+├── src/
+│   ├── app/              # App Router (Next.js 15)
+│   │   ├── admin/        # Administrative panel
+│   │   ├── api/          # API Routes
+│   │   ├── agenda/       # Appointment page
+│   │   ├── servicos/     # Service catalog
+│   │   └── contato/      # Contact form
+│   ├── components/       # React components
+│   │   ├── admin/        # Dashboard components
+│   │   ├── auth/         # Authentication components
+│   │   ├── ui/           # Base components (shadcn/ui)
+│   │   └── ...           # Other components
+│   ├── lib/              # Utilities and configurations
+│   ├── server/           # Server logic
+│   └── types/            # TypeScript definitions
+├── package.json          # Dependencies and scripts
+├── tailwind.config.ts    # Tailwind configuration
+├── tsconfig.json         # TypeScript configuration
+└── README.md            # This file
+```
 
-To learn more about Next.js, take a look at the following resources:
+## API Endpoints
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Public
+- `GET /api/availability/slots` - Available time slots
+- `POST /api/contact` - Send contact message
+- `GET /api/admin/reports/public` - Public reports
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Administrative (Authenticated)
+- `GET /api/admin/appointments` - List appointments
+- `POST /api/admin/appointments` - Create appointment
+- `PUT /api/admin/appointments/[id]` - Update appointment
+- `DELETE /api/admin/appointments/[id]` - Cancel appointment
+- `GET /api/admin/services` - List services
+- `POST /api/admin/services` - Create service
+- `PUT /api/admin/services/[id]` - Update service
+- `GET /api/admin/reports` - Administrative reports
+- `GET /api/admin/reports/export` - Export reports to PDF
 
-## Deploy on Vercel
+### Authentication
+- `POST /api/auth/signin` - Login
+- `POST /api/auth/signout` - Logout
+- `GET /api/auth/session` - Current session
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Vercel (Recommended)
+
+1. **Connect your repository** to Vercel
+2. **Configure environment variables**:
+   - `DATABASE_URL` (use PostgreSQL for production)
+   - `NEXTAUTH_SECRET`
+   - `NEXTAUTH_URL`
+   - `RESEND_API_KEY` (optional)
+
+3. **Automatic deployment** on every push to main branch
+
+### Other Platforms
+
+The project is compatible with any platform that supports Next.js:
+- **Netlify**
+- **Railway**
+- **DigitalOcean App Platform**
+- **AWS Amplify**
+
+### Production Database
+
+For production, it's recommended to use PostgreSQL:
+
+```bash
+# Example DATABASE_URL for PostgreSQL
+DATABASE_URL="postgresql://user:password@host:5432/odonto_center"
+```
+
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. **Fork** the project
+2. **Create a branch** for your feature (`git checkout -b feature/AmazingFeature`)
+3. **Commit** your changes (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** to the branch (`git push origin feature/AmazingFeature`)
+5. **Open a Pull Request**
+
+### Code Standards
+
+- Use **TypeScript** for typing
+- Follow the configured **ESLint** conventions
+- Write **functional components** with hooks
+- Use **Tailwind CSS** for styling
+- Keep **components small** and reusable
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+
+## Additional Documentation
+
+- 🚀 **[Quick Setup Guide](SETUP.md)** - Set up in 5 minutes
+- 🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
+- 📝 **[Changelog](CHANGELOG.md)** - Change history
+- 📧 **[Email Configuration](EMAIL_SETUP.md)** - Notification system setup
+
+## Support
+
+For support and questions:
+
+- 📧 **Email**: thiagoroyal05@icloud.com
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Thiago-Martins05/odonto-center)
+- 📖 **Documentation**: [Project Wiki](https://github.com/seu-usuario/odonto-center/wiki)
+
+---
+
+<div align="center">
+  <p>Developed by Thiago Martins with dedication for dental clinics</p>
+  <p>⭐ If this project helped you, consider giving it a star!</p>
+</div>
