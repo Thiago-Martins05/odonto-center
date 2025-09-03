@@ -66,19 +66,8 @@ export function getDailySlots({
   
   const isPast = targetDateString < todayString;
   
-  console.log(`🔍 Debug - Date comparison:`, {
-    inputDate: date.toISOString(),
-    targetDate: targetDate.toISOString(),
-    today: today.toISOString(),
-    todayString,
-    targetDateString,
-    isPast,
-    comparison: `${targetDateString} < ${todayString} = ${isPast}`
-  });
-  
   if (isPast) {
     // Date is in the past, no slots available
-    console.log(`🔍 Debug - Date is in the past, returning empty array`);
     return [];
   }
 
@@ -88,23 +77,7 @@ export function getDailySlots({
     ? new Date(now.getTime() + bufferMin * 60 * 1000)
     : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 
-  console.log(`🔍 Debug - Time validation:`, {
-    isToday,
-    now: now.toISOString(),
-    bufferTime: bufferTime.toISOString(),
-    bufferMin,
-    todayString,
-    targetDateString,
-  });
 
-  console.log(`🔍 Debug - getDailySlots:`, {
-    date: date.toISOString(),
-    weekday,
-    applicableRules: applicableRules.length,
-    isToday,
-    bufferTime: bufferTime.toISOString(),
-    now: now.toISOString(),
-  });
 
   for (const rule of applicableRules) {
     const { start, end } = rule;
@@ -132,12 +105,7 @@ export function getDailySlots({
       0
     );
 
-    console.log(`🔍 Debug - Regra:`, {
-      start: `${startHour}:${startMin}`,
-      end: `${endHour}:${endMin}`,
-      ruleStart: ruleStart.toISOString(),
-      ruleEnd: ruleEnd.toISOString(),
-    });
+
 
     // Generate candidate slots in stepMin increments
     let currentSlot = new Date(ruleStart);
@@ -177,7 +145,7 @@ export function getDailySlots({
     }
   }
 
-  console.log(`🔍 Debug - Total de slots gerados:`, allSlots.length);
+
 
   // Return sorted unique slots
   return allSlots

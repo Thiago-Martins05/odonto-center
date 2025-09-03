@@ -49,10 +49,7 @@ export function TimeSelection({
         services[0]?.id || ""
       }&t=${timestamp}`;
 
-      console.log("🔍 Fetching availability from API:", apiUrl);
-      console.log("📅 Week start:", weekStart.toISOString());
-      console.log("📅 Week end:", weekEnd.toISOString());
-      console.log("🦷 Service ID:", services[0]?.id || "none");
+
 
       const response = await fetch(apiUrl);
 
@@ -63,13 +60,7 @@ export function TimeSelection({
       }
 
       const data = await response.json();
-      console.log("✅ API Response:", data);
-
       if (data.success) {
-        console.log("🎯 Available slots loaded:", data.data.days);
-        console.log("📊 Total rules:", data.data.totalRules);
-        console.log("🚫 Total blackouts:", data.data.totalBlackouts);
-        console.log("📅 Total appointments:", data.data.totalAppointments);
         setAvailableSlots(data.data.days);
       } else {
         throw new Error(data.error || "Erro desconhecido na API");

@@ -74,11 +74,7 @@ export function SchedulingFlow() {
       const result = await createAppointment(completeData);
 
       if (result.success) {
-        console.log(
-          "Appointment created successfully! ID:",
-          result.appointmentId
-        );
-        console.log("Confirmation email sent to:", completeData.patientEmail);
+
         setIsSuccess(true);
       } else {
         console.error("Failed to create appointment:", result.error);

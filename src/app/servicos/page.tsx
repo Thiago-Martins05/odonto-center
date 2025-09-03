@@ -22,26 +22,12 @@ export default async function ServicesPage() {
   let error: string | null = null;
 
   try {
-    console.log("=== DEBUG: Iniciando carregamento da página de serviços ===");
-    console.log("Tentando conectar ao banco...");
-
-    // Verificar se o prisma está funcionando
-    const serviceCount = await prisma.service.count();
-    console.log(`Total de serviços no banco: ${serviceCount}`);
-
     services = await prisma.service.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
     });
-    console.log(`Serviços ativos encontrados: ${services.length}`);
-    console.log(
-      "Serviços:",
-      services.map((s) => ({ id: s.id, name: s.name, active: s.active }))
-    );
   } catch (err) {
     error = err instanceof Error ? err.message : "Erro desconhecido";
-    console.error("Erro ao carregar serviços:", err);
-    console.error("Stack trace:", err instanceof Error ? err.stack : "N/A");
   }
 
   return (
@@ -133,12 +119,7 @@ export default async function ServicesPage() {
             </div>
           </div>
 
-          {/* Debug info */}
-          <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded mb-6">
-            <strong>Debug:</strong> Página carregada com {services.length}{" "}
-            serviços
-            {error && ` - Erro: ${error}`}
-          </div>
+
 
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6">
@@ -156,9 +137,6 @@ export default async function ServicesPage() {
               </h3>
               <p className="text-gray-500 mb-4">
                 No momento, não temos serviços ativos para agendamento.
-              </p>
-              <p className="text-sm text-gray-400">
-                Total de serviços no banco: {services.length}
               </p>
             </div>
           ) : (

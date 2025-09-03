@@ -4,24 +4,24 @@ import { prisma } from "@/server/db";
 
 export async function GET(request: NextRequest) {
   try {
-    console.log("Reports endpoint called");
+
     
     const session = await auth();
-    console.log("Session:", session);
+
     
     if (!session?.user) {
-      console.log("No session found");
+
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("User authenticated:", session.user);
+
 
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const type = searchParams.get("type") || "all";
 
-    console.log("Parameters:", { startDate, endDate, type });
+
 
     if (!startDate || !endDate) {
       return NextResponse.json(
@@ -34,13 +34,13 @@ export async function GET(request: NextRequest) {
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999); // Include the entire end date
 
-    console.log("Date range:", { start, end });
+
 
     const reportData: any = {};
 
     // Appointments Report
     if (type === "all" || type === "appointments") {
-      console.log("Fetching appointments...");
+
       const appointments = await prisma.appointment.findMany({
         where: {
           startsAt: {
@@ -52,7 +52,7 @@ export async function GET(request: NextRequest) {
           service: true,
         },
       });
-      console.log("Appointments found:", appointments.length);
+
 
       const appointmentsByService = appointments.reduce((acc, appointment) => {
         const serviceName = appointment.service.name;
@@ -224,7 +224,7 @@ export async function GET(request: NextRequest) {
 
       // Simplified calculation to avoid infinite loops
       const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-      console.log("Days difference:", daysDiff);
+
       
       for (let i = 0; i <= Math.min(daysDiff, 365); i++) { // Limit to 365 days max
         const d = new Date(start);
@@ -300,7 +300,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    console.log("Report data generated:", reportData);
+
     return NextResponse.json(reportData);
   } catch (error) {
     console.error("Error generating reports:", error);

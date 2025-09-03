@@ -30,48 +30,44 @@ export function ContactMessagesTab() {
 
   const fetchMessages = async () => {
     try {
-      console.log("🔍 Iniciando busca de mensagens...");
+
       
       // Tentar primeiro a API do arquivo JSON (mensagens reais)
       const fileResponse = await fetch("/api/admin/contact-messages-file");
-      console.log("📊 Status da API de arquivo:", fileResponse.status);
+
       
       if (fileResponse.ok) {
         const fileData = await fileResponse.json();
-        console.log("📋 Dados do arquivo:", fileData);
+
         
         if (fileData.messages.length > 0) {
-          console.log("✅ Carregando mensagens reais do arquivo JSON:", fileData.messages.length);
+
           setMessages(fileData.messages);
           return;
         } else {
-          console.log("⚠️ Arquivo JSON vazio");
+
         }
       } else {
-        console.log("❌ Erro na API de arquivo:", fileResponse.status);
+
       }
       
       // Se não houver mensagens reais, tentar a API do banco de dados
-      console.log("🔄 Tentando API do banco de dados...");
       const response = await fetch("/api/admin/contact-messages");
-      console.log("📊 Status da API do banco:", response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log("✅ Carregando mensagens do banco:", data.messages.length);
+
         setMessages(data.messages);
       } else {
         // Se não conseguir, usar a API mock para demonstração
-        console.log("🔄 Usando mensagens de demonstração...");
         const mockResponse = await fetch("/api/admin/contact-messages-mock");
-        console.log("📊 Status da API mock:", mockResponse.status);
         
         if (mockResponse.ok) {
           const mockData = await mockResponse.json();
-          console.log("✅ Carregando mensagens mock:", mockData.messages.length);
+
           setMessages(mockData.messages);
         } else {
-          console.log("❌ Nenhuma API funcionando, array vazio");
+
           setMessages([]);
         }
       }

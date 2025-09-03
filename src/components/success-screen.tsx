@@ -36,7 +36,7 @@ export function SuccessScreen({
 
   const handleAddToCalendar = () => {
     // TODO: Generate and download .ics file
-    console.log("Adding to calendar...");
+
   };
 
   return (

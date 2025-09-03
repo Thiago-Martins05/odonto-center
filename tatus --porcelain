@@ -1,5 +1,0 @@
-[33m144986d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m feat: implement service detail pages with dynamic routing and breadcrumb navigation
-[33m56dc123[m style: format code with consistent quotes and spacing
-[33mb88cc8a[m[33m ([m[1;31morigin/main[m[33m)[m fix: corrigir todos os erros pendentes de build
-[33m2ec74dd[m fix: consolidar estrutura do projeto e remover duplicatas
-[33m6a2bcb1[m feat(contact): server action for contact email with Resend fallback

@@ -21,7 +21,7 @@ export function AdminTabs() {
     const checkNewAppointments = () => {
       // Aqui você pode implementar uma verificação real no banco
       // ou usar WebSockets para notificações em tempo real
-      console.log("🔍 Checking for new appointments...");
+
     };
 
     const interval = setInterval(checkNewAppointments, 30000); // Verificar a cada 30 segundos

@@ -79,9 +79,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!emailResult.success) {
-      console.log("Email não enviado (serviço não configurado), mas mensagem salva no arquivo");
+
     } else {
-      console.log("Email enviado com sucesso para o administrador");
+
     }
 
     return NextResponse.json(

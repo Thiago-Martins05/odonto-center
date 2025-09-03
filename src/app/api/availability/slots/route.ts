@@ -9,10 +9,7 @@ export async function GET(request: Request) {
     const weekEnd = searchParams.get("weekEnd");
     const serviceId = searchParams.get("serviceId");
 
-    console.log("🔍 API Availability Slots - Parameters:");
-    console.log("📅 Week start:", weekStart);
-    console.log("📅 Week end:", weekEnd);
-    console.log("🦷 Service ID:", serviceId);
+
 
     if (!weekStart || !weekEnd) {
       return NextResponse.json(
@@ -43,11 +40,7 @@ export async function GET(request: Request) {
       );
     }
 
-    console.log("📅 Parsed dates:");
-    console.log("  Start (original):", startDate.toISOString());
-    console.log("  End (original):", endDate.toISOString());
-    console.log("  Start (normalized):", normalizedStartDate.toISOString());
-    console.log("  End (normalized):", normalizedEndDate.toISOString());
+
 
     // Fetch availability rules - INCLUINDO REGRAS GLOBAIS!
     const rules = await prisma.availabilityRule.findMany({
@@ -62,16 +55,7 @@ export async function GET(request: Request) {
       orderBy: { weekday: "asc" },
     });
 
-    console.log("📊 Found rules:", rules.length);
-    console.log("🔍 Rules breakdown:");
-    console.log(
-      "  - Service-specific:",
-      rules.filter((r) => r.serviceId === serviceId).length
-    );
-    console.log(
-      "  - Global rules:",
-      rules.filter((r) => r.serviceId === null).length
-    );
+
 
     // Fetch blackout dates
     const blackoutDates = await prisma.blackoutDate.findMany({
@@ -83,7 +67,7 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log("🚫 Found blackout dates:", blackoutDates.length);
+
 
     // Fetch existing appointments
     const existingAppointments = await prisma.appointment.findMany({
@@ -103,7 +87,7 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log("📅 Found appointments:", existingAppointments.length);
+
 
     // Fetch service if serviceId is provided
     let service = null;
@@ -116,7 +100,7 @@ export async function GET(request: Request) {
           durationMin: true,
         },
       });
-      console.log("🦷 Service:", service);
+
     }
 
     // Generate slots for each day
@@ -142,11 +126,11 @@ export async function GET(request: Request) {
       
       const isDateInPast = dateKey < todayString;
 
-      console.log(`🔍 Processing date: ${dateKey}, weekday: ${weekday}, isPast: ${isDateInPast}`);
+
 
       // Skip past dates entirely
       if (isDateInPast) {
-        console.log(`🔍 Skipping past date: ${dateKey}`);
+
         currentDate.setDate(currentDate.getDate() + 1);
         continue;
       }
@@ -160,7 +144,7 @@ export async function GET(request: Request) {
           (blackout) => blackout.date.toISOString().split("T")[0] === dateKey
         );
 
-        console.log(`🔍 Date ${dateKey}: rules=${dayRules.length}, blackedOut=${isBlackedOut}`);
+
 
         if (!isBlackedOut) {
           // Convert Prisma rules to the format expected by getDailySlots
@@ -255,10 +239,7 @@ export async function GET(request: Request) {
       },
     };
 
-    console.log("✅ Generated response:", {
-      daysCount: days.length,
-      totalSlots: days.reduce((sum, day) => sum + day.slots.length, 0),
-    });
+
 
     // Return response with cache headers to prevent caching issues
     return NextResponse.json(response, {

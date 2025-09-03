@@ -352,7 +352,7 @@ function generateCSV(data: any, type: string, filename: string) {
 
 function generatePDF(data: any, type: string, filename: string, startDate: string, endDate: string) {
   try {
-    console.log("Generating PDF with data:", JSON.stringify(data, null, 2));
+
     
     // Import jsPDF dynamically
     const { jsPDF } = require('jspdf');

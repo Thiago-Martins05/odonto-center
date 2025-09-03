@@ -3,14 +3,14 @@ import { prisma } from "@/server/db";
 
 export async function GET(request: NextRequest) {
   try {
-    console.log("Public reports endpoint called");
+
     
     const { searchParams } = new URL(request.url);
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const type = searchParams.get("type") || "all";
 
-    console.log("Parameters:", { startDate, endDate, type });
+
 
     if (!startDate || !endDate) {
       return NextResponse.json(
@@ -23,13 +23,13 @@ export async function GET(request: NextRequest) {
     const end = new Date(endDate);
     end.setHours(23, 59, 59, 999);
 
-    console.log("Date range:", { start, end });
+
 
     const reportData: any = {};
 
     // Appointments Report
     if (type === "all" || type === "appointments") {
-      console.log("Fetching appointments...");
+
       const appointments = await prisma.appointment.findMany({
         where: {
           startsAt: {
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
           service: true,
         },
       });
-      console.log("Appointments found:", appointments.length);
+
 
       const appointmentsByService = appointments.reduce((acc, appointment) => {
         const serviceName = appointment.service.name;
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
 
     // Financial Report
     if (type === "all" || type === "financial") {
-      console.log("Fetching financial data...");
+
       const completedAppointments = await prisma.appointment.findMany({
         where: {
           startsAt: {
@@ -160,7 +160,7 @@ export async function GET(request: NextRequest) {
 
     // Services Report
     if (type === "all" || type === "services") {
-      console.log("Fetching services data...");
+
       const services = await prisma.service.findMany();
       
       const serviceStats = await Promise.all(
@@ -194,7 +194,7 @@ export async function GET(request: NextRequest) {
 
     // Availability Report
     if (type === "all" || type === "availability") {
-      console.log("Fetching availability data...");
+
       const availabilityRules = await prisma.availabilityRule.findMany({
         include: {
           service: true,
@@ -216,7 +216,7 @@ export async function GET(request: NextRequest) {
 
       // Simplified calculation to avoid infinite loops
       const daysDiff = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
-      console.log("Days difference:", daysDiff);
+
       
       for (let i = 0; i <= Math.min(daysDiff, 365); i++) { // Limit to 365 days max
         const d = new Date(start);
@@ -292,7 +292,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
-    console.log("Report data generated:", reportData);
+
     return NextResponse.json(reportData);
   } catch (error) {
     console.error("Error generating reports:", error);

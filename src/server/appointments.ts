@@ -18,39 +18,7 @@ async function notifyAdminAboutNewAppointment(appointmentData: {
   observations?: string;
 }) {
   try {
-    // Log detalhado para o admin no console
-    console.log("\n" + "=".repeat(80));
-    console.log("🔔 NOVO AGENDAMENTO CRIADO - NOTIFICAÇÃO PARA ADMIN");
-    console.log("=".repeat(80));
-    console.log(`📋 ID do Agendamento: ${appointmentData.id}`);
-    console.log(`👤 Paciente: ${appointmentData.patientName}`);
-    console.log(`📧 Email: ${appointmentData.patientEmail}`);
-    console.log(
-      `📱 Telefone: ${appointmentData.patientPhone || "Não informado"}`
-    );
-    console.log(
-      `📅 Data: ${appointmentData.startsAt.toLocaleDateString("pt-BR")}`
-    );
-    console.log(
-      `⏰ Horário: ${appointmentData.startsAt.toLocaleTimeString(
-        "pt-BR"
-      )} - ${appointmentData.endsAt.toLocaleTimeString("pt-BR")}`
-    );
-    console.log(
-      `🦷 Serviços: ${appointmentData.services.map((s) => s.name).join(", ")}`
-    );
-    console.log(`⏱️ Duração Total: ${appointmentData.totalDuration} minutos`);
-    console.log(
-      `💰 Valor Total: R$ ${(appointmentData.totalPrice / 100).toFixed(2)}`
-    );
-    if (appointmentData.observations) {
-      console.log(`📝 Observações: ${appointmentData.observations}`);
-    }
-    console.log("=".repeat(80));
-    console.log(
-      "💡 AÇÃO REQUERIDA: Verificar disponibilidade e confirmar agendamento"
-    );
-    console.log("=".repeat(80) + "\n");
+
 
     // TODO: Aqui você pode implementar:
     // 1. Envio de email para o admin
@@ -76,14 +44,9 @@ export interface CreateAppointmentData {
 
 export async function createAppointment(data: CreateAppointmentData) {
   try {
-    console.log("🚀 Starting appointment creation...");
-    console.log("📊 Input data:", JSON.stringify(data, null, 2));
-
     // Testar conexão com o banco
-    console.log("🔍 Testing database connection...");
     try {
-      const testQuery = await prisma.$queryRaw`SELECT 1 as test`;
-      console.log("✅ Database connection successful:", testQuery);
+      await prisma.$queryRaw`SELECT 1 as test`;
     } catch (dbError) {
       console.error("❌ Database connection failed:", dbError);
       throw new Error("Falha na conexão com o banco de dados");
@@ -97,11 +60,7 @@ export async function createAppointment(data: CreateAppointmentData) {
     const startsAt = new Date(data.selectedSlot);
     const endsAt = new Date(startsAt.getTime() + totalDuration * 60 * 1000);
 
-    console.log("⏱️ Calculated duration:", totalDuration, "minutes");
-    console.log("📅 Starts at:", startsAt.toISOString());
-    console.log("⏰ Ends at:", endsAt.toISOString());
 
-    console.log("🗄️ Attempting to create appointment in database...");
 
     // Criar o agendamento principal com o primeiro serviço
     const appointment = await prisma.appointment.create({
@@ -117,30 +76,11 @@ export async function createAppointment(data: CreateAppointmentData) {
       },
     });
 
-    console.log("✅ Appointment created in database:", appointment.id);
-    console.log("📅 Starts at:", startsAt.toLocaleString("pt-BR"));
-    console.log("⏰ Ends at:", endsAt.toLocaleString("pt-BR"));
-    console.log("👤 Patient:", data.patientName);
-    console.log("📧 Email:", data.patientEmail);
-    console.log(
-      "🦷 Services:",
-      data.services.map((s: Service) => s.name).join(", ")
-    );
-    console.log("⏱️ Total duration:", totalDuration, "minutes");
-    console.log(
-      "💰 Total price:",
-      data.services.reduce(
-        (total: number, s: Service) => total + s.priceCents,
-        0
-      ) / 100,
-      "reais"
-    );
+
 
     // Se houver múltiplos serviços, criar agendamentos adicionais
     if (data.services.length > 1) {
-      console.log(
-        "🔄 Creating additional appointments for multiple services..."
-      );
+
 
       for (let i = 1; i < data.services.length; i++) {
         const service = data.services[i];
@@ -151,9 +91,7 @@ export async function createAppointment(data: CreateAppointmentData) {
           serviceStartsAt.getTime() + service.durationMin * 60 * 1000
         );
 
-        console.log(
-          `🔄 Creating appointment for service ${i + 1}: ${service.name}`
-        );
+
 
         await prisma.appointment.create({
           data: {
@@ -170,11 +108,11 @@ export async function createAppointment(data: CreateAppointmentData) {
           },
         });
 
-        console.log(`✅ Additional appointment created for: ${service.name}`);
+
       }
     }
 
-    console.log("🔔 Notifying admin...");
+
 
     // NOTIFICAR O ADMIN sobre o novo agendamento
     await notifyAdminAboutNewAppointment({
@@ -193,22 +131,22 @@ export async function createAppointment(data: CreateAppointmentData) {
       observations: data.observations,
     });
 
-    console.log("📧 Attempting to send confirmation email...");
+
 
     // Enviar email de confirmação
     try {
       const emailResult = await sendAppointmentConfirmation(appointment.id);
       if (emailResult.success) {
-        console.log("📧 Confirmation email sent successfully");
+
       } else {
-        console.log("📧 Email service not available:", emailResult.message);
+
       }
     } catch (emailError) {
       console.error("❌ Failed to send confirmation email:", emailError);
       // Não falhar o agendamento se o email falhar
     }
 
-    console.log("🎉 Appointment creation completed successfully!");
+
 
     return {
       success: true,

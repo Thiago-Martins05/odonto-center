@@ -64,19 +64,11 @@ export function ServicesTab() {
 
   const fetchServices = async () => {
     try {
-      console.log("🔄 Iniciando fetchServices...");
       const response = await fetch("/api/admin/services");
-      console.log("📡 Status da resposta fetchServices:", response.status);
-      console.log("📡 Response OK fetchServices:", response.ok);
 
       if (response.ok) {
         const data = await response.json();
-        console.log("📦 Dados recebidos do fetchServices:", data);
-        console.log("📦 Quantidade de serviços:", data.length);
         setServices(data);
-        console.log("✅ Serviços atualizados no estado");
-      } else {
-        console.log("❌ Erro na resposta fetchServices, usando fallback");
         // Fallback para dados mockados
         setServices([
           {
@@ -134,9 +126,7 @@ export function ServicesTab() {
           formData.description.trim() === "" ? undefined : formData.description,
       };
 
-      console.log("Enviando dados:", dataToSend);
-      console.log("URL:", url);
-      console.log("Método:", method);
+
 
       const response = await fetch(url, {
         method,
@@ -146,12 +136,11 @@ export function ServicesTab() {
         body: JSON.stringify(dataToSend),
       });
 
-      console.log("Status da resposta:", response.status);
-      console.log("Resposta OK:", response.ok);
+
 
       if (response.ok) {
         const responseData = await response.json();
-        console.log("Dados da resposta:", responseData);
+
 
         toast.success(
           editingService
@@ -160,7 +149,7 @@ export function ServicesTab() {
         );
         setIsDialogOpen(false);
         resetForm();
-        console.log("🔄 Chamando fetchServices após criar serviço...");
+
         fetchServices();
       } else {
         const errorData = await response.text();

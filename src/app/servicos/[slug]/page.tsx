@@ -50,7 +50,6 @@ export default async function ServiceDetailPage({
                 >
                   {service.active ? "Disponível" : "Indisponível"}
                 </Badge>
-                <span className="text-gray-500 text-sm">ID: {service.id}</span>
               </div>
             </div>
             <div className="text-right">

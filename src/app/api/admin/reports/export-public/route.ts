@@ -345,7 +345,7 @@ function generateCSV(data: any, type: string, filename: string) {
 
 function generatePDF(data: any, type: string, filename: string, startDate: string, endDate: string) {
   try {
-    console.log("Generating PDF with data:", JSON.stringify(data, null, 2));
+
     
     // Use PDFKit for better server-side compatibility
     const PDFDocument = require('pdfkit');

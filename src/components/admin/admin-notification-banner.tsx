@@ -56,7 +56,7 @@ export function AdminNotificationBanner() {
 
   const handleViewAppointments = () => {
     // TODO: Navegar para a aba de agendamentos
-    console.log("Navegando para agendamentos...");
+
     setIsVisible(false);
   };
 

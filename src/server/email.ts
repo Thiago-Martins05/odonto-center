@@ -28,10 +28,7 @@ export async function sendContactEmail(contactData: ContactFormData) {
   try {
     // Se não houver Resend configurado, apenas logar
     if (!resend) {
-      console.log(
-        "Email service not configured. Mock contact email:",
-        contactData
-      );
+
       return { success: true, message: "Email service not configured" };
     }
 
@@ -136,10 +133,7 @@ export async function sendAppointmentConfirmation(appointmentId: string) {
   try {
     // Se não houver Resend configurado, apenas logar
     if (!resend) {
-      console.log(
-        "Email service not configured. Mock appointment confirmation:",
-        appointmentId
-      );
+
       return { success: true, message: "Email service not configured" };
     }
 
