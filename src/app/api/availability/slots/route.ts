@@ -249,6 +249,11 @@ export async function GET(request: Request) {
           end: r.end,
           serviceId: r.serviceId,
         })),
+        debug: {
+          currentTime: new Date().toISOString(),
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          todayString: new Date().toISOString().split('T')[0],
+        },
       },
     };
 
