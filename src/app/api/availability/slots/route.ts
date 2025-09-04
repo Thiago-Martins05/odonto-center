@@ -253,6 +253,13 @@ export async function GET(request: Request) {
           currentTime: new Date().toISOString(),
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
           todayString: new Date().toISOString().split('T')[0],
+          slotsDebug: days.map(day => ({
+            date: day.date,
+            dateKey: day.dateKey,
+            slotsCount: day.slots.length,
+            firstSlot: day.slots[0] || null,
+            lastSlot: day.slots[day.slots.length - 1] || null,
+          })),
         },
       },
     };

@@ -38,6 +38,15 @@ async function testProductionAPI() {
         console.log(`     Current time: ${data.data.debug.currentTime}`);
         console.log(`     Timezone: ${data.data.debug.timezone}`);
         console.log(`     Today string: ${data.data.debug.todayString}`);
+        
+        if (data.data.debug.slotsDebug) {
+          console.log('\n   Slots debug:');
+          data.data.debug.slotsDebug.forEach(day => {
+            console.log(`     ${day.date} (${day.dateKey}): ${day.slotsCount} slots`);
+            if (day.firstSlot) console.log(`       First: ${day.firstSlot}`);
+            if (day.lastSlot) console.log(`       Last: ${day.lastSlot}`);
+          });
+        }
       }
       
       console.log('\n   Regras encontradas:');
