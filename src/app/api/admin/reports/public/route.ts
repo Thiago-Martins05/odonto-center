@@ -296,9 +296,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(reportData);
   } catch (error) {
     console.error("Error generating reports:", error);
-    console.error("Error stack:", error.stack);
+    if (error instanceof Error) {
+      console.error("Error stack:", error.stack);
+      return NextResponse.json(
+        { error: "Internal server error", details: error.message },
+        { status: 500 }
+      );
+    }
     return NextResponse.json(
-      { error: "Internal server error", details: error.message },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
