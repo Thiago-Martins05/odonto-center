@@ -1,94 +1,31 @@
-import { addMinutes, parseHHMM } from "./time";
+require('dotenv').config({ path: '.env.local' });
 
-export interface AvailabilityRule {
-  id: string;
-  weekday: number;
-  start: string; // 'HH:mm'
-  end: string; // 'HH:mm'
-  serviceId?: string;
+// Simular a função getDailySlots com a correção
+function parseHHMM(timeStr) {
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return { hours, minutes };
 }
 
-export interface BlackoutDate {
-  id: string;
-  date: Date;
-  reason?: string;
+function addMinutes(date, minutes) {
+  return new Date(date.getTime() + minutes * 60 * 1000);
 }
 
-export interface Appointment {
-  id: string;
-  startsAt: Date;
-  endsAt: Date;
-}
-
-export interface DailySlotsOptions {
-  date: Date;
-  serviceDurationMin: number;
-  rules: AvailabilityRule[];
-  blackouts: BlackoutDate[];
-  existingAppointments: Appointment[];
-  stepMin?: number;
-  bufferMin?: number;
-}
-
-export function getDailySlots({
-  date,
-  serviceDurationMin,
-  rules,
-  blackouts,
-  existingAppointments,
-  stepMin = 15,
-  bufferMin = 10,
-}: DailySlotsOptions): string[] {
-  // Check if date is blacked out
-  const isBlackedOut = blackouts.some(
-    (blackout) => blackout.date.toDateString() === date.toDateString()
-  );
-
-  if (isBlackedOut) return [];
-
-  // Get rules for this weekday
-  const weekday = date.getDay();
-  const applicableRules = rules.filter((rule) => rule.weekday === weekday);
-
-  if (applicableRules.length === 0) return [];
-
-  // Generate slots for each rule window
-  const allSlots: string[] = [];
+function getDailySlots(date, applicableRules, existingAppointments = [], serviceDurationMin = 60, stepMin = 15) {
+  const allSlots = [];
   const now = new Date();
-
-  // Check if the date is in the past - more robust comparison
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const targetDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const todayString = now.toISOString().split('T')[0];
+  const targetDateString = date.toISOString().split('T')[0];
   
-  // Additional check: compare date strings to avoid timezone issues
-  const todayString = today.toISOString().split('T')[0]; // YYYY-MM-DD
-  const targetDateString = targetDate.toISOString().split('T')[0]; // YYYY-MM-DD
-  
-  const isPast = targetDateString < todayString;
-  
-  if (isPast) {
-    // Date is in the past, no slots available
-    return [];
-  }
-
   // Only apply buffer if the date is today
   const isToday = targetDateString === todayString;
   
   // For today, use a more reasonable buffer time
-  let bufferTime: Date;
+  let bufferTime;
   if (isToday) {
     // Use current time + 15 minutes buffer (more reasonable)
     bufferTime = new Date(now.getTime() + 15 * 60 * 1000);
   } else {
     bufferTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-  }
-
-  // Debug log for today
-  if (isToday) {
-    console.log(`🔍 Debug getDailySlots for today:`);
-    console.log(`   now: ${now.toISOString()}`);
-    console.log(`   bufferTime: ${bufferTime.toISOString()}`);
-    console.log(`   bufferMin: 15 (adjusted)`);
   }
 
   for (const rule of applicableRules) {
@@ -160,3 +97,30 @@ export function getDailySlots({
     )
     .sort((a, b) => a.localeCompare(b));
 }
+
+// Testar com regras de segunda-feira
+const testDate = new Date(2025, 8, 9); // 09/09/2025 (terça-feira)
+const rules = [
+  { start: "08:00", end: "12:00" },
+  { start: "14:00", end: "18:00" }
+];
+
+console.log('🧪 Testando correção de timezone...');
+console.log('Data de teste:', testDate.toISOString().split('T')[0]);
+console.log('Regras:', rules);
+
+const slots = getDailySlots(testDate, rules);
+
+console.log('\n📅 Slots gerados:');
+slots.forEach((slot, index) => {
+  const date = new Date(slot);
+  const timeStr = date.toLocaleTimeString('pt-BR', { 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+  console.log(`  ${index + 1}. ${timeStr} (${slot})`);
+});
+
+console.log(`\n✅ Total: ${slots.length} slots`);
+console.log('Primeiro slot:', slots[0]);
+console.log('Último slot:', slots[slots.length - 1]);
