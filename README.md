@@ -1,4 +1,4 @@
-# Odonto Center
+# Odonto Center - Deploy Ready
 
 A comprehensive dental clinic management system with online appointment scheduling and administrative dashboard.
 
