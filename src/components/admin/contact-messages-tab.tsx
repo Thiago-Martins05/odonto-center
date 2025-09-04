@@ -30,46 +30,36 @@ export function ContactMessagesTab() {
 
   const fetchMessages = async () => {
     try {
-
-      
-      // Tentar primeiro a API do arquivo JSON (mensagens reais)
-      const fileResponse = await fetch("/api/admin/contact-messages-file");
-
-      
-      if (fileResponse.ok) {
-        const fileData = await fileResponse.json();
-
-        
-        if (fileData.messages.length > 0) {
-
-          setMessages(fileData.messages);
-          return;
-        } else {
-
-        }
-      } else {
-
-      }
-      
-      // Se não houver mensagens reais, tentar a API do banco de dados
+      // Tentar primeiro a API do banco de dados (mensagens reais)
       const response = await fetch("/api/admin/contact-messages");
       
       if (response.ok) {
         const data = await response.json();
-
-        setMessages(data.messages);
-      } else {
-        // Se não conseguir, usar a API mock para demonstração
-        const mockResponse = await fetch("/api/admin/contact-messages-mock");
-        
-        if (mockResponse.ok) {
-          const mockData = await mockResponse.json();
-
-          setMessages(mockData.messages);
-        } else {
-
-          setMessages([]);
+        if (data.messages && data.messages.length > 0) {
+          setMessages(data.messages);
+          return;
         }
+      }
+      
+      // Se não houver mensagens no banco, tentar a API do arquivo JSON
+      const fileResponse = await fetch("/api/admin/contact-messages-file");
+      
+      if (fileResponse.ok) {
+        const fileData = await fileResponse.json();
+        if (fileData.messages && fileData.messages.length > 0) {
+          setMessages(fileData.messages);
+          return;
+        }
+      }
+      
+      // Se não conseguir, usar a API mock para demonstração
+      const mockResponse = await fetch("/api/admin/contact-messages-mock");
+      
+      if (mockResponse.ok) {
+        const mockData = await mockResponse.json();
+        setMessages(mockData.messages);
+      } else {
+        setMessages([]);
       }
     } catch (error) {
       console.error("Erro ao buscar mensagens:", error);
