@@ -108,7 +108,10 @@ export function TimeSelection({
     }).format(date);
   };
 
-  const getWeekdayName = (date: Date): string => {
+  const getWeekdayName = (dateKey: string): string => {
+    // Parse dateKey properly to avoid timezone issues
+    const [year, month, day] = dateKey.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
     return new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(date);
   };
 
@@ -319,7 +322,7 @@ export function TimeSelection({
             <Card key={day.dateKey} className="rounded-2xl">
               <CardHeader className="pb-3">
                 <CardTitle className="text-center text-lg">
-                  {getWeekdayName(new Date(day.dateKey))}
+                  {getWeekdayName(day.dateKey)}
                 </CardTitle>
                 <p className="text-center text-sm text-muted-foreground">
                   {day.date}
