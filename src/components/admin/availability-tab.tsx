@@ -131,27 +131,13 @@ export function AvailabilityTab() {
           
           setSchedule(Array.from(scheduleMap.values()));
         } else {
-          // Fallback para dados padrão se não houver regras
-          const defaultSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
+          // Se não houver regras, inicializar com todos os dias desabilitados
+          const emptySchedule: DaySchedule[] = daysOfWeek.map((day) => ({
             day: day.value,
-            enabled: [
-              "monday",
-              "tuesday",
-              "wednesday",
-              "thursday",
-              "friday",
-            ].includes(day.value),
-            timeSlots:
-              day.value === "saturday"
-                ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
-                : day.value === "sunday"
-                ? []
-                : [
-                    { id: "1", startTime: "08:00", endTime: "12:00" },
-                    { id: "2", startTime: "14:00", endTime: "18:00" },
-                  ],
+            enabled: false,
+            timeSlots: [],
           }));
-          setSchedule(defaultSchedule);
+          setSchedule(emptySchedule);
         }
       } else {
         throw new Error("Falha ao carregar horários");
@@ -160,27 +146,13 @@ export function AvailabilityTab() {
       console.error("Error fetching schedule:", error);
       toast.error("Erro ao carregar horários");
       
-      // Fallback para dados padrão em caso de erro
-      const defaultSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
+      // Em caso de erro, inicializar com todos os dias desabilitados
+      const emptySchedule: DaySchedule[] = daysOfWeek.map((day) => ({
         day: day.value,
-        enabled: [
-          "monday",
-          "tuesday",
-          "wednesday",
-          "thursday",
-          "friday",
-        ].includes(day.value),
-        timeSlots:
-          day.value === "saturday"
-            ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
-            : day.value === "sunday"
-            ? []
-            : [
-                { id: "1", startTime: "08:00", endTime: "12:00" },
-                { id: "2", startTime: "14:00", endTime: "18:00" },
-              ],
+        enabled: false,
+        timeSlots: [],
       }));
-      setSchedule(defaultSchedule);
+      setSchedule(emptySchedule);
     } finally {
       setLoading(false);
     }
