@@ -47,3 +47,33 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da mensagem é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    // Deletar mensagem
+    await prisma.contactMessage.delete({
+      where: { id }
+    });
+
+    return NextResponse.json({ 
+      message: "Mensagem deletada com sucesso",
+      id 
+    });
+  } catch (error) {
+    console.error("Erro ao deletar mensagem:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
+  }
+}

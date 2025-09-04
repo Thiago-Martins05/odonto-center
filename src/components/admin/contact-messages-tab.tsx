@@ -128,25 +128,10 @@ export function ContactMessagesTab() {
     }
 
     try {
-      // Tentar primeiro a API do arquivo JSON
-      let response = await fetch("/api/admin/contact-messages-file", {
+      // Usar a API pública do banco de dados
+      const response = await fetch(`/api/contact-messages-public?id=${messageId}`, {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id: messageId }),
       });
-
-      // Se não funcionar, tentar a API do banco de dados
-      if (!response.ok) {
-        response = await fetch("/api/admin/contact-messages", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: messageId }),
-        });
-      }
 
       if (response.ok) {
         // Remover mensagem da lista
