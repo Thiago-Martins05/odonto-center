@@ -128,8 +128,8 @@ export function ContactMessagesTab() {
     }
 
     try {
-      // Usar a API pública do banco de dados
-      const response = await fetch(`/api/contact-messages-public?id=${messageId}`, {
+      // Usar a API do banco de dados (sem autenticação)
+      const response = await fetch(`/api/admin/contact-messages?id=${messageId}`, {
         method: "DELETE",
       });
 
