@@ -55,6 +55,12 @@ export async function GET(request: Request) {
       orderBy: { weekday: "asc" },
     });
 
+    console.log(`🔍 API Slots - Regras encontradas: ${rules.length}`);
+    rules.forEach(rule => {
+      const dayName = getDayNameFromWeekday(rule.weekday);
+      console.log(`   ${dayName}: ${rule.start}-${rule.end}`);
+    });
+
 
 
     // Fetch blackout dates
@@ -256,4 +262,18 @@ export async function GET(request: Request) {
       { status: 500 }
     );
   }
+}
+
+function getDayNameFromWeekday(weekday: number): string {
+  const dayMap: { [key: number]: string } = {
+    0: 'Domingo',
+    1: 'Segunda',
+    2: 'Terça',
+    3: 'Quarta',
+    4: 'Quinta',
+    5: 'Sexta',
+    6: 'Sábado',
+  };
+  
+  return dayMap[weekday] || 'Desconhecido';
 }
