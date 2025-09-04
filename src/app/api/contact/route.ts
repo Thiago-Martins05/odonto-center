@@ -1,42 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendContactEmail } from "@/server/email";
-import { promises as fs } from "fs";
-import path from "path";
+import { prisma } from "@/server/db";
 
-// Função para salvar mensagens em arquivo JSON
-async function saveMessageToFile(messageData: any) {
-  try {
-    const messagesPath = path.join(process.cwd(), "contact-messages.json");
-    
-    // Tentar ler mensagens existentes
-    let messages = [];
-    try {
-      const existingData = await fs.readFile(messagesPath, "utf-8");
-      messages = JSON.parse(existingData);
-    } catch (error) {
-      // Arquivo não existe, começar com array vazio
-      messages = [];
-    }
-    
-    // Adicionar nova mensagem
-    const newMessage = {
-      id: Date.now().toString(),
-      ...messageData,
-      read: false,
-      createdAt: new Date().toISOString(),
-    };
-    
-    messages.unshift(newMessage); // Adicionar no início
-    
-    // Salvar de volta no arquivo
-    await fs.writeFile(messagesPath, JSON.stringify(messages, null, 2));
-    
-    return newMessage;
-  } catch (error) {
-    console.error("Erro ao salvar mensagem:", error);
-    return null;
-  }
-}
 
 export async function POST(request: NextRequest) {
   try {
@@ -60,13 +25,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Salvar mensagem no arquivo JSON
-    const savedMessage = await saveMessageToFile({
-      name,
-      email,
-      phone: phone || null,
-      subject,
-      message,
+    // Salvar mensagem no banco de dados
+    const savedMessage = await prisma.contactMessage.create({
+      data: {
+        name,
+        email,
+        phone: phone || null,
+        message: `${subject}\n\n${message}`, // Combinar assunto e mensagem
+      },
     });
 
     // Tentar enviar email para o administrador
