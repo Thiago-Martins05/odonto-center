@@ -174,6 +174,17 @@ export async function GET(request: Request) {
               );
               return localSlot.toISOString();
             });
+            
+            // Debug log for today's slots
+            if (process.env.NODE_ENV === 'development' && dateKey === '2025-09-04') {
+              console.log(`🔍 Debug slots for ${dateKey}:`);
+              console.log(`   Total slots generated: ${slots.length}`);
+              console.log(`   First slot: ${slots[0]?.toISOString()}`);
+              console.log(`   Last slot: ${slots[slots.length - 1]?.toISOString()}`);
+              console.log(`   First slot string: ${slotStrings[0]}`);
+              console.log(`   Last slot string: ${slotStrings[slotStrings.length - 1]}`);
+            }
+            
             daysMap.set(dateKey, slotStrings);
           }
         }
