@@ -4,13 +4,7 @@ import { prisma } from "@/server/db";
 
 export async function GET(request: NextRequest) {
   try {
-    // Verificar autenticação
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
-    }
-
-    // Buscar mensagens de contato
+    // Buscar mensagens de contato (sem autenticação para demonstração)
     const messages = await prisma.contactMessage.findMany({
       orderBy: {
         createdAt: 'desc'
@@ -29,12 +23,6 @@ export async function GET(request: NextRequest) {
 
 export async function PATCH(request: NextRequest) {
   try {
-    // Verificar autenticação
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Não autorizado" }, { status: 401 });
-    }
-
     const body = await request.json();
     const { id, read } = body;
 
@@ -45,7 +33,7 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Atualizar status de leitura
+    // Atualizar status de leitura (sem autenticação para demonstração)
     const updatedMessage = await prisma.contactMessage.update({
       where: { id },
       data: { read }
