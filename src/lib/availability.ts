@@ -77,8 +77,8 @@ export function getDailySlots({
   // For today, use a more reasonable buffer time
   let bufferTime: Date;
   if (isToday) {
-    // Use current time + 30 minutes buffer (instead of 10 minutes)
-    bufferTime = new Date(now.getTime() + 30 * 60 * 1000);
+    // Use current time + 15 minutes buffer (more reasonable)
+    bufferTime = new Date(now.getTime() + 15 * 60 * 1000);
   } else {
     bufferTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
   }
@@ -88,7 +88,7 @@ export function getDailySlots({
     console.log(`🔍 Debug getDailySlots for today:`);
     console.log(`   now: ${now.toISOString()}`);
     console.log(`   bufferTime: ${bufferTime.toISOString()}`);
-    console.log(`   bufferMin: 30 (increased from 10)`);
+    console.log(`   bufferMin: 15 (adjusted)`);
   }
 
   for (const rule of applicableRules) {
