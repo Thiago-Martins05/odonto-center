@@ -76,3 +76,4 @@ Se encontrar problemas:
 3. Teste a API de setup: `/api/setup`
 
 **Tudo está pronto para o deploy! 🎉**
+

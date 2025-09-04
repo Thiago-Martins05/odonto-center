@@ -17,12 +17,22 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
+    console.log("Creating service with data:", data);
     const service = await createService(data);
     return NextResponse.json(service, { status: 201 });
   } catch (error) {
     console.error("Error creating service:", error);
+    
+    // Retornar mais detalhes do erro para debug
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido";
+    const errorDetails = error instanceof Error ? error.stack : String(error);
+    
     return NextResponse.json(
-      { error: "Erro ao criar serviço" },
+      { 
+        error: "Erro ao criar serviço",
+        details: errorMessage,
+        debug: process.env.NODE_ENV === 'development' ? errorDetails : undefined
+      },
       { status: 500 }
     );
   }

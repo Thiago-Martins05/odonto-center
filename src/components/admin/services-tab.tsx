@@ -69,37 +69,9 @@ export function ServicesTab() {
       if (response.ok) {
         const data = await response.json();
         setServices(data);
-        // Fallback para dados mockados
-        setServices([
-          {
-            id: "1",
-            name: "Consulta de Rotina",
-            slug: "consulta-rotina",
-            description:
-              "Avaliação geral da saúde bucal, limpeza e orientações",
-            durationMin: 60,
-            priceCents: 15000,
-            active: true,
-          },
-          {
-            id: "2",
-            name: "Limpeza Profissional",
-            slug: "limpeza-profissional",
-            description: "Remoção de tártaro e placa bacteriana",
-            durationMin: 45,
-            priceCents: 12000,
-            active: true,
-          },
-          {
-            id: "3",
-            name: "Clareamento",
-            slug: "clareamento",
-            description: "Clareamento dental profissional",
-            durationMin: 90,
-            priceCents: 30000,
-            active: false,
-          },
-        ]);
+      } else {
+        console.error("❌ Error fetching services:", response.status, response.statusText);
+        toast.error("Erro ao carregar serviços");
       }
     } catch (error) {
       console.error("❌ Error fetching services:", error);
@@ -152,9 +124,12 @@ export function ServicesTab() {
 
         fetchServices();
       } else {
-        const errorData = await response.text();
+        const errorData = await response.json();
         console.error("Erro na resposta:", errorData);
-        toast.error("Erro ao salvar serviço");
+        
+        // Mostrar erro mais específico
+        const errorMessage = errorData.details || errorData.error || "Erro ao salvar serviço";
+        toast.error(errorMessage);
       }
     } catch (error) {
       console.error("Error saving service:", error);

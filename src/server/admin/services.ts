@@ -77,10 +77,27 @@ export async function createService(data: ServiceFormData): Promise<Service> {
     const validatedData = serviceSchema.parse(data);
 
     // Criar slug baseado no nome
-    const slug = data.name
+    let baseSlug = data.name
       .toLowerCase()
       .replace(/\s+/g, "-")
       .replace(/[^a-z0-9-]/g, "");
+
+    // Verificar se o slug já existe e criar um único
+    let slug = baseSlug;
+    let counter = 1;
+    
+    while (true) {
+      const existingService = await prisma.service.findUnique({
+        where: { slug }
+      });
+      
+      if (!existingService) {
+        break;
+      }
+      
+      slug = `${baseSlug}-${counter}`;
+      counter++;
+    }
 
     const service = await prisma.service.create({
       data: {
@@ -100,7 +117,18 @@ export async function createService(data: ServiceFormData): Promise<Service> {
     };
   } catch (error) {
     console.error("Error creating service:", error);
-    throw new Error("Failed to create service");
+    
+    // Retornar erro mais específico
+    if (error instanceof Error) {
+      if (error.message.includes("Unique constraint")) {
+        throw new Error("Já existe um serviço com este nome");
+      }
+      if (error.message.includes("Validation error")) {
+        throw new Error("Dados inválidos fornecidos");
+      }
+    }
+    
+    throw new Error(`Failed to create service: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
   }
 }
 

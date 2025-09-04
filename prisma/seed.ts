@@ -99,6 +99,35 @@ async function main() {
     console.log("ℹ️  Serviços já existem");
   }
 
+  // Criar regras de disponibilidade padrão se não existirem
+  const existingRules = await prisma.availabilityRule.count();
+  
+  if (existingRules === 0) {
+    const defaultRules = [
+      { weekday: 1, start: "08:00", end: "12:00", serviceId: null }, // Segunda
+      { weekday: 1, start: "14:00", end: "18:00", serviceId: null },
+      { weekday: 2, start: "08:00", end: "12:00", serviceId: null }, // Terça
+      { weekday: 2, start: "14:00", end: "18:00", serviceId: null },
+      { weekday: 3, start: "08:00", end: "12:00", serviceId: null }, // Quarta
+      { weekday: 3, start: "14:00", end: "18:00", serviceId: null },
+      { weekday: 4, start: "08:00", end: "12:00", serviceId: null }, // Quinta
+      { weekday: 4, start: "14:00", end: "18:00", serviceId: null },
+      { weekday: 5, start: "08:00", end: "12:00", serviceId: null }, // Sexta
+      { weekday: 5, start: "14:00", end: "18:00", serviceId: null },
+      { weekday: 6, start: "08:00", end: "12:00", serviceId: null }, // Sábado
+    ];
+
+    for (const rule of defaultRules) {
+      await prisma.availabilityRule.create({
+        data: rule
+      });
+    }
+
+    console.log("✅ Regras de disponibilidade padrão criadas");
+  } else {
+    console.log("ℹ️  Regras de disponibilidade já existem");
+  }
+
   console.log("🎉 Seed concluído com sucesso!");
 }
 

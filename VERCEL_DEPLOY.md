@@ -150,3 +150,4 @@ Para atualizar o projeto:
 - [Documentação Vercel](https://vercel.com/docs)
 - [Next.js na Vercel](https://vercel.com/docs/frameworks/nextjs)
 - [Prisma na Vercel](https://vercel.com/docs/integrations/prisma)
+

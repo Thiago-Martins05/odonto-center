@@ -71,6 +71,20 @@ const timeOptions = [
   "19:30",
 ];
 
+function getDayNameFromWeekday(weekday: number): string {
+  const dayMap: { [key: number]: string } = {
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
+  };
+  
+  return dayMap[weekday] || 'monday';
+}
+
 export function AvailabilityTab() {
   const [schedule, setSchedule] = useState<DaySchedule[]>([]);
   const [loading, setLoading] = useState(true);
@@ -82,8 +96,72 @@ export function AvailabilityTab() {
 
   const fetchSchedule = async () => {
     try {
-      // Mock data for now - replace with actual API call
-      const mockSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
+      const response = await fetch("/api/admin/availability");
+      
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data.success && data.data.rules) {
+          // Converter regras do banco para formato do componente
+          const scheduleMap = new Map<string, DaySchedule>();
+          
+          // Inicializar todos os dias como desabilitados
+          daysOfWeek.forEach(day => {
+            scheduleMap.set(day.value, {
+              day: day.value,
+              enabled: false,
+              timeSlots: []
+            });
+          });
+          
+          // Processar regras do banco
+          data.data.rules.forEach((rule: any) => {
+            const dayName = getDayNameFromWeekday(rule.weekday);
+            const existingDay = scheduleMap.get(dayName);
+            
+            if (existingDay) {
+              existingDay.enabled = true;
+              existingDay.timeSlots.push({
+                id: rule.id,
+                startTime: rule.start,
+                endTime: rule.end
+              });
+            }
+          });
+          
+          setSchedule(Array.from(scheduleMap.values()));
+        } else {
+          // Fallback para dados padrão se não houver regras
+          const defaultSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
+            day: day.value,
+            enabled: [
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+            ].includes(day.value),
+            timeSlots:
+              day.value === "saturday"
+                ? [{ id: "1", startTime: "08:00", endTime: "12:00" }]
+                : day.value === "sunday"
+                ? []
+                : [
+                    { id: "1", startTime: "08:00", endTime: "12:00" },
+                    { id: "2", startTime: "14:00", endTime: "18:00" },
+                  ],
+          }));
+          setSchedule(defaultSchedule);
+        }
+      } else {
+        throw new Error("Falha ao carregar horários");
+      }
+    } catch (error) {
+      console.error("Error fetching schedule:", error);
+      toast.error("Erro ao carregar horários");
+      
+      // Fallback para dados padrão em caso de erro
+      const defaultSchedule: DaySchedule[] = daysOfWeek.map((day) => ({
         day: day.value,
         enabled: [
           "monday",
@@ -102,11 +180,7 @@ export function AvailabilityTab() {
                 { id: "2", startTime: "14:00", endTime: "18:00" },
               ],
       }));
-
-      setSchedule(mockSchedule);
-    } catch (error) {
-      console.error("Error fetching schedule:", error);
-      toast.error("Erro ao carregar horários");
+      setSchedule(defaultSchedule);
     } finally {
       setLoading(false);
     }
