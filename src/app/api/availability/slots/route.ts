@@ -276,6 +276,7 @@ export async function GET(request: Request) {
         "ETag": `"${Date.now()}"`,
         "X-Debug": "true",
         "X-Timestamp": Date.now().toString(),
+        "X-Version": "2.0.0",
       },
     });
   } catch (error) {
