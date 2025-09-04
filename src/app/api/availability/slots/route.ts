@@ -176,7 +176,7 @@ export async function GET(request: Request) {
             });
             
             // Debug log for today's slots
-            if (process.env.NODE_ENV === 'development' && dateKey === '2025-09-04') {
+            if (dateKey === '2025-09-04') {
               console.log(`🔍 Debug slots for ${dateKey}:`);
               console.log(`   Total slots generated: ${slots.length}`);
               console.log(`   First slot: ${slots[0]?.toISOString()}`);
