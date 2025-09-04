@@ -77,15 +77,12 @@ export function getDailySlots({
     ? new Date(now.getTime() + bufferMin * 60 * 1000)
     : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 
-
-
   for (const rule of applicableRules) {
     const { start, end } = rule;
     const { hours: startHour, minutes: startMin } = parseHHMM(start);
     const { hours: endHour, minutes: endMin } = parseHHMM(end);
 
     // Create rule start and end times for this date
-    // Corrigir problema de fuso horário - garantir que as datas sejam criadas no fuso local
     const ruleStart = new Date(
       date.getFullYear(),
       date.getMonth(),
@@ -104,8 +101,6 @@ export function getDailySlots({
       0,
       0
     );
-
-
 
     // Generate candidate slots in stepMin increments
     let currentSlot = new Date(ruleStart);
@@ -126,26 +121,13 @@ export function getDailySlots({
         });
 
         if (!hasOverlap) {
-          // Corrigir problema de fuso horário - garantir que o slot seja criado no fuso local
-          allSlots.push(
-            new Date(
-              currentSlot.getFullYear(),
-              currentSlot.getMonth(),
-              currentSlot.getDate(),
-              currentSlot.getHours(),
-              currentSlot.getMinutes(),
-              0,
-              0
-            )
-          );
+          allSlots.push(new Date(currentSlot));
         }
       }
 
       currentSlot = addMinutes(currentSlot, stepMin);
     }
   }
-
-
 
   // Return sorted unique slots
   return allSlots
