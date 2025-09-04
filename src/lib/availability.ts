@@ -77,6 +77,14 @@ export function getDailySlots({
     ? new Date(now.getTime() + bufferMin * 60 * 1000)
     : new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
 
+  // Debug log for today
+  if (isToday) {
+    console.log(`🔍 Debug getDailySlots for today:`);
+    console.log(`   now: ${now.toISOString()}`);
+    console.log(`   bufferTime: ${bufferTime.toISOString()}`);
+    console.log(`   bufferMin: ${bufferMin}`);
+  }
+
   for (const rule of applicableRules) {
     const { start, end } = rule;
     const { hours: startHour, minutes: startMin } = parseHHMM(start);
