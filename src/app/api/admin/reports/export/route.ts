@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
     });
 
     // Buscar dados dos contatos
-    const contactMessages = await prisma.contactMessage?.findMany({
+    const contactMessages = await prisma.contactMessage.findMany({
       where: {
         createdAt: {
           gte: new Date(startDate),
