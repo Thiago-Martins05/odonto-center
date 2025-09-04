@@ -52,6 +52,7 @@ export function TimeSelection({
 
 
       console.log("🔍 Chamando API de slots:", apiUrl);
+      // Force new deployment
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
