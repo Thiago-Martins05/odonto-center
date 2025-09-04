@@ -250,14 +250,14 @@ export async function GET(request: Request) {
 
 function getDayNameFromWeekday(weekday: number): string {
   const dayMap: { [key: number]: string } = {
-    0: 'Domingo',
-    1: 'Segunda',
-    2: 'Terça',
-    3: 'Quarta',
-    4: 'Quinta',
-    5: 'Sexta',
-    6: 'Sábado',
+    0: 'sunday',
+    1: 'monday',
+    2: 'tuesday',
+    3: 'wednesday',
+    4: 'thursday',
+    5: 'friday',
+    6: 'saturday',
   };
   
-  return dayMap[weekday] || 'Desconhecido';
+  return dayMap[weekday] || 'monday';
 }
