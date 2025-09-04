@@ -48,9 +48,6 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "zod": "^4.1.5",
-    "jspdf": "^2.5.2",
-    "jspdf-autotable": "^3.8.2",
-    "pdfkit": "^0.15.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -59,7 +56,6 @@
     "@types/pg": "^8.11.10",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@types/pdfkit": "^0.13.4",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
