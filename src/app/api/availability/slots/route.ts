@@ -259,6 +259,7 @@ export async function GET(request: Request) {
             slotsCount: day.slots.length,
             firstSlot: day.slots[0] || null,
             lastSlot: day.slots[day.slots.length - 1] || null,
+            allSlots: day.slots,
           })),
         },
       },

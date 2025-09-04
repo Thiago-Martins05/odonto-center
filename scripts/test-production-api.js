@@ -45,6 +45,9 @@ async function testProductionAPI() {
             console.log(`     ${day.date} (${day.dateKey}): ${day.slotsCount} slots`);
             if (day.firstSlot) console.log(`       First: ${day.firstSlot}`);
             if (day.lastSlot) console.log(`       Last: ${day.lastSlot}`);
+            if (day.allSlots && day.allSlots.length > 0) {
+              console.log(`       All slots: ${day.allSlots.join(', ')}`);
+            }
           });
         }
       }
