@@ -30,7 +30,23 @@ export function TimeSelection({
   onTimeSelect,
   onBack,
 }: TimeSelectionProps) {
-  const [currentWeek, setCurrentWeek] = useState(new Date());
+  // Inicializar com a próxima semana se estivermos no final da semana atual
+  const getInitialWeek = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
+    
+    // Se estivermos na quinta (4), sexta (5), sábado (6) ou domingo (0), 
+    // mostrar a próxima semana para ter mais horários disponíveis
+    if (dayOfWeek >= 4 || dayOfWeek === 0) {
+      const nextWeek = new Date(today);
+      nextWeek.setDate(today.getDate() + 7);
+      return nextWeek;
+    }
+    
+    return today;
+  };
+
+  const [currentWeek, setCurrentWeek] = useState(getInitialWeek());
   const [availableSlots, setAvailableSlots] = useState<DaySlots[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -247,6 +263,21 @@ export function TimeSelection({
               )
             )}
           </p>
+          {(() => {
+            const today = new Date();
+            const todayWeekStart = getWeekStart(today);
+            const currentWeekStart = getWeekStart(currentWeek);
+            const isNextWeek = currentWeekStart.getTime() > todayWeekStart.getTime();
+            
+            if (isNextWeek) {
+              return (
+                <p className="text-xs text-blue-600 mt-1">
+                  📅 Próxima semana - Mais horários disponíveis
+                </p>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         <Button
