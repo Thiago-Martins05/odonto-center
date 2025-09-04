@@ -52,8 +52,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Limpar regras existentes
+    // Limpar TODAS as regras existentes (globais e específicas)
     await prisma.availabilityRule.deleteMany({});
+    console.log("🧹 Todas as regras existentes removidas");
 
     // Criar novas regras baseadas no schedule
     const rulesToCreate = [];
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
             weekday: getWeekdayNumber(day.day),
             start: slot.startTime,
             end: slot.endTime,
-            serviceId: null, // Regra global
+            serviceId: null, // Sempre regras globais
           };
           rulesToCreate.push(rule);
           console.log(`   ✅ Criando regra: ${day.day} (${rule.weekday}) ${rule.start}-${rule.end}`);
@@ -81,6 +82,9 @@ export async function POST(request: NextRequest) {
       await prisma.availabilityRule.createMany({
         data: rulesToCreate
       });
+      console.log(`✅ ${rulesToCreate.length} regras criadas`);
+    } else {
+      console.log("⚠️ Nenhuma regra criada");
     }
 
     return NextResponse.json({

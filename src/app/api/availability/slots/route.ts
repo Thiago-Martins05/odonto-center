@@ -9,8 +9,6 @@ export async function GET(request: Request) {
     const weekEnd = searchParams.get("weekEnd");
     const serviceId = searchParams.get("serviceId");
 
-
-
     if (!weekStart || !weekEnd) {
       return NextResponse.json(
         { success: false, error: "weekStart e weekEnd são obrigatórios" },
@@ -40,37 +38,17 @@ export async function GET(request: Request) {
       );
     }
 
-
-
-    // Fetch availability rules - INCLUINDO REGRAS GLOBAIS!
+    // Fetch availability rules - ONLY GLOBAL RULES (serviceId: null)
     const rules = await prisma.availabilityRule.findMany({
       where: {
-        OR: [
-          // Regras específicas do serviço
-          ...(serviceId ? [{ serviceId }] : []),
-          // Regras globais (sem serviceId) - IMPORTANTE!
-          { serviceId: null },
-        ],
+        serviceId: null, // Only global rules
       },
       orderBy: { weekday: "asc" },
     });
 
-    console.log(`🔍 API Slots - Regras encontradas: ${rules.length}`);
-    rules.forEach(rule => {
-      const dayName = getDayNameFromWeekday(rule.weekday);
-      console.log(`   ${dayName}: ${rule.start}-${rule.end}`);
-    });
-
-    // Log específico para sexta-feira
-    const fridayRules = rules.filter(rule => rule.weekday === 5);
-    console.log(`🔍 SEXTA-FEIRA - Regras encontradas: ${fridayRules.length}`);
-    if (fridayRules.length > 0) {
-      console.log(`   ❌ PROBLEMA: Sexta-feira tem regras!`);
-      fridayRules.forEach(rule => {
-        console.log(`     - ${rule.start}-${rule.end} (ID: ${rule.id})`);
-      });
-    } else {
-      console.log(`   ✅ OK: Sexta-feira não tem regras`);
+    // Log apenas para debug se necessário
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔍 API Slots - Regras globais encontradas: ${rules.length}`);
     }
 
 
@@ -123,11 +101,9 @@ export async function GET(request: Request) {
 
     // Generate slots for each day
     const daysMap = new Map<string, string[]>();
-    // Use normalized dates to avoid timezone issues
     const currentDate = new Date(normalizedStartDate);
 
     while (currentDate <= normalizedEndDate) {
-      // Create proper date key using local date components
       const year = currentDate.getFullYear();
       const month = String(currentDate.getMonth() + 1).padStart(2, '0');
       const day = String(currentDate.getDate()).padStart(2, '0');
@@ -135,7 +111,7 @@ export async function GET(request: Request) {
       
       const weekday = currentDate.getDay();
 
-      // Check if this date is in the past - additional validation
+      // Check if this date is in the past
       const today = new Date();
       const todayYear = today.getFullYear();
       const todayMonth = String(today.getMonth() + 1).padStart(2, '0');
@@ -144,11 +120,8 @@ export async function GET(request: Request) {
       
       const isDateInPast = dateKey < todayString;
 
-
-
-      // Skip past dates entirely
+      // Skip past dates
       if (isDateInPast) {
-
         currentDate.setDate(currentDate.getDate() + 1);
         continue;
       }
@@ -156,27 +129,12 @@ export async function GET(request: Request) {
       // Find rules for this weekday
       const dayRules = rules.filter((rule) => rule.weekday === weekday);
 
-      // Log específico para sexta-feira
-      if (weekday === 5) {
-        console.log(`🔍 PROCESSANDO SEXTA-FEIRA (${dateKey}):`);
-        console.log(`   Regras encontradas: ${dayRules.length}`);
-        if (dayRules.length > 0) {
-          console.log(`   ❌ PROBLEMA: Sexta-feira tem regras!`);
-          dayRules.forEach(rule => {
-            console.log(`     - ${rule.start}-${rule.end} (ID: ${rule.id})`);
-          });
-        } else {
-          console.log(`   ✅ OK: Sexta-feira não tem regras, será pulada`);
-        }
-      }
-
+      // Only process if there are rules for this day
       if (dayRules.length > 0) {
         // Check if this date is blacked out
         const isBlackedOut = blackoutDates.some(
           (blackout) => blackout.date.toISOString().split("T")[0] === dateKey
         );
-
-
 
         if (!isBlackedOut) {
           // Convert Prisma rules to the format expected by getDailySlots
@@ -204,9 +162,7 @@ export async function GET(request: Request) {
 
           if (slots.length > 0) {
             // Convert Date[] to string[] for storage
-            // Corrigir problema de fuso horário - garantir que os slots sejam convertidos corretamente
             const slotStrings = slots.map((slot) => {
-              // Criar uma nova data no fuso horário local para evitar problemas de UTC
               const localSlot = new Date(
                 slot.getFullYear(),
                 slot.getMonth(),
