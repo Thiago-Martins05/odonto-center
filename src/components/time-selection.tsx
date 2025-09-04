@@ -43,11 +43,12 @@ export function TimeSelection({
       const weekStart = getWeekStart(currentWeek);
       const weekEnd = new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000);
 
-      // Usar a API real de disponibilidade com timestamp para evitar cache
+      // Usar a API real de disponibilidade com timestamp único para evitar cache
       const timestamp = Date.now();
+      const randomId = Math.random().toString(36).substring(7);
       const apiUrl = `/api/availability/slots?weekStart=${weekStart.toISOString()}&weekEnd=${weekEnd.toISOString()}&serviceId=${
         services[0]?.id || ""
-      }&t=${timestamp}`;
+      }&t=${timestamp}&r=${randomId}`;
 
 
 

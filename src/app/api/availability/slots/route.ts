@@ -273,12 +273,14 @@ export async function GET(request: Request) {
 
 
 
-    // Return response with cache headers to prevent caching issues
+    // Return response with aggressive cache headers to prevent caching issues
     return NextResponse.json(response, {
       headers: {
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        Pragma: "no-cache",
-        Expires: "0",
+        "Cache-Control": "no-cache, no-store, must-revalidate, max-age=0",
+        "Pragma": "no-cache",
+        "Expires": "0",
+        "Last-Modified": new Date().toUTCString(),
+        "ETag": `"${Date.now()}"`,
       },
     });
   } catch (error) {
