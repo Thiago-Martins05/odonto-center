@@ -75,7 +75,7 @@ export async function GET() {
     }, 0);
 
     // Criar atividade recente
-    const recentActivity = [];
+    const recentActivity: any[] = [];
 
     // Adicionar agendamentos recentes
     recentAppointments.forEach((appointment) => {
