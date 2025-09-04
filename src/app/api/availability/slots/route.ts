@@ -175,19 +175,8 @@ export async function GET(request: Request) {
           }
 
           if (slots.length > 0) {
-            // Convert Date[] to string[] for storage
-            const slotStrings = slots.map((slot) => {
-              const localSlot = new Date(
-                slot.getFullYear(),
-                slot.getMonth(),
-                slot.getDate(),
-                slot.getHours(),
-                slot.getMinutes(),
-                0,
-                0
-              );
-              return localSlot.toISOString();
-            });
+            // Slots are already strings, no conversion needed
+            const slotStrings = slots;
             
             // Debug log for today's slots
             if (dateKey === '2025-09-04') {
@@ -195,8 +184,6 @@ export async function GET(request: Request) {
               console.log(`   Total slots generated: ${slots.length}`);
               console.log(`   First slot: ${slots[0]}`);
               console.log(`   Last slot: ${slots[slots.length - 1]}`);
-              console.log(`   First slot string: ${slotStrings[0]}`);
-              console.log(`   Last slot string: ${slotStrings[slotStrings.length - 1]}`);
             }
             
             daysMap.set(dateKey, slotStrings);
