@@ -61,6 +61,18 @@ export async function GET(request: Request) {
       console.log(`   ${dayName}: ${rule.start}-${rule.end}`);
     });
 
+    // Log específico para sexta-feira
+    const fridayRules = rules.filter(rule => rule.weekday === 5);
+    console.log(`🔍 SEXTA-FEIRA - Regras encontradas: ${fridayRules.length}`);
+    if (fridayRules.length > 0) {
+      console.log(`   ❌ PROBLEMA: Sexta-feira tem regras!`);
+      fridayRules.forEach(rule => {
+        console.log(`     - ${rule.start}-${rule.end} (ID: ${rule.id})`);
+      });
+    } else {
+      console.log(`   ✅ OK: Sexta-feira não tem regras`);
+    }
+
 
 
     // Fetch blackout dates
@@ -143,6 +155,20 @@ export async function GET(request: Request) {
 
       // Find rules for this weekday
       const dayRules = rules.filter((rule) => rule.weekday === weekday);
+
+      // Log específico para sexta-feira
+      if (weekday === 5) {
+        console.log(`🔍 PROCESSANDO SEXTA-FEIRA (${dateKey}):`);
+        console.log(`   Regras encontradas: ${dayRules.length}`);
+        if (dayRules.length > 0) {
+          console.log(`   ❌ PROBLEMA: Sexta-feira tem regras!`);
+          dayRules.forEach(rule => {
+            console.log(`     - ${rule.start}-${rule.end} (ID: ${rule.id})`);
+          });
+        } else {
+          console.log(`   ✅ OK: Sexta-feira não tem regras, será pulada`);
+        }
+      }
 
       if (dayRules.length > 0) {
         // Check if this date is blacked out
