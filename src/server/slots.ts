@@ -56,7 +56,7 @@ export async function getAvailableSlots({
   const existingAppointments: Appointment[] = [];
 
   // Build slots map for each day
-  const daysMap = new Map<string, Date[]>();
+  const daysMap = new Map<string, string[]>();
   const currentDate = new Date(weekStart);
 
   while (currentDate <= weekEnd) {
@@ -83,7 +83,7 @@ export async function getAvailableSlots({
   const days: DaySlots[] = Array.from(daysMap.entries()).map(
     ([dateKey, slots]) => ({
       date: formatPt(new Date(dateKey)),
-      slots: slots.map((slot) => slot.toISOString()),
+      slots: slots, // slots are already strings
       dateKey,
     })
   );
