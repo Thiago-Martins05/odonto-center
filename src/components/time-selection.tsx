@@ -65,7 +65,7 @@ export function TimeSelection({
       
       if (data.success) {
         console.log("📅 Dias com horários:", data.data.days.length);
-        data.data.days.forEach(day => {
+        data.data.days.forEach((day: any) => {
           console.log(`   ${day.date}: ${day.slots.length} horários`);
         });
         setAvailableSlots(data.data.days);
