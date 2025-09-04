@@ -267,6 +267,8 @@ export async function GET(request: Request) {
         "Expires": "0",
         "Last-Modified": new Date().toUTCString(),
         "ETag": `"${Date.now()}"`,
+        "X-Debug": "true",
+        "X-Timestamp": Date.now().toString(),
       },
     });
   } catch (error) {

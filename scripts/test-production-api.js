@@ -33,6 +33,13 @@ async function testProductionAPI() {
       console.log(`   Total de regras: ${data.data.totalRules}`);
       console.log(`   Dias com slots: ${data.data.days.length}`);
       
+      if (data.data.debug) {
+        console.log('\n   Debug info:');
+        console.log(`     Current time: ${data.data.debug.currentTime}`);
+        console.log(`     Timezone: ${data.data.debug.timezone}`);
+        console.log(`     Today string: ${data.data.debug.todayString}`);
+      }
+      
       console.log('\n   Regras encontradas:');
       data.data.rules.forEach(rule => {
         const dayName = getDayNameFromWeekday(rule.weekday);
