@@ -40,8 +40,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const { schedule } = await request.json();
+    
+    // Log dos dados recebidos
+    console.log("📥 Dados recebidos na API:", schedule);
 
     if (!schedule || !Array.isArray(schedule)) {
+      console.error("❌ Dados inválidos:", { schedule });
       return NextResponse.json(
         { error: "Dados de horários inválidos" },
         { status: 400 }
@@ -55,15 +59,21 @@ export async function POST(request: NextRequest) {
     const rulesToCreate = [];
 
     for (const day of schedule) {
+      console.log(`📅 Processando ${day.day}: enabled=${day.enabled}, slots=${day.timeSlots?.length || 0}`);
+      
       if (day.enabled && day.timeSlots && day.timeSlots.length > 0) {
         for (const slot of day.timeSlots) {
-          rulesToCreate.push({
+          const rule = {
             weekday: getWeekdayNumber(day.day),
             start: slot.startTime,
             end: slot.endTime,
             serviceId: null, // Regra global
-          });
+          };
+          rulesToCreate.push(rule);
+          console.log(`   ✅ Criando regra: ${day.day} (${rule.weekday}) ${rule.start}-${rule.end}`);
         }
+      } else {
+        console.log(`   ❌ ${day.day} desabilitado ou sem slots`);
       }
     }
 

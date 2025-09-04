@@ -189,6 +189,9 @@ export function AvailabilityTab() {
   const saveSchedule = async () => {
     setSaving(true);
     try {
+      // Log dos dados que estão sendo enviados
+      console.log("📤 Enviando dados para API:", schedule);
+      
       const response = await fetch("/api/admin/availability", {
         method: "POST",
         headers: {
@@ -198,8 +201,12 @@ export function AvailabilityTab() {
       });
 
       if (response.ok) {
+        const result = await response.json();
+        console.log("✅ Resposta da API:", result);
         toast.success("Horários salvos com sucesso!");
       } else {
+        const errorData = await response.json();
+        console.error("❌ Erro na resposta:", errorData);
         toast.error("Erro ao salvar horários");
       }
     } catch (error) {
