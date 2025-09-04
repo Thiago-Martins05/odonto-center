@@ -30,8 +30,8 @@ export function ContactMessagesTab() {
 
   const fetchMessages = async () => {
     try {
-      // Tentar primeiro a API do banco de dados (mensagens reais)
-      const response = await fetch("/api/admin/contact-messages");
+      // Tentar primeiro a API pública do banco de dados (mensagens reais)
+      const response = await fetch("/api/contact-messages-public");
       
       if (response.ok) {
         const data = await response.json();
@@ -83,25 +83,14 @@ export function ContactMessagesTab() {
 
   const markAsRead = async (messageId: string, read: boolean) => {
     try {
-      // Tentar primeiro a API do arquivo JSON
-      let response = await fetch("/api/admin/contact-messages-file", {
+      // Usar a API pública do banco de dados
+      const response = await fetch("/api/contact-messages-public", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ id: messageId, read }),
       });
-
-      // Se não funcionar, tentar a API do banco de dados
-      if (!response.ok) {
-        response = await fetch("/api/admin/contact-messages", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: messageId, read }),
-        });
-      }
 
       // Se ainda não funcionar, tentar a API mock
       if (!response.ok) {
