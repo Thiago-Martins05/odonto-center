@@ -160,6 +160,20 @@ export async function GET(request: Request) {
             bufferMin: 10,
           });
 
+          // Debug log for today's slots
+          if (dateKey === '2025-09-04') {
+            console.log(`🔍 Debug getDailySlots for ${dateKey}:`);
+            console.log(`   currentDate: ${currentDate.toISOString()}`);
+            console.log(`   serviceDurationMin: ${service?.durationMin || 30}`);
+            console.log(`   rules: ${availabilityRules.length}`);
+            console.log(`   existingAppointments: ${existingAppointments.length}`);
+            console.log(`   slots returned: ${slots.length}`);
+            if (slots.length > 0) {
+              console.log(`   first slot: ${slots[0].toISOString()}`);
+              console.log(`   last slot: ${slots[slots.length - 1].toISOString()}`);
+            }
+          }
+
           if (slots.length > 0) {
             // Convert Date[] to string[] for storage
             const slotStrings = slots.map((slot) => {
