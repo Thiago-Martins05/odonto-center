@@ -1,6 +1,9 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+// Verificar se estamos no ambiente de produção
+const isProduction = process.env.NODE_ENV === 'production';
+
 // Extend jsPDF type to include autoTable
 declare module 'jspdf' {
   interface jsPDF {
@@ -51,7 +54,8 @@ export interface ReportData {
 }
 
 export function generateReportPDF(data: ReportData): jsPDF {
-  const doc = new jsPDF();
+  try {
+    const doc = new jsPDF();
   
   // Configurações
   const pageWidth = doc.internal.pageSize.getWidth();
@@ -195,6 +199,17 @@ export function generateReportPDF(data: ReportData): jsPDF {
   }
 
   return doc;
+  } catch (error) {
+    console.error("Erro ao gerar PDF:", error);
+    // Retornar um PDF simples em caso de erro
+    const fallbackDoc = new jsPDF();
+    fallbackDoc.setFontSize(16);
+    fallbackDoc.text("Erro ao gerar relatório", 20, 20);
+    fallbackDoc.setFontSize(12);
+    fallbackDoc.text("Ocorreu um erro ao processar os dados do relatório.", 20, 40);
+    fallbackDoc.text("Tente novamente ou entre em contato com o suporte.", 20, 60);
+    return fallbackDoc;
+  }
 }
 
 // Funções auxiliares

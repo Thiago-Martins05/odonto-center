@@ -107,15 +107,23 @@ export async function GET(request: NextRequest) {
 
     // Se o formato solicitado for PDF, gerar PDF
     if (format === "pdf") {
-      const pdf = generateReportPDF(exportData);
-      const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
-      
-      return new NextResponse(pdfBuffer, {
-        headers: {
-          "Content-Type": "application/pdf",
-          "Content-Disposition": `attachment; filename="relatorio-${type}-${startDate}-${endDate}.pdf"`,
-        },
-      });
+      try {
+        const pdf = generateReportPDF(exportData);
+        const pdfBuffer = Buffer.from(pdf.output('arraybuffer'));
+        
+        return new NextResponse(pdfBuffer, {
+          headers: {
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="relatorio-${type}-${startDate}-${endDate}.pdf"`,
+          },
+        });
+      } catch (pdfError) {
+        console.error("Erro ao gerar PDF:", pdfError);
+        return NextResponse.json(
+          { error: "Erro ao gerar PDF", details: pdfError instanceof Error ? pdfError.message : "Erro desconhecido" },
+          { status: 500 }
+        );
+      }
     }
 
     // Retornar JSON por padrão
