@@ -25,7 +25,7 @@ export interface ReportData {
     id: string;
     patientName: string;
     email: string;
-    phone: string;
+    phone: string | null;
     service: string;
     startsAt: string;
     endsAt: string;
@@ -116,7 +116,7 @@ export function generateReportPDF(data: ReportData): jsPDF {
       apt.service,
       formatDateTime(apt.startsAt),
       getStatusLabel(apt.status),
-      apt.phone
+      apt.phone || 'N/A'
     ]);
     
     doc.autoTable({
