@@ -112,24 +112,21 @@ export function generateReportPDF(data: ReportData): jsPDF {
       doc.setFont('helvetica', 'bold');
       yPosition = addText('Agendamentos', margin, yPosition);
       
-      const appointmentsData = data.appointments.map(apt => [
-        apt.patientName,
-        apt.service,
-        formatDateTime(apt.startsAt),
-        getStatusLabel(apt.status),
-        apt.phone || 'N/A'
-      ]);
-      
-      doc.autoTable({
-        startY: yPosition,
-        head: [['Paciente', 'Serviço', 'Data/Hora', 'Status', 'Telefone']],
-        body: appointmentsData,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [41, 128, 185] },
-        margin: { left: margin, right: margin }
+      // Lista simples de agendamentos
+      data.appointments.forEach((apt, index) => {
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        yPosition = addText(`${index + 1}. ${apt.patientName} - ${apt.service}`, margin, yPosition);
+        yPosition = addText(`   Data: ${formatDateTime(apt.startsAt)} | Status: ${getStatusLabel(apt.status)}`, margin, yPosition);
+        yPosition += 5;
       });
       
-      yPosition = (doc as any).lastAutoTable.finalY + 10;
+      yPosition += 10;
     }
 
     // Tabela de Serviços
@@ -138,24 +135,21 @@ export function generateReportPDF(data: ReportData): jsPDF {
       doc.setFont('helvetica', 'bold');
       yPosition = addText('Serviços', margin, yPosition);
       
-      const servicesData = data.services.map(service => [
-        service.name,
-        `${service.duration} min`,
-        formatCurrency(service.price),
-        service.active ? 'Ativo' : 'Inativo',
-        service.appointmentCount.toString()
-      ]);
-      
-      doc.autoTable({
-        startY: yPosition,
-        head: [['Nome', 'Duração', 'Preço', 'Status', 'Agendamentos']],
-        body: servicesData,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [46, 204, 113] },
-        margin: { left: margin, right: margin }
+      // Lista simples de serviços
+      data.services.forEach((service, index) => {
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        yPosition = addText(`${index + 1}. ${service.name}`, margin, yPosition);
+        yPosition = addText(`   Duração: ${service.duration} min | Preço: ${formatCurrency(service.price)} | Status: ${service.active ? 'Ativo' : 'Inativo'}`, margin, yPosition);
+        yPosition += 5;
       });
       
-      yPosition = (doc as any).lastAutoTable.finalY + 10;
+      yPosition += 10;
     }
 
     // Tabela de Contatos (se disponível)
@@ -164,21 +158,20 @@ export function generateReportPDF(data: ReportData): jsPDF {
       doc.setFont('helvetica', 'bold');
       yPosition = addText('Mensagens de Contato', margin, yPosition);
       
-      const contactsData = data.contacts.map(contact => [
-        contact.name,
-        contact.email,
-        contact.phone || 'N/A',
-        formatDate(contact.createdAt),
-        contact.message.length > 50 ? contact.message.substring(0, 50) + '...' : contact.message
-      ]);
-      
-      doc.autoTable({
-        startY: yPosition,
-        head: [['Nome', 'Email', 'Telefone', 'Data', 'Mensagem']],
-        body: contactsData,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [155, 89, 182] },
-        margin: { left: margin, right: margin }
+      // Lista simples de contatos
+      data.contacts.forEach((contact, index) => {
+        if (yPosition > 250) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        yPosition = addText(`${index + 1}. ${contact.name}`, margin, yPosition);
+        yPosition = addText(`   Email: ${contact.email} | Telefone: ${contact.phone || 'N/A'}`, margin, yPosition);
+        yPosition = addText(`   Data: ${formatDate(contact.createdAt)}`, margin, yPosition);
+        yPosition = addText(`   Mensagem: ${contact.message.length > 50 ? contact.message.substring(0, 50) + '...' : contact.message}`, margin, yPosition);
+        yPosition += 5;
       });
     }
 

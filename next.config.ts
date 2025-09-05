@@ -26,6 +26,14 @@ const nextConfig: NextConfig = {
   // Configurações para deploy na Vercel
   trailingSlash: false,
   skipTrailingSlashRedirect: true,
+  // Configurações para jsPDF
+  webpack: (config: any) => {
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      canvas: false,
+    };
+    return config;
+  },
 };
 
 export default nextConfig;
