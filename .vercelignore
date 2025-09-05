@@ -29,9 +29,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Node modules (já ignorado por padrão, mas por segurança)
-node_modules/
-
 # Arquivos de build local
 .next/
 out/
@@ -41,7 +38,19 @@ dist/
 coverage/
 .nyc_output/
 
+# Scripts de debug e teste (não necessários no deploy)
+scripts/debug-*.js
+scripts/test-*.js
+scripts/fix-*.js
+scripts/reset-*.js
+scripts/force-*.js
+scripts/simple-*.js
+scripts/check-*.js
+
 # Arquivos de documentação local
-README.md
-*.md
+ADMIN_SETUP.md
+DEPLOY_README.md
+EMAIL_SETUP.md
+FIX_PRODUCTION.md
+VERCEL_DEPLOY.md
 
