@@ -44,7 +44,7 @@ export interface ReportData {
     id: string;
     name: string;
     email: string;
-    phone: string;
+    phone: string | null;
     message: string;
     createdAt: string;
   }>;
@@ -166,7 +166,7 @@ export function generateReportPDF(data: ReportData): jsPDF {
     const contactsData = data.contacts.map(contact => [
       contact.name,
       contact.email,
-      contact.phone,
+      contact.phone || 'N/A',
       formatDate(contact.createdAt),
       contact.message.length > 50 ? contact.message.substring(0, 50) + '...' : contact.message
     ]);
