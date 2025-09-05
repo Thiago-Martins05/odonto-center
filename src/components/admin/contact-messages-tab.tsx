@@ -92,7 +92,7 @@ export function ContactMessagesTab() {
   const markAsRead = async (messageId: string, read: boolean) => {
     try {
       // Usar a API pública do banco de dados
-      const response = await fetch("/api/contact-messages-public", {
+      let response = await fetch("/api/contact-messages-public", {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
