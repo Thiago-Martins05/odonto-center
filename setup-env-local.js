@@ -54,3 +54,4 @@ try {
   console.log('');
   console.log(envContent);
 }
+

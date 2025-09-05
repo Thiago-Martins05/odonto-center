@@ -140,3 +140,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 checkCurrentState();
+

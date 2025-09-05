@@ -110,3 +110,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 testAvailability();
+

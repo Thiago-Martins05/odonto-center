@@ -146,3 +146,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 debugTimeRange();
+

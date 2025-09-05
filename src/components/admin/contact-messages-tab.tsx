@@ -23,6 +23,7 @@ export function ContactMessagesTab() {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedMessage, setSelectedMessage] = useState<ContactMessage | null>(null);
+  const [dataSource, setDataSource] = useState<'database' | 'file' | 'mock'>('database');
 
   useEffect(() => {
     fetchMessages();
@@ -37,6 +38,7 @@ export function ContactMessagesTab() {
         const data = await response.json();
         if (data.messages && data.messages.length > 0) {
           setMessages(data.messages);
+          setDataSource('database');
           return;
         }
       }
@@ -48,6 +50,7 @@ export function ContactMessagesTab() {
         const fileData = await fileResponse.json();
         if (fileData.messages && fileData.messages.length > 0) {
           setMessages(fileData.messages);
+          setDataSource('file');
           return;
         }
       }
@@ -58,8 +61,10 @@ export function ContactMessagesTab() {
       if (mockResponse.ok) {
         const mockData = await mockResponse.json();
         setMessages(mockData.messages);
+        setDataSource('mock');
       } else {
         setMessages([]);
+        setDataSource('database');
       }
     } catch (error) {
       console.error("Erro ao buscar mensagens:", error);
@@ -69,12 +74,15 @@ export function ContactMessagesTab() {
         if (mockResponse.ok) {
           const mockData = await mockResponse.json();
           setMessages(mockData.messages);
+          setDataSource('mock');
         } else {
           setMessages([]);
+          setDataSource('database');
         }
       } catch (mockError) {
         console.error("Erro ao buscar mensagens mock:", mockError);
         setMessages([]);
+        setDataSource('database');
       }
     } finally {
       setLoading(false);
@@ -128,10 +136,31 @@ export function ContactMessagesTab() {
     }
 
     try {
-      // Usar a API do banco de dados (sem autenticação)
-      const response = await fetch(`/api/admin/contact-messages?id=${messageId}`, {
-        method: "DELETE",
-      });
+      let response: Response;
+      
+      // Usar a API correta baseada na fonte dos dados
+      if (dataSource === 'database') {
+        response = await fetch(`/api/contact-messages-public?id=${messageId}`, {
+          method: "DELETE",
+        });
+      } else if (dataSource === 'file') {
+        response = await fetch(`/api/admin/contact-messages-file`, {
+          method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: messageId }),
+        });
+      } else {
+        // Para mock, usar a API mock
+        response = await fetch(`/api/admin/contact-messages-mock`, {
+          method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ id: messageId }),
+        });
+      }
 
       if (response.ok) {
         // Remover mensagem da lista

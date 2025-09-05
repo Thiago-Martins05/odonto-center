@@ -85,3 +85,44 @@ export async function PATCH(request: NextRequest) {
     );
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  try {
+    // Para demonstração, não verificar autenticação
+    // Em produção, sempre verificar autenticação
+
+    const body = await request.json();
+    const { id } = body;
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "ID da mensagem é obrigatório" },
+        { status: 400 }
+      );
+    }
+
+    // Simular exclusão (em produção, isso seria salvo no banco)
+    const messageIndex = mockMessages.findIndex(msg => msg.id === id);
+    if (messageIndex !== -1) {
+      const deletedMessage = mockMessages[messageIndex];
+      mockMessages.splice(messageIndex, 1);
+      
+      return NextResponse.json({ 
+        message: "Mensagem deletada com sucesso",
+        id,
+        note: "Mensagem removida (modo demonstração)"
+      });
+    } else {
+      return NextResponse.json(
+        { error: "Mensagem não encontrada" },
+        { status: 404 }
+      );
+    }
+  } catch (error) {
+    console.error("Erro ao deletar mensagem mock:", error);
+    return NextResponse.json(
+      { error: "Erro interno do servidor" },
+      { status: 500 }
+    );
+  }
+}

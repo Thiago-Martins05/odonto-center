@@ -130,3 +130,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 testSlotsAPIFriday();
+

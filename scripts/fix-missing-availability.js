@@ -107,3 +107,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 fixMissingAvailability();
+

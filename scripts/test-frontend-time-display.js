@@ -67,3 +67,4 @@ console.log('Se você está vendo horários diferentes, pode ser:');
 console.log('1. Cache do navegador');
 console.log('2. Problema de timezone no frontend');
 console.log('3. Dados antigos sendo exibidos');
+

@@ -157,3 +157,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 debugSlotsGeneration();
+

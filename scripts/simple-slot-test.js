@@ -132,3 +132,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 simpleSlotTest();
+

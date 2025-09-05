@@ -165,3 +165,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 testRealAPICall();
+

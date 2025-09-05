@@ -93,3 +93,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 resetAvailabilitySystem();
+

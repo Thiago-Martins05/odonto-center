@@ -92,3 +92,4 @@ Se o problema persistir, verifique:
 ---
 
 **Nota**: Este problema foi causado pelo uso de dados mockados em desenvolvimento que não foram substituídos por implementações reais do banco de dados. As correções garantem que o sistema use dados reais em produção.
+

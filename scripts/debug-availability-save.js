@@ -171,3 +171,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 debugAvailabilitySave();
+

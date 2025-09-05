@@ -142,3 +142,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 debugWeekdayMapping();
+

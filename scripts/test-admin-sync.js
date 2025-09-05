@@ -139,3 +139,4 @@ function getDayNameFromWeekday(weekday) {
 }
 
 testAdminSync();
+

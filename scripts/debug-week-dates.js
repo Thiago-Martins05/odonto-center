@@ -26,3 +26,4 @@ console.log('Quinta-feira (weekday 4): 09:00-19:00');
 
 console.log('\n❓ Por que terça e quinta não aparecem?');
 console.log('Vamos verificar se as datas estão corretas...');
+
