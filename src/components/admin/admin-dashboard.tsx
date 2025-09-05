@@ -23,6 +23,8 @@ import {
   LogOut,
   Loader2,
   MessageSquare,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ServicesTab } from "./services-tab";
@@ -53,6 +55,7 @@ export function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     fetchDashboardStats();
@@ -90,6 +93,15 @@ export function AdminDashboard() {
     };
     toast.success(`Navegando para ${tabNames[tab as keyof typeof tabNames]}`);
   };
+
+  const tabs = [
+    { id: "overview", label: "Visão Geral", icon: BarChart3, mobileLabel: "Visão" },
+    { id: "services", label: "Serviços", icon: Settings, mobileLabel: "Serviços" },
+    { id: "appointments", label: "Agendamentos", icon: Calendar, mobileLabel: "Agenda" },
+    { id: "availability", label: "Disponibilidade", icon: Clock, mobileLabel: "Horários" },
+    { id: "reports", label: "Relatórios", icon: FileText, mobileLabel: "Relatórios" },
+    { id: "messages", label: "Mensagens", icon: MessageSquare, mobileLabel: "Mensagens" },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -129,38 +141,67 @@ export function AdminDashboard() {
           onValueChange={setActiveTab}
           className="space-y-6"
         >
-          <TabsList className="grid w-full grid-cols-6">
-            <TabsTrigger value="overview" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Visão Geral
-            </TabsTrigger>
-            <TabsTrigger value="services" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Serviços
-            </TabsTrigger>
-            <TabsTrigger
-              value="appointments"
-              className="flex items-center gap-2"
-            >
-              <Calendar className="h-4 w-4" />
-              Agendamentos
-            </TabsTrigger>
-            <TabsTrigger
-              value="availability"
-              className="flex items-center gap-2"
-            >
-              <Clock className="h-4 w-4" />
-              Disponibilidade
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Relatórios
-            </TabsTrigger>
-            <TabsTrigger value="messages" className="flex items-center gap-2">
-              <MessageSquare className="h-4 w-4" />
-              Mensagens
-            </TabsTrigger>
-          </TabsList>
+          {/* Desktop Navigation */}
+          <div className="hidden md:block">
+            <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6 gap-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <TabsTrigger 
+                    key={tab.id} 
+                    value={tab.id} 
+                    className="flex items-center gap-2 text-sm"
+                  >
+                    <Icon className="h-4 w-4" />
+                    {tab.label}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
+
+          {/* Mobile Navigation */}
+          <div className="md:hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold">
+                {tabs.find(tab => tab.id === activeTab)?.label}
+              </h2>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="flex items-center gap-2"
+              >
+                {mobileMenuOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+                Menu
+              </Button>
+            </div>
+            
+            {mobileMenuOpen && (
+              <div className="space-y-2 border rounded-lg p-2 bg-white shadow-sm">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => {
+                        setActiveTab(tab.id);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 px-3 py-2 rounded-md text-left transition-colors ${
+                        activeTab === tab.id
+                          ? "bg-primary text-primary-foreground"
+                          : "hover:bg-gray-100"
+                      }`}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {tab.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
