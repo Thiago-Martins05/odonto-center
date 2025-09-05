@@ -26,6 +26,10 @@ A comprehensive dental clinic management system with online appointment scheduli
 
 **Odonto Center** is a modern, comprehensive web application designed for dental clinic management. Built with Next.js 15, it provides a seamless experience for both patients and administrators, featuring online appointment scheduling, complete administrative dashboard, and automated email notifications.
 
+### Project Status
+
+✅ **Production Ready** - The project has been cleaned and optimized for production deployment. All unnecessary development files, debug scripts, and test files have been removed, leaving only essential components for a clean, maintainable codebase.
+
 ### Key Features
 
 - **Modern Interface**: Responsive and intuitive design with Tailwind CSS
@@ -170,6 +174,12 @@ npm run db:seed      # Seed database with initial data
 
 # Code Quality
 npm run lint         # Run ESLint
+
+# Production Utilities (scripts/)
+node scripts/check-current-state.js     # Check system status
+node scripts/check-production-rules.js  # Verify production rules
+node scripts/fix-production.js          # Fix production issues
+node scripts/setup-production.js        # Initial production setup
 ```
 
 ### Initial Setup
@@ -187,8 +197,16 @@ odonto-center/
 ├── prisma/                 # Database schema and migrations
 │   ├── schema.prisma      # Database definition
 │   ├── seed.ts           # Initial data
-│   └── dev.db            # SQLite database (development)
+│   ├── dev.db            # SQLite database (development)
+│   └── migrations/       # Database migrations
 ├── public/               # Static files
+│   ├── odonto1.png       # Clinic logo
+│   └── odonto1hero.png   # Hero image
+├── scripts/              # Production utilities
+│   ├── check-current-state.js
+│   ├── check-production-rules.js
+│   ├── fix-production.js
+│   └── setup-production.js
 ├── src/
 │   ├── app/              # App Router (Next.js 15)
 │   │   ├── admin/        # Administrative panel
@@ -207,6 +225,7 @@ odonto-center/
 ├── package.json          # Dependencies and scripts
 ├── tailwind.config.ts    # Tailwind configuration
 ├── tsconfig.json         # TypeScript configuration
+├── vercel.json          # Vercel deployment config
 └── README.md            # This file
 ```
 
@@ -290,7 +309,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - 🚀 **[Quick Setup Guide](SETUP.md)** - Set up in 5 minutes
 - 🤝 **[Contributing Guide](CONTRIBUTING.md)** - How to contribute to the project
 - 📝 **[Changelog](CHANGELOG.md)** - Change history
-- 📧 **[Email Configuration](EMAIL_SETUP.md)** - Notification system setup
 
 ## Support
 
