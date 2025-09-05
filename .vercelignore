@@ -54,3 +54,6 @@ EMAIL_SETUP.md
 FIX_PRODUCTION.md
 VERCEL_DEPLOY.md
 
+# Arquivos de configuração local
+.env.example
+
