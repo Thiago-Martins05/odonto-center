@@ -322,5 +322,8 @@ For support and questions:
 
 <div align="center">
   <p>Developed by Thiago Martins with dedication for dental clinics</p>
+   <p>**LinkedIn:** [Thiago Martins](https://www.linkedin.com/in/thiago-martins-5556512b6)</p>
+   <p>**Portfólio:** [ainda vou incluir]</p>
+   <p>**Github:** [Thiago-Martins05](https://github.com/Thiago-Martins05)</p>
   <p>⭐ If this project helped you, consider giving it a star!</p>
 </div>
